@@ -3,6 +3,9 @@ import { dbClient } from "@/lib/db";
 import { ReportView } from "@/components/report-view";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { getRequestContext } from "@cloudflare/next-on-pages";
+
+export const runtime = "edge";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -10,7 +13,15 @@ interface PageProps {
 
 export default async function ReportPage({ params }: PageProps) {
   const { id } = await params;
-  const report = dbClient.getReport(id);
+  
+  let env;
+  try {
+    env = getRequestContext().env;
+  } catch (e) {
+    console.log("Running locally, no Cloudflare context");
+  }
+
+  const report = await dbClient.getReport(id, env);
 
   if (!report) {
     notFound();

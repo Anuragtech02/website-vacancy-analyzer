@@ -1,54 +1,47 @@
-import Database from 'better-sqlite3';
-import fs from 'fs';
-import path from 'path';
+import { drizzle as drizzleD1 } from 'drizzle-orm/d1';
+import { drizzle as drizzleSqlite } from 'drizzle-orm/better-sqlite3';
+import { reports, leads } from './db/schema';
+import { eq } from 'drizzle-orm';
 
-const DB_PATH = 'local.db';
+// Define the DB type based on the schema
+export type DbClientType = ReturnType<typeof drizzleD1<typeof import('./db/schema')>> | ReturnType<typeof drizzleSqlite<typeof import('./db/schema')>>;
 
-let db: Database.Database;
+let localDb: ReturnType<typeof drizzleSqlite<typeof import('./db/schema')>> | null = null;
 
-function getDb() {
-  if (!db) {
-    db = new Database(DB_PATH);
-    // Enable WAL mode for better performance
-    db.pragma('journal_mode = WAL');
-    
-    // Initialize schema if needed
-    const schemaPath = path.join(process.cwd(), 'schema.sql');
-    if (fs.existsSync(schemaPath)) {
-      const schema = fs.readFileSync(schemaPath, 'utf-8');
-      db.exec(schema);
-    }
+export async function getDb(env?: any) {
+  if (env?.DB) {
+    return drizzleD1(env.DB, { schema: { reports, leads } });
   }
-  return db;
-}
 
-export interface Report {
-  id: string;
-  vacancy_text: string;
-  analysis_json: string; // JSON string
-  created_at: number;
-}
-
-export interface Lead {
-  id: number;
-  email: string;
-  report_id: string;
-  created_at: number;
+  if (!localDb) {
+    const Database = (await import('better-sqlite3')).default;
+    const sqlite = new Database('local.db');
+    localDb = drizzleSqlite(sqlite, { schema: { reports, leads } });
+  }
+  return localDb;
 }
 
 export const dbClient = {
-  createReport: (id: string, vacancyText: string, analysisJson: string) => {
-    const stmt = getDb().prepare('INSERT INTO reports (id, vacancy_text, analysis_json) VALUES (?, ?, ?)');
-    stmt.run(id, vacancyText, analysisJson);
+  createReport: async (id: string, vacancyText: string, analysisJson: string, env?: any) => {
+    const db = await getDb(env);
+    await db.insert(reports).values({
+      id,
+      vacancy_text: vacancyText,
+      analysis_json: analysisJson,
+    });
   },
 
-  getReport: (id: string): Report | undefined => {
-    const stmt = getDb().prepare('SELECT * FROM reports WHERE id = ?');
-    return stmt.get(id) as Report | undefined;
+  getReport: async (id: string, env?: any) => {
+    const db = await getDb(env);
+    const result = await db.select().from(reports).where(eq(reports.id, id)).get();
+    return result;
   },
 
-  createLead: (email: string, reportId: string) => {
-    const stmt = getDb().prepare('INSERT INTO leads (email, report_id) VALUES (?, ?)');
-    stmt.run(email, reportId);
+  createLead: async (email: string, reportId: string, env?: any) => {
+    const db = await getDb(env);
+    await db.insert(leads).values({
+      email,
+      report_id: reportId,
+    });
   }
 };

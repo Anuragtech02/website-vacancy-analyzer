@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dbClient } from "@/lib/db";
 import { optimizeVacancy } from "@/lib/gemini";
+import { getRequestContext } from "@cloudflare/next-on-pages";
+
+export const runtime = "edge";
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,8 +16,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    let env;
+    try {
+      env = getRequestContext().env;
+    } catch (e) {
+      console.log("Running locally, no Cloudflare context");
+    }
+
     // Verify report exists
-    const report = dbClient.getReport(reportId);
+    const report = await dbClient.getReport(reportId, env);
     if (!report) {
       return NextResponse.json(
         { error: "Report not found" },
@@ -23,7 +33,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Save lead
-    dbClient.createLead(email, reportId);
+    await dbClient.createLead(email, reportId, env);
 
     // Generate optimization
     const analysis = JSON.parse(report.analysis_json);
