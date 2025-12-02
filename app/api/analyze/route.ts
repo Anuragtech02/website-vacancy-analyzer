@@ -3,7 +3,6 @@ import { analyzeVacancy } from "@/lib/gemini";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { dbClient } from "@/lib/db";
 import { nanoid } from "nanoid";
-import { getRequestContext } from "@cloudflare/next-on-pages";
 
 export const runtime = "edge";
 
@@ -34,15 +33,9 @@ export async function POST(req: NextRequest) {
     const reportId = nanoid(10);
 
     // Save to DB
-    let env;
-    try {
-      env = getRequestContext().env;
-    } catch (e) {
-      // Fallback for local dev if getRequestContext fails or is not available
-      console.log("Running locally, no Cloudflare context");
-    }
-
-    await dbClient.createReport(reportId, vacancyText, JSON.stringify(analysis), env);
+    // OpenNext with nodejs_compat should populate process.env with bindings
+    // We pass undefined as env, so dbClient will fallback to process.env.MainDB
+    await dbClient.createReport(reportId, vacancyText, JSON.stringify(analysis), undefined);
 
     return NextResponse.json({ reportId, analysis });
   } catch (error) {
