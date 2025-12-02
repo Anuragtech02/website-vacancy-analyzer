@@ -4,8 +4,6 @@ import { ReportView } from "@/components/report-view";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-export const runtime = "edge";
-
 interface PageProps {
   params: Promise<{ id: string }>;
 }
