@@ -25,7 +25,7 @@ export default function Home() {
         throw new Error("Analysis failed");
       }
 
-      const data = await response.json();
+      const data = await response.json() as { reportId: string };
       router.push(`/report/${data.reportId}`);
     } catch (error) {
       console.error("Error:", error);

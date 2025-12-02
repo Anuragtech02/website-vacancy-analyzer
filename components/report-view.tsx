@@ -43,7 +43,7 @@ export function ReportView({ analysis, vacancyText, reportId }: ReportViewProps)
 
       if (!response.ok) throw new Error("Failed to submit");
 
-      const data = await response.json();
+      const data = await response.json() as { optimization: OptimizationResult };
       setOptimizationResult(data.optimization);
       setIsUnlocked(true);
       setStatus("success");

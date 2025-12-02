@@ -11,8 +11,7 @@ interface PageProps {
 export default async function ReportPage({ params }: PageProps) {
   const { id } = await params;
   
-  // OpenNext with nodejs_compat should populate process.env with bindings
-  const report = await dbClient.getReport(id, undefined);
+  const report = await dbClient.getReport(id);
 
   if (!report) {
     notFound();

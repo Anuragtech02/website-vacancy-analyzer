@@ -4,7 +4,7 @@ import { optimizeVacancy } from "@/lib/gemini";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, reportId } = await req.json();
+    const { email, reportId } = await req.json() as { email: string; reportId: string };
 
     if (!email || !reportId) {
       return NextResponse.json(
@@ -14,8 +14,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Verify report exists
-    // OpenNext with nodejs_compat should populate process.env with bindings
-    const report = await dbClient.getReport(reportId, undefined);
+    const report = await dbClient.getReport(reportId);
     if (!report) {
       return NextResponse.json(
         { error: "Report not found" },
@@ -24,7 +23,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Save lead
-    await dbClient.createLead(email, reportId, undefined);
+    await dbClient.createLead(email, reportId);
 
     // Generate optimization
     const analysis = JSON.parse(report.analysis_json);

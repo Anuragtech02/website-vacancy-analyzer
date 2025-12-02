@@ -31,7 +31,7 @@ export function OptimizationCTA({ reportId }: OptimizationCTAProps) {
 
       if (!response.ok) throw new Error("Failed to submit");
 
-      const data = await response.json();
+      const data = await response.json() as { optimization: OptimizationResult };
       setResult(data.optimization);
       setStatus("success");
     } catch (error) {

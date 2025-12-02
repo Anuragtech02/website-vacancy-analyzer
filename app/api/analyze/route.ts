@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { vacancyText } = await req.json();
+    const { vacancyText } = await req.json() as { vacancyText: string };
 
     if (!vacancyText || typeof vacancyText !== "string") {
       return NextResponse.json(
@@ -31,9 +31,7 @@ export async function POST(req: NextRequest) {
     const reportId = nanoid(10);
 
     // Save to DB
-    // OpenNext with nodejs_compat should populate process.env with bindings
-    // We pass undefined as env, so dbClient will fallback to process.env.MainDB
-    await dbClient.createReport(reportId, vacancyText, JSON.stringify(analysis), undefined);
+    await dbClient.createReport(reportId, vacancyText, JSON.stringify(analysis));
 
     return NextResponse.json({ reportId, analysis });
   } catch (error) {
