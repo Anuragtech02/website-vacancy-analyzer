@@ -3,9 +3,7 @@
   "main": ".open-next/worker.js",
   "name": "vacancy-analyzer",
   "compatibility_date": "2024-09-23",
-  "compatibility_flags": [
-    "nodejs_compat"
-  ],
+  "compatibility_flags": ["nodejs_compat"],
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
@@ -16,5 +14,13 @@
       "database_name": "vacancy-analyzer",
       "database_id": "d07a7b92-fb62-4ae8-b9d7-ba137573ebfb"
     }
-  ]
+  ],
+  "observability": {
+    "logs": {
+      "enabled": false,
+      "head_sampling_rate": 1,
+      "invocation_logs": true,
+      "persist": true
+    }
+  }
 }
