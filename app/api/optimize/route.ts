@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { dbClient } from "@/lib/db";
 import { optimizeVacancy } from "@/lib/gemini";
 
-export const runtime = "edge";
-
 export async function POST(req: NextRequest) {
   try {
     const { email, reportId } = await req.json();

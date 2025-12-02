@@ -4,8 +4,6 @@ import { checkRateLimit } from "@/lib/rate-limit";
 import { dbClient } from "@/lib/db";
 import { nanoid } from "nanoid";
 
-export const runtime = "edge";
-
 export async function POST(req: NextRequest) {
   // Rate Limiting
   const ip = req.headers.get("x-forwarded-for") || "unknown";
