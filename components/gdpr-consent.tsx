@@ -24,8 +24,8 @@ export function GDPRConsent() {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 p-4 sm:p-6 flex justify-center pointer-events-none">
-      <Card className="w-full max-w-2xl shadow-2xl border-primary/20 pointer-events-auto animate-in slide-in-from-bottom-10 fade-in duration-500">
+    <div className="fixed bottom-4 right-4 z-50 pointer-events-none">
+      <Card className="w-full max-w-md shadow-2xl border-primary/20 pointer-events-auto animate-in slide-in-from-bottom-10 fade-in duration-500">
         <CardHeader className="pb-2">
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-5 h-5 text-primary" />
