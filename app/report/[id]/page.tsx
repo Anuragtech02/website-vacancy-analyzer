@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { dbClient } from "@/lib/db";
 import { ReportView } from "@/components/report-view";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Sparkles } from "lucide-react";
 import Link from "next/link";
 
 interface PageProps {
@@ -10,7 +10,7 @@ interface PageProps {
 
 export default async function ReportPage({ params }: PageProps) {
   const { id } = await params;
-  
+
   const report = await dbClient.getReport(id);
 
   if (!report) {
@@ -20,27 +20,73 @@ export default async function ReportPage({ params }: PageProps) {
   const analysis = JSON.parse(report.analysis_json);
 
   return (
-    <main className="min-h-screen bg-background">
-      <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex h-16 items-center px-4 sm:px-8 max-w-[1600px] mx-auto">
-          <Link href="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mr-4">
-            <ArrowLeft className="w-4 h-4" />
-            <span className="font-medium">Back</span>
-          </Link>
-          <div className="h-6 w-[1px] bg-border mx-2" />
+    <main className="min-h-screen bg-gradient-to-b from-background to-muted/30 flex flex-col">
+      {/* Header */}
+      <header className="w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-8 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Link
+              href="/"
+              className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span className="font-medium text-sm">New Analysis</span>
+            </Link>
+            <div className="h-6 w-[1px] bg-border" />
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-primary-foreground" />
+              </div>
+              <div>
+                <h1 className="font-bold text-sm text-foreground">
+                  Vacature Tovenaar
+                </h1>
+                <p className="text-xs text-muted-foreground">
+                  The #1 Recruitment Software
+                </p>
+              </div>
+            </div>
+          </div>
           <div className="text-sm text-muted-foreground">
-            Report <span className="font-mono text-xs bg-muted px-1.5 py-0.5 rounded">{id}</span>
+            Report{" "}
+            <span className="font-mono text-xs bg-muted px-2 py-1 rounded">
+              {id}
+            </span>
           </div>
         </div>
-      </div>
+      </header>
 
-      <div className="max-w-[1600px] mx-auto p-4 sm:p-6 lg:p-8">
-        <ReportView 
-          analysis={analysis} 
-          vacancyText={report.vacancy_text} 
-          reportId={id} 
+      {/* Main Content */}
+      <div className="flex-1 max-w-[1600px] mx-auto w-full p-4 sm:p-6 lg:p-8">
+        <ReportView
+          analysis={analysis}
+          vacancyText={report.vacancy_text}
+          reportId={id}
         />
       </div>
+
+      {/* Footer */}
+      <footer className="w-full border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 mt-auto">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
+          <p>
+            © {new Date().getFullYear()} Vacature Tovenaar. All rights reserved.
+          </p>
+          <div className="flex items-center gap-6">
+            <a
+              href="/privacy"
+              className="hover:text-foreground transition-colors"
+            >
+              Privacy Policy
+            </a>
+            <a
+              href="/terms"
+              className="hover:text-foreground transition-colors"
+            >
+              Terms of Service
+            </a>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }
