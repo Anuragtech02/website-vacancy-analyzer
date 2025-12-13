@@ -12,7 +12,8 @@
     {
       "binding": "MainDB",
       "database_name": "vacancy-analyzer",
-      "database_id": "d07a7b92-fb62-4ae8-b9d7-ba137573ebfb"
+      "database_id": "d07a7b92-fb62-4ae8-b9d7-ba137573ebfb",
+      "migrations_dir": "drizzle"
     }
   ],
   "observability": {
