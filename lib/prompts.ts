@@ -106,6 +106,13 @@ Score each pillar from 1.0 to 10.0 based on these criteria:
     "verdict": "string ('excellent' | 'good' | 'needs_work' | 'poor')",
     "top_strengths": ["string", "string"],
     "critical_weaknesses": ["string", "string"],
+    "key_issues": [
+      {
+        "problem": "string (The specific critical issue found)",
+        "why_it_matters": "string (Explanation of impact on candidate/conversion)",
+        "how_to_improve": "string (Actionable advice to fix it)"
+      }
+    ],
     "executive_summary": "string (3-4 sentences, direct assessment)"
   },
   "original_headers": ["array of headers extracted from the posting for rewrite preservation"]

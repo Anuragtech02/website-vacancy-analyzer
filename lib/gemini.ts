@@ -26,6 +26,11 @@ export interface AnalysisResult {
     verdict: 'excellent' | 'good' | 'needs_work' | 'poor';
     top_strengths: string[];
     critical_weaknesses: string[];
+    key_issues: Array<{
+      problem: string;
+      why_it_matters: string;
+      how_to_improve: string;
+    }>;
     executive_summary: string;
   };
   original_headers: string[];
