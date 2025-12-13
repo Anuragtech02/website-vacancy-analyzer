@@ -23,41 +23,43 @@ export default async function ReportPage({ params }: PageProps) {
     <main className="min-h-screen bg-gradient-to-b from-background to-muted/30 flex flex-col">
       {/* Header */}
       <header className="w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-8 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-8 py-3 sm:py-4 flex items-center justify-between gap-2">
+          {/* Left side */}
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
             <Link
               href="/"
-              className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+              className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground hover:text-foreground transition-colors shrink-0"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span className="font-medium text-sm">New Analysis</span>
+              <span className="font-medium text-sm hidden sm:inline">New Analysis</span>
             </Link>
-            <div className="h-6 w-[1px] bg-border" />
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                <Sparkles className="w-4 h-4 text-primary-foreground" />
+            <div className="h-5 w-[1px] bg-border hidden sm:block" />
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-primary flex items-center justify-center shrink-0">
+                <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary-foreground" />
               </div>
-              <div>
-                <h1 className="font-bold text-sm text-foreground">
+              <div className="min-w-0">
+                <h1 className="font-bold text-sm text-foreground truncate">
                   Vacature Tovenaar
                 </h1>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-muted-foreground hidden sm:block">
                   The #1 Recruitment Software
                 </p>
               </div>
             </div>
           </div>
-          <div className="text-sm text-muted-foreground">
-            Report{" "}
-            <span className="font-mono text-xs bg-muted px-2 py-1 rounded">
-              {id}
+          {/* Right side */}
+          <div className="text-sm text-muted-foreground shrink-0">
+            <span className="hidden sm:inline">Report </span>
+            <span className="font-mono text-xs bg-muted px-1.5 sm:px-2 py-0.5 sm:py-1 rounded">
+              {id.slice(0, 8)}
             </span>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <div className="flex-1 max-w-[1600px] mx-auto w-full p-4 sm:p-6 lg:p-8">
+      <div className="flex-1 w-full py-6 lg:py-8">
         <ReportView
           analysis={analysis}
           vacancyText={report.vacancy_text}
