@@ -1,28 +1,28 @@
 @import "tailwindcss";
 
 :root {
-  /* Brand Colors */
-  --primary: #F39C12; /* Orange/Gold from screenshot */
+  /* Brand Colors - Premium "Wizard" Theme */
+  --primary: #4F46E5; /* Indigo 600 - High conversion, premium */
   --primary-foreground: #ffffff;
   
-  --secondary: #1A202C; /* Dark Blue/Black from screenshot */
+  --secondary: #1E1B4B; /* Indigo 950 - Deep, professional dark */
   --secondary-foreground: #ffffff;
 
-  --accent: #E2E8F0; /* Light Gray */
-  --accent-foreground: #1A202C;
+  --accent: #F1F5F9; /* Slate 100 */
+  --accent-foreground: #0F172A;
 
-  --background: #FDFDFD; /* Off-white background */
-  --foreground: #1A202C;
+  --background: #F8FAFC; /* Slate 50 - Clean, airy */
+  --foreground: #0F172A; /* Slate 900 - Sharp text */
 
-  --muted: #F3F4F6;
-  --muted-foreground: #6B7280;
+  --muted: #F1F5F9;
+  --muted-foreground: #64748B; /* Slate 500 */
 
   --card: #ffffff;
-  --card-foreground: #1A202C;
+  --card-foreground: #0F172A;
 
-  --border: #E5E7EB;
-  --input: #E5E7EB;
-  --ring: #F39C12;
+  --border: #E2E8F0;
+  --input: #E2E8F0;
+  --ring: #4F46E5;
   
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;

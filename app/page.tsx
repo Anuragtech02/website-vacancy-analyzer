@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Sparkles, ArrowRight, Loader2, CheckCircle2 } from "lucide-react";
+import { Sparkles, ArrowRight, Loader2, CheckCircle2, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const LOADING_MESSAGES = [
@@ -28,7 +28,7 @@ export default function Home() {
     const interval = setInterval(() => {
       index = (index + 1) % LOADING_MESSAGES.length;
       setLoadingMessage(LOADING_MESSAGES[index]);
-    }, 800);
+    }, 4000);
 
     return () => clearInterval(interval);
   }, [isAnalyzing]);
@@ -60,171 +60,180 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-background to-muted/30 flex flex-col">
+    <main className="min-h-screen bg-[#F8FAFC] flex flex-col">
       {/* Header / Top Bar */}
-      <header className="w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="max-w-6xl mx-auto px-4 sm:px-8 py-4 flex items-center justify-between">
+      <header className="w-full fixed top-0 z-50 bg-[#F8FAFC]/80 backdrop-blur-md border-b border-border/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-primary-foreground" />
+            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+              <Sparkles className="w-6 h-6 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="font-bold text-lg text-foreground">
-                Vacature Tovenaar
+              <h1 className="font-bold text-xl text-foreground tracking-tight">
+                Vacancy Analyser
               </h1>
-              <p className="text-xs text-muted-foreground">
-                The #1 Recruitment Software
-              </p>
             </div>
           </div>
-          <a
-            href="https://vacaturetovenaar.nl"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Visit Main Site →
-          </a>
+          <div className="flex items-center gap-6">
+            <a
+               href="https://vacaturetovenaar.nl"
+               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block"
+             >
+               Visit Main Site
+             </a>
+            <a
+              href="#analyze"
+              className="bg-primary text-primary-foreground px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-primary/90 transition-all shadow-md shadow-primary/25"
+            >
+              Get Started
+            </a>
+          </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8">
-        <div className="max-w-4xl w-full space-y-8 text-center">
-          {/* Hero Section */}
-          <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary font-medium text-sm">
-              <Sparkles className="w-4 h-4" />
-              <span>Powered by Vacature Tovenaar</span>
+      {/* Main Hero Content */}
+      <div className="flex-1 flex flex-col pt-32 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full justify-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center mb-12">
+            {/* Left Column: Copy */}
+            <div className="space-y-8 text-left">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-blue-700 font-medium text-xs uppercase tracking-wide">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Powered by Vacature Tovenaar</span>
+                </div>
+
+                <h2 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-foreground leading-[1.1]">
+                    Write job ads that <br/>
+                    <span className="text-primary relative inline-block">
+                        actually convert.
+                        <svg className="absolute w-full h-3 -bottom-1 left-0 text-primary/20" viewBox="0 0 100 10" preserveAspectRatio="none">
+                            <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="8" fill="none" />
+                        </svg>
+                    </span>
+                </h2>
+
+                <p className="text-xl text-muted-foreground leading-relaxed max-w-lg">
+                    Stop guessing. Our AI analyzes your vacancy for bias, clarity, and conversion aimed at top talent.
+                </p>
+
+                <div className="flex flex-col gap-4 pt-2">
+                   <div className="flex items-center gap-3">
+                      <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+                         <CheckCircle2 className="w-4 h-4 text-green-600" />
+                      </div>
+                      <span className="text-foreground/80 font-medium">Remove unconscious bias instantly</span>
+                   </div>
+                   <div className="flex items-center gap-3">
+                      <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+                         <CheckCircle2 className="w-4 h-4 text-green-600" />
+                      </div>
+                      <span className="text-foreground/80 font-medium">Boost SEO visibility & findability</span>
+                   </div>
+                   <div className="flex items-center gap-3">
+                      <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+                         <CheckCircle2 className="w-4 h-4 text-green-600" />
+                      </div>
+                      <span className="text-foreground/80 font-medium">Increase applicant conversion by 30%</span>
+                   </div>
+                </div>
             </div>
 
-            <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-foreground">
-              Analyze & optimize your vacancy <br className="hidden sm:block" />
-              <span className="text-primary">in seconds</span>
-            </h2>
+            {/* Right Column: Interactive Card */}
+            <div className="relative">
+                {/* Decorative blobs */}
+                <div className="absolute -top-12 -right-12 w-64 h-64 bg-primary/10 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
+                <div className="absolute -bottom-12 -left-12 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
 
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Get instant AI feedback on clarity, inclusivity, and
-              attractiveness. Attract the right talent with data-driven
-              insights.
-            </p>
-          </div>
+                {/* Floating Elements (Graphics) */}
+                <div className="absolute -right-8 top-12 bg-white p-3 rounded-xl shadow-xl border border-border/40 animate-bounce duration-[3000ms] hidden lg:block z-10">
+                    <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                        <span className="text-xs font-bold text-foreground">Inclusive?</span>
+                    </div>
+                </div>
+                 <div className="absolute -left-8 bottom-24 bg-white p-3 rounded-xl shadow-xl border border-border/40 animate-pulse hidden lg:block z-10">
+                    <div className="flex items-center gap-2">
+                         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                            <span className="text-xs font-bold text-primary">A+</span>
+                         </div>
+                        <span className="text-xs font-bold text-foreground">Score: 9.8</span>
+                    </div>
+                </div>
 
-          {/* Input Section */}
-          <div className="w-full max-w-3xl mx-auto">
-            <div className="bg-card p-2 rounded-2xl shadow-xl border border-border/50 ring-1 ring-black/5">
-              <textarea
-                value={vacancyText}
-                onChange={(e) => setVacancyText(e.target.value)}
-                placeholder="Paste your full vacancy text here (including job title, introduction, and 'about us') for the best analysis score."
-                className="w-full h-72 p-5 bg-transparent border-none resize-none focus:ring-0 text-foreground placeholder:text-muted-foreground/60 text-base leading-relaxed"
-                style={{ whiteSpace: "pre-wrap" }}
-                disabled={isAnalyzing}
-              />
-              <div className="flex justify-between items-center px-4 pb-3 pt-2 border-t border-border/30">
-                <span className="text-xs text-muted-foreground font-medium">
-                  {vacancyText.length} characters
-                </span>
-                <button
-                  onClick={handleAnalyze}
-                  disabled={!vacancyText.trim() || isAnalyzing}
-                  className={cn(
-                    "flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all",
-                    "bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20",
-                    "disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none",
-                  )}
-                >
-                  {isAnalyzing ? (
-                    <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      {loadingMessage}
-                    </>
-                  ) : (
-                    <>
-                      Analyze Vacancy
-                      <ArrowRight className="w-5 h-5" />
-                    </>
-                  )}
-                </button>
-              </div>
+                <div className="relative bg-white rounded-3xl shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+                     {/* Fake Browser Header */}
+                     <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                             <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                             <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+                             <div className="w-3 h-3 rounded-full bg-green-400"></div>
+                        </div>
+                        <div className="text-xs font-medium text-muted-foreground/60 flex items-center gap-2">
+                            <Lock className="w-3 h-3" />
+                            Analyse Vacature
+                        </div>
+                     </div>
+
+                    <div className="p-6 sm:p-8 space-y-6">
+                        <div className="space-y-2">
+                             <label className="text-sm font-semibold text-foreground ml-1">Paste your vacancy text</label>
+                             <textarea
+                                value={vacancyText}
+                                onChange={(e) => setVacancyText(e.target.value)}
+                                placeholder="E.g. We are looking for a Marketing Manager who..."
+                                className="w-full h-64 p-4 bg-slate-50 rounded-xl border border-slate-200 resize-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-base leading-relaxed placeholder:text-muted-foreground/50"
+                                style={{ whiteSpace: "pre-wrap" }}
+                                disabled={isAnalyzing}
+                            />
+                        </div>
+
+                        <div className="flex items-center justify-between gap-4">
+                            <div className="text-xs text-muted-foreground font-medium pl-1">
+                                {vacancyText.length > 0 ? `${vacancyText.length} chars` : 'Ready to analyze'}
+                            </div>
+                            <button
+                                onClick={handleAnalyze}
+                                disabled={!vacancyText.trim() || isAnalyzing}
+                                className={cn(
+                                    "flex items-center gap-2 px-8 py-3.5 rounded-xl font-bold transition-all transform hover:-translate-y-0.5 active:translate-y-0",
+                                    "bg-primary text-primary-foreground hover:bg-primary/90 shadow-xl shadow-primary/25",
+                                    "disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:transform-none"
+                                )}
+                            >
+                                {isAnalyzing ? (
+                                    <>
+                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                    {loadingMessage}
+                                    </>
+                                ) : (
+                                    <>
+                                    Analyze for Free
+                                    <ArrowRight className="w-5 h-5" />
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </div>
 
-            {/* Social Proof - Below Button */}
-            <p className="mt-4 text-sm text-muted-foreground">
-              Over{" "}
-              <span className="font-semibold text-foreground">
-                1,500 vacancies
-              </span>{" "}
-              already optimized
-            </p>
-          </div>
-
-          {/* Why Checklist */}
-          <div className="w-full max-w-2xl mx-auto pt-4">
-            <p className="text-sm font-medium text-muted-foreground mb-4">
-              For the best analysis, include:
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left">
-              <div className="flex items-start gap-3 p-4 rounded-xl bg-card border border-border/50">
-                <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">
-                    Introduction
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    For a Tone-of-Voice check
-                  </p>
+        {/* Social Proof Strip */}
+        <div className="w-full border-t border-border/40 pt-10 mt-12 mb-8">
+             <p className="text-center text-sm font-medium text-muted-foreground mb-6 uppercase tracking-widest opacity-70">
+                Trusted by
+             </p>
+             <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-8 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
+                <div className="flex items-center gap-3">
+                    {/* Rijkswaterstaat Logo Representation */}
+                    <div className="w-10 h-10 bg-[#003366] rounded-sm flex items-center justify-center">
+                        <div className="w-6 h-6 border-2 border-white transform rotate-45"></div>
+                    </div>
+                    <span className="text-xl font-bold text-[#003366] tracking-tight">Rijkswaterstaat</span>
                 </div>
-              </div>
-              <div className="flex items-start gap-3 p-4 rounded-xl bg-card border border-border/50">
-                <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">
-                    Benefits & Conditions
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    For a Competitive Analysis
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3 p-4 rounded-xl bg-card border border-border/50">
-                <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">
-                    'About Us' Section
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    For a Culture Fit check
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+             </div>
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="w-full border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="max-w-6xl mx-auto px-4 sm:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-          <p>
-            © {new Date().getFullYear()} Vacature Tovenaar. All rights reserved.
-          </p>
-          <div className="flex items-center gap-6">
-            <a
-              href="/privacy"
-              className="hover:text-foreground transition-colors"
-            >
-              Privacy Policy
-            </a>
-            <a
-              href="/terms"
-              className="hover:text-foreground transition-colors"
-            >
-              Terms of Service
-            </a>
-          </div>
-        </div>
-      </footer>
     </main>
   );
 }
