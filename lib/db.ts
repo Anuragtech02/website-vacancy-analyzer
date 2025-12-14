@@ -1,21 +1,25 @@
-import { drizzle } from 'drizzle-orm/d1';
-import { reports, leads } from './db/schema';
-import { eq } from 'drizzle-orm';
-import { getCloudflareContext } from '@opennextjs/cloudflare';
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
+import { reports, leads } from "./db/schema";
+import { eq } from "drizzle-orm";
 
-export function getDb() {
-  const ctx = getCloudflareContext();
-  const binding = (ctx.env as { MainDB: D1Database }).MainDB;
+const connectionString = process.env.DATABASE_URL!;
 
-  if (!binding) {
-    throw new Error("MainDB binding not found. Ensure you have configured the D1 binding in Cloudflare Pages settings.");
-  }
-  return drizzle(binding, { schema: { reports, leads } });
-}
+// Connection pool for serverless/server environments
+const client = postgres(connectionString, {
+  max: 10,
+  idle_timeout: 20,
+  connect_timeout: 10,
+});
+
+const db = drizzle(client, { schema: { reports, leads } });
 
 export const dbClient = {
-  createReport: async (id: string, vacancyText: string, analysisJson: string) => {
-    const db = getDb();
+  createReport: async (
+    id: string,
+    vacancyText: string,
+    analysisJson: string
+  ) => {
     await db.insert(reports).values({
       id,
       vacancy_text: vacancyText,
@@ -24,16 +28,18 @@ export const dbClient = {
   },
 
   getReport: async (id: string) => {
-    const db = getDb();
-    const result = await db.select().from(reports).where(eq(reports.id, id)).get();
-    return result;
+    const result = await db
+      .select()
+      .from(reports)
+      .where(eq(reports.id, id))
+      .limit(1);
+    return result[0] || null;
   },
 
   createLead: async (email: string, reportId: string) => {
-    const db = getDb();
     await db.insert(leads).values({
       email,
       report_id: reportId,
     });
-  }
+  },
 };

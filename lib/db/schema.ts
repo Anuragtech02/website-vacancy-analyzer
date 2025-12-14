@@ -1,19 +1,16 @@
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
-import { sql } from "drizzle-orm";
+import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
-export const reports = sqliteTable("reports", {
+export const reports = pgTable("reports", {
   id: text("id").primaryKey(),
   vacancy_text: text("vacancy_text").notNull(),
   analysis_json: text("analysis_json").notNull(),
-  created_at: integer("created_at", { mode: "timestamp" })
-    .notNull()
-    .default(sql`(unixepoch())`),
+  created_at: timestamp("created_at").notNull().defaultNow(),
 });
 
-export const leads = sqliteTable("leads", {
+export const leads = pgTable("leads", {
   email: text("email").notNull(),
-  report_id: text("report_id").notNull(),
-  created_at: integer("created_at", { mode: "timestamp" })
+  report_id: text("report_id")
     .notNull()
-    .default(sql`(unixepoch())`),
+    .references(() => reports.id),
+  created_at: timestamp("created_at").notNull().defaultNow(),
 });
