@@ -137,7 +137,7 @@ export function generateVacancyHTML(optimization: OptimizationResult): string {
     .client-btn { background-color: #005f4b; }
 
     /* BRANDING VACATURE TOVENAAR */
-    .wizard-bg { background-color: #1f2937; }
+    .wizard-bg { background-color: #1f2937; border-radius: 0 !important; }
 
     /* STRATEGY NOTES */
     .strategy-note { border-left: 4px solid #007b5f; background-color: #f0fdf4; }
@@ -170,7 +170,7 @@ export function generateVacancyHTML(optimization: OptimizationResult): string {
   document.documentElement.style.setProperty('--client-text', '#007b5f');
 </script>
 
-<div class="w-full overflow-hidden bg-white">
+<div class="w-full min-h-screen overflow-hidden bg-white flex flex-col">
   <!-- Header Banner -->
   <div class="client-primary text-white relative overflow-hidden">
     <div class="flex items-center">
@@ -195,7 +195,7 @@ export function generateVacancyHTML(optimization: OptimizationResult): string {
   </div>
 
   <!-- Main Content -->
-  <div class="flex flex-col lg:flex-row">
+  <div class="flex flex-col lg:flex-row flex-grow">
     <!-- Left Column: Vacancy Text -->
     <div class="w-full lg:w-2/3 p-8 sm:p-12 bg-white">
       <!-- Title Bar -->
