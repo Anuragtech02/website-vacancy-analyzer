@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dbClient } from "@/lib/db";
 import { optimizeVacancy } from "@/lib/gemini";
+import { sendOptimizedVacancyEmail } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
   try {
@@ -29,7 +30,24 @@ export async function POST(req: NextRequest) {
     const analysis = JSON.parse(report.analysis_json);
     const optimizationResult = await optimizeVacancy(report.vacancy_text, analysis);
 
-    return NextResponse.json({ success: true, optimization: optimizationResult });
+    // Send email with PDF attachment
+    const emailResult = await sendOptimizedVacancyEmail({
+      to: email,
+      optimization: optimizationResult,
+      reportId,
+    });
+
+    if (!emailResult.success) {
+      console.error("Failed to send email:", emailResult.error);
+      // Still return success since we generated the optimization
+      // The user can still see it on the page
+    }
+
+    return NextResponse.json({
+      success: true,
+      optimization: optimizationResult,
+      emailSent: emailResult.success
+    });
   } catch (error) {
     console.error("Optimization Error:", error);
     return NextResponse.json(

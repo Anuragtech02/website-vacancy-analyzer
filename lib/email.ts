@@ -1,0 +1,159 @@
+import { Resend } from "resend";
+import { OptimizationResult } from "./gemini";
+import { generateVacancyHTML } from "./html-template";
+
+function getResendClient() {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    throw new Error("RESEND_API_KEY is not set");
+  }
+  return new Resend(apiKey);
+}
+
+interface SendOptimizedVacancyEmailParams {
+  to: string;
+  optimization: OptimizationResult;
+  reportId: string;
+}
+
+export async function sendOptimizedVacancyEmail({
+  to,
+  optimization,
+  reportId,
+}: SendOptimizedVacancyEmailParams): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  try {
+    const htmlContent = generateVacancyHTML(optimization);
+    const jobTitle = optimization.metadata.job_title || "Optimized Vacancy";
+    const organization = optimization.metadata.organization || "";
+    const score = Math.round(optimization.estimated_scores.weighted_score);
+
+    const resend = getResendClient();
+    const { data, error } = await resend.emails.send({
+      from: "Vacature Tovenaar <noreply@vacaturetovenaar.nl>",
+      to: [to],
+      subject: `Jouw Geoptimaliseerde Vacature: ${jobTitle}`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f8fafc; padding: 40px 20px;">
+              <tr>
+                <td align="center">
+                  <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
+                    <!-- Header -->
+                    <tr>
+                      <td style="padding: 32px 40px; border-bottom: 1px solid #e2e8f0;">
+                        <h1 style="margin: 0; font-size: 24px; font-weight: 700; color: #007b5f;">✨ Vacature Tovenaar</h1>
+                      </td>
+                    </tr>
+
+                    <!-- Content -->
+                    <tr>
+                      <td style="padding: 40px;">
+                        <h2 style="margin: 0 0 16px 0; font-size: 22px; font-weight: 600; color: #0f172a;">
+                          Jouw geoptimaliseerde vacature is klaar!
+                        </h2>
+
+                        <p style="margin: 0 0 24px 0; font-size: 16px; line-height: 1.6; color: #475569;">
+                          We hebben jouw vacature voor <strong style="color: #0f172a;">${jobTitle}</strong>${organization ? ` bij ${organization}` : ""} geoptimaliseerd met onze Human AI methode.
+                        </p>
+
+                        <!-- Score Box -->
+                        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f0fdf4; border-radius: 8px; margin-bottom: 24px; border-left: 4px solid #007b5f;">
+                          <tr>
+                            <td style="padding: 20px;">
+                              <p style="margin: 0 0 8px 0; font-size: 14px; color: #166534;">Nieuwe Effectiviteit Score</p>
+                              <p style="margin: 0; font-size: 32px; font-weight: 700; color: #007b5f;">
+                                ${score}<span style="font-size: 18px; color: #94a3b8;">/100</span>
+                              </p>
+                            </td>
+                          </tr>
+                        </table>
+
+                        <p style="margin: 0 0 24px 0; font-size: 16px; line-height: 1.6; color: #475569;">
+                          📎 <strong>De herschreven vacature zit als HTML-bestand in de bijlage.</strong> Open dit bestand in je browser voor de volledige weergave met strategie-uitleg.
+                        </p>
+
+                        <!-- What We Changed -->
+                        <h3 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 600; color: #0f172a;">
+                          Wat we verbeterd hebben:
+                        </h3>
+                        <p style="margin: 0 0 24px 0; font-size: 14px; line-height: 1.6; color: #475569;">
+                          ${optimization.changes.summary}
+                        </p>
+
+                        <!-- Highlights -->
+                        <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 24px;">
+                          <tr>
+                            <td style="padding: 12px 16px; background-color: #f8fafc; border-radius: 6px;">
+                              <p style="margin: 0; font-size: 13px; color: #64748b;">
+                                ✅ Bureaucratische termen verwijderd<br>
+                                ✅ Psychologische veiligheid toegevoegd<br>
+                                ✅ SEO-geoptimaliseerde titel met locatie<br>
+                                ✅ Actieve, warme toon
+                              </p>
+                            </td>
+                          </tr>
+                        </table>
+
+                        <!-- CTA -->
+                        <table width="100%" cellpadding="0" cellspacing="0">
+                          <tr>
+                            <td align="center">
+                              <a href="https://vacaturetovenaar.nl" style="display: inline-block; padding: 14px 32px; background-color: #007b5f; color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; border-radius: 8px;">
+                                Analyseer Nog Een Vacature
+                              </a>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                      <td style="padding: 24px 40px; background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-radius: 0 0 12px 12px;">
+                        <p style="margin: 0 0 8px 0; font-size: 14px; color: #64748b; text-align: center;">
+                          Vragen? Neem contact op via <a href="mailto:joost@vacaturetovenaar.nl" style="color: #007b5f;">joost@vacaturetovenaar.nl</a>
+                        </p>
+                        <p style="margin: 0; font-size: 12px; color: #94a3b8; text-align: center;">
+                          © ${new Date().getFullYear()} Vacature Tovenaar. Alle rechten voorbehouden.
+                        </p>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+        </html>
+      `,
+      attachments: [
+        {
+          filename: `${jobTitle.replace(/[^a-zA-Z0-9\s]/g, "").replace(/\s+/g, "-")}-geoptimaliseerd.html`,
+          content: Buffer.from(htmlContent, "utf-8"),
+        },
+      ],
+    });
+
+    if (error) {
+      console.error("Resend error:", error);
+      return { success: false, error: error.message };
+    }
+
+    console.log("Email sent successfully:", data);
+    return { success: true };
+  } catch (error) {
+    console.error("Email sending error:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}

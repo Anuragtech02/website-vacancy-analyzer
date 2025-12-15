@@ -1,7 +1,4 @@
-"use client";
-
-import { useState } from "react";
-import { AlertCircle, XCircle, ChevronDown, Lightbulb } from "lucide-react";
+import { AlertCircle, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Issue {
@@ -14,9 +11,7 @@ interface IssueCardsProps {
   issues: Issue[];
 }
 
-function IssueCard({ issue, index }: { issue: Issue; index: number }) {
-  const [isExpanded, setIsExpanded] = useState(false);
-
+function IssueCard({ issue }: { issue: Issue }) {
   return (
     <div
       className={cn(
@@ -38,35 +33,6 @@ function IssueCard({ issue, index }: { issue: Issue; index: number }) {
             </h4>
             <p className="text-sm text-slate-600 leading-relaxed">
               {issue.why_it_matters}
-            </p>
-          </div>
-        </div>
-
-        {/* Expandable "How to fix" section */}
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="mt-4 flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors group"
-        >
-          <Lightbulb className="w-4 h-4" />
-          <span>How to fix this</span>
-          <ChevronDown
-            className={cn(
-              "w-4 h-4 transition-transform duration-200",
-              isExpanded && "rotate-180"
-            )}
-          />
-        </button>
-
-        {/* Expanded content */}
-        <div
-          className={cn(
-            "overflow-hidden transition-all duration-300",
-            isExpanded ? "max-h-40 opacity-100 mt-3" : "max-h-0 opacity-0"
-          )}
-        >
-          <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
-            <p className="text-sm text-slate-700 leading-relaxed">
-              {issue.how_to_improve}
             </p>
           </div>
         </div>
@@ -98,7 +64,7 @@ export function IssueCards({ issues }: IssueCardsProps) {
       {/* Issues grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {issues.map((issue, index) => (
-          <IssueCard key={index} issue={issue} index={index} />
+          <IssueCard key={index} issue={issue} />
         ))}
       </div>
     </section>

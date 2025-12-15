@@ -7,7 +7,9 @@ export interface AnalysisResult {
   metadata: {
     organization: string | null;
     job_title: string;
+    location: string | null;
     detected_evp: string;
+    word_count: number;
     analyzed_at: string;
   };
   pillars: {
@@ -41,11 +43,18 @@ interface PillarScore {
   diagnosis: string;
 }
 
+export interface StrategyNote {
+  title: string;
+  description: string;
+  icon: string;
+}
+
 export interface OptimizationResult {
   metadata: {
     job_title: string;
     original_job_title: string;
     organization: string | null;
+    location: string | null;
     rewritten_at: string;
   };
   content: {
@@ -71,6 +80,7 @@ export interface OptimizationResult {
     }>;
     preserved_elements: string[];
   };
+  strategy_notes: StrategyNote[];
   estimated_scores: {
     structure_layout: number;
     persona_fit: number;
