@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 import { OptimizationResult } from "./gemini";
-import { generateVacancyHTML } from "./html-template";
+import { generateVacancyPDF } from "./pdf-generator";
 
 function getResendClient() {
   const apiKey = process.env.RESEND_API_KEY;
@@ -25,10 +25,12 @@ export async function sendOptimizedVacancyEmail({
   error?: string;
 }> {
   try {
-    const htmlContent = generateVacancyHTML(optimization);
     const jobTitle = optimization.metadata.job_title || "Optimized Vacancy";
     const organization = optimization.metadata.organization || "";
     const score = Math.round(optimization.estimated_scores.weighted_score);
+
+    // Generate PDF from HTML template
+    const pdfBuffer = await generateVacancyPDF(optimization);
 
     const resend = getResendClient();
     const { data, error } = await resend.emails.send({
@@ -78,7 +80,7 @@ export async function sendOptimizedVacancyEmail({
                         </table>
 
                         <p style="margin: 0 0 24px 0; font-size: 16px; line-height: 1.6; color: #475569;">
-                          📎 <strong>De herschreven vacature zit als HTML-bestand in de bijlage.</strong> Open dit bestand in je browser voor de volledige weergave met strategie-uitleg.
+                          📎 <strong>De herschreven vacature zit als PDF in de bijlage.</strong> Je kunt de tekst direct kopiëren en plakken in je ATS of vacaturesite.
                         </p>
 
                         <!-- What We Changed -->
@@ -136,8 +138,8 @@ export async function sendOptimizedVacancyEmail({
       `,
       attachments: [
         {
-          filename: `${jobTitle.replace(/[^a-zA-Z0-9\s]/g, "").replace(/\s+/g, "-")}-geoptimaliseerd.html`,
-          content: Buffer.from(htmlContent, "utf-8"),
+          filename: `${jobTitle.replace(/[^a-zA-Z0-9\s]/g, "").replace(/\s+/g, "-")}-geoptimaliseerd.pdf`,
+          content: pdfBuffer,
         },
       ],
     });
