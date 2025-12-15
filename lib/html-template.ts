@@ -12,36 +12,71 @@ function getOrgInitials(org: string | null): string {
 }
 
 function convertMarkdownToHTML(markdown: string): string {
-  let html = markdown
-    // Headers
-    .replace(/^### (.+)$/gm, '<h3 class="editor-h3">$1</h3>')
-    .replace(/^## (.+)$/gm, '<h3 class="editor-h3">$1</h3>')
-    .replace(/^# (.+)$/gm, '<h3 class="editor-h3">$1</h3>')
-    // Bold
+  // First pass: process inline formatting
+  let processed = markdown
+    // Bold (before italic to handle **text**)
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-    // Italic
-    .replace(/\*(.+?)\*/g, "<em>$1</em>")
-    // Lists
-    .replace(/^[-*] (.+)$/gm, "<li>$1</li>")
-    // Paragraphs (lines that aren't already wrapped)
-    .split("\n\n")
-    .map((block) => {
-      if (
-        block.startsWith("<h") ||
-        block.startsWith("<li") ||
-        block.trim() === ""
-      ) {
-        return block;
-      }
-      // Wrap consecutive <li> items in <ul>
-      if (block.includes("<li>")) {
-        return `<ul>${block}</ul>`;
-      }
-      return `<p>${block.replace(/\n/g, " ")}</p>`;
-    })
-    .join("\n");
+    // Italic (single asterisk, but not list items)
+    .replace(/(?<!\*)\*([^*\n]+)\*(?!\*)/g, "<em>$1</em>");
 
-  return html;
+  // Split into lines and process block-level elements
+  const lines = processed.split("\n");
+  const result: string[] = [];
+  let inList = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+
+    // Empty line
+    if (line === "") {
+      if (inList) {
+        result.push("</ul>");
+        inList = false;
+      }
+      continue;
+    }
+
+    // Headers
+    if (line.startsWith("### ")) {
+      if (inList) { result.push("</ul>"); inList = false; }
+      result.push(`<h3 class="editor-h3">${line.slice(4)}</h3>`);
+      continue;
+    }
+    if (line.startsWith("## ")) {
+      if (inList) { result.push("</ul>"); inList = false; }
+      result.push(`<h3 class="editor-h3">${line.slice(3)}</h3>`);
+      continue;
+    }
+    if (line.startsWith("# ")) {
+      if (inList) { result.push("</ul>"); inList = false; }
+      result.push(`<h3 class="editor-h3">${line.slice(2)}</h3>`);
+      continue;
+    }
+
+    // List items (- or *)
+    if (line.match(/^[-*] /)) {
+      if (!inList) {
+        result.push("<ul>");
+        inList = true;
+      }
+      result.push(`<li>${line.slice(2)}</li>`);
+      continue;
+    }
+
+    // Regular paragraph
+    if (inList) {
+      result.push("</ul>");
+      inList = false;
+    }
+    result.push(`<p>${line}</p>`);
+  }
+
+  // Close any open list
+  if (inList) {
+    result.push("</ul>");
+  }
+
+  return result.join("\n");
 }
 
 function escapeHtml(text: string): string {
@@ -93,7 +128,7 @@ export function generateVacancyHTML(optimization: OptimizationResult): string {
   <script src="https://unpkg.com/lucide@latest"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+    body { font-family: 'Inter', sans-serif; background-color: white; }
 
     /* BRANDING CLIENT */
     .client-primary { background-color: #007b5f; }
@@ -120,9 +155,12 @@ export function generateVacancyHTML(optimization: OptimizationResult): string {
     .score-box { background-color: #005f4b; }
     .score-text { font-size: 3.5rem; line-height: 1; font-weight: 900; }
 
+    /* PDF specific - no background, no shadow, no spacing */
+    html, body { margin: 0; padding: 0; }
+    * { box-sizing: border-box; }
+
     @media print {
       body { background-color: white; }
-      .max-w-6xl { max-width: 100%; margin: 0; box-shadow: none; }
     }
   </style>
 </head>
@@ -132,7 +170,7 @@ export function generateVacancyHTML(optimization: OptimizationResult): string {
   document.documentElement.style.setProperty('--client-text', '#007b5f');
 </script>
 
-<div class="max-w-6xl mx-auto my-8 sm:my-12 shadow-2xl rounded-xl overflow-hidden bg-white">
+<div class="w-full overflow-hidden bg-white">
   <!-- Header Banner -->
   <div class="client-primary text-white relative overflow-hidden">
     <div class="flex items-center">
