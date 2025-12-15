@@ -134,21 +134,25 @@ export function generateVacancyHTML(optimization: OptimizationResult): string {
 
 <div class="max-w-6xl mx-auto my-8 sm:my-12 shadow-2xl rounded-xl overflow-hidden bg-white">
   <!-- Header Banner -->
-  <div class="client-primary p-8 text-white flex justify-between items-center relative overflow-hidden">
-    <div class="relative z-10 flex items-center gap-5">
-      <div class="bg-white h-16 w-16 rounded flex items-center justify-center shadow-lg">
-        <span class="text-2xl font-black client-text tracking-tighter">${escapeHtml(orgInitials)}</span>
+  <div class="client-primary text-white relative overflow-hidden">
+    <div class="flex items-center">
+      <!-- Left side: Logo and title (with max-width to prevent overlap) -->
+      <div class="relative z-10 flex items-center gap-5 p-8 pr-4" style="max-width: calc(100% - 180px);">
+        <div class="bg-white h-16 w-16 rounded flex items-center justify-center shadow-lg flex-shrink-0">
+          <span class="text-2xl font-black client-text tracking-tighter">${escapeHtml(orgInitials)}</span>
+        </div>
+        <div class="min-w-0">
+          <span class="bg-yellow-400 text-green-900 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider inline-block">Herschreven Versie</span>
+          <h1 class="text-xl font-bold leading-tight mt-1 truncate">${escapeHtml(jobTitle)}</h1>
+          <p class="text-green-100 text-sm truncate">Focus: Anti-Bureaucratie, Psychologische Veiligheid & Conversie</p>
+        </div>
       </div>
-      <div>
-        <span class="bg-yellow-400 text-green-900 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">Herschreven Versie</span>
-        <h1 class="text-2xl font-bold leading-tight mt-1">${escapeHtml(jobTitle)}</h1>
-        <p class="text-green-100 text-sm">Focus: Anti-Bureaucratie, Psychologische Veiligheid & Conversie</p>
-      </div>
-    </div>
 
-    <div class="score-box absolute right-0 top-0 bottom-0 px-8 py-3 flex flex-col justify-center items-center text-white text-center">
-      <span class="text-xs font-bold uppercase tracking-widest">EFFECTIVITEIT SCORE</span>
-      <div class="score-text mt-1">${score}<span class="text-2xl">/100</span></div>
+      <!-- Right side: Score box (fixed width) -->
+      <div class="score-box ml-auto px-6 py-6 flex flex-col justify-center items-center text-white text-center flex-shrink-0" style="min-width: 160px;">
+        <span class="text-[10px] font-bold uppercase tracking-widest">EFFECTIVITEIT SCORE</span>
+        <div class="score-text mt-1">${score}<span class="text-xl">/100</span></div>
+      </div>
     </div>
   </div>
 
