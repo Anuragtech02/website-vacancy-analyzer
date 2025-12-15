@@ -1,9 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AnalysisResult, OptimizationResult } from "@/lib/gemini";
 import { Button } from "@/components/ui/button";
 import { Loader2, Mail, ArrowRight } from "lucide-react";
+
+const OPTIMIZATION_MESSAGES = [
+  "Verwijderen bureaucratische termen...",
+  "Toevoegen psychologische veiligheid...",
+  "Optimaliseren voor conversie...",
+  "Herschrijven in warme toon...",
+  "Versterken van EVP elementen...",
+  "Toepassen Human AI Protocol...",
+  "Genereren PDF document...",
+  "Versturen naar je inbox...",
+];
 
 import { ScoreHero } from "@/components/report/score-hero";
 import { IssueCards } from "@/components/report/issue-cards";
@@ -31,6 +42,23 @@ function EmailModal({
   status: "idle" | "loading" | "success" | "error";
 }) {
   const [email, setEmail] = useState("");
+  const [loadingMessage, setLoadingMessage] = useState(OPTIMIZATION_MESSAGES[0]);
+
+  // Cycle through loading messages when loading
+  useEffect(() => {
+    if (status !== "loading") {
+      setLoadingMessage(OPTIMIZATION_MESSAGES[0]);
+      return;
+    }
+
+    let index = 0;
+    const interval = setInterval(() => {
+      index = (index + 1) % OPTIMIZATION_MESSAGES.length;
+      setLoadingMessage(OPTIMIZATION_MESSAGES[index]);
+    }, 2500);
+
+    return () => clearInterval(interval);
+  }, [status]);
 
   if (!isOpen) return null;
 
@@ -97,7 +125,7 @@ function EmailModal({
               {status === "loading" ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin mr-2" />
-                  Generating & Sending...
+                  {loadingMessage}
                 </>
               ) : (
                 <>
