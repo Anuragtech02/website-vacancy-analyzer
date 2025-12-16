@@ -12,7 +12,6 @@ import {
   Mail,
   ArrowRight,
   TrendingUp,
-  Target
 } from "lucide-react";
 
 interface ScoreHeroProps {
@@ -136,51 +135,54 @@ export function ScoreHero({
             </div>
           </div>
 
-          {/* Main content grid: Score + Summary + CTA */}
-          <div className="grid grid-cols-1 lg:grid-cols-[140px_1fr_auto] gap-6 lg:gap-8 items-center">
-            {/* Score Circle */}
-            <div className="relative group cursor-default justify-self-start">
-              <div className="relative bg-slate-50 p-2 rounded-full">
-                <div className="relative w-28 h-28 flex items-center justify-center">
-                  <svg className="w-full h-full transform -rotate-90" viewBox="0 0 128 128">
-                    <circle cx="64" cy="64" r="56" stroke="#E2E8F0" strokeWidth="8" fill="none" />
-                    <circle
-                      cx="64" cy="64" r="56"
-                      stroke="currentColor"
-                      strokeWidth="8"
-                      fill="none"
-                      strokeDasharray={351.86}
-                      strokeDashoffset={351.86 - (351.86 * score) / 10}
-                      strokeLinecap="round"
-                      className={cn(
-                        "transition-all duration-1000 ease-out",
-                        scoreColors.stroke
-                      )}
-                    />
-                  </svg>
-                  <div className="absolute flex flex-col items-center">
-                    <span className={cn("text-3xl font-black tracking-tight", scoreColors.text)}>
-                      {score.toFixed(1)}
-                    </span>
-                    <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400 mt-0.5">
-                      / 10
-                    </span>
+          {/* Main content: Two-column layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 lg:gap-8">
+            {/* Left side: Score + Summary */}
+            <div className="flex flex-col sm:flex-row gap-5 items-start">
+              {/* Score Circle */}
+              <div className="relative group cursor-default shrink-0">
+                <div className="relative bg-slate-50 p-2 rounded-full">
+                  <div className="relative w-24 h-24 flex items-center justify-center">
+                    <svg className="w-full h-full transform -rotate-90" viewBox="0 0 128 128">
+                      <circle cx="64" cy="64" r="56" stroke="#E2E8F0" strokeWidth="8" fill="none" />
+                      <circle
+                        cx="64" cy="64" r="56"
+                        stroke="currentColor"
+                        strokeWidth="8"
+                        fill="none"
+                        strokeDasharray={351.86}
+                        strokeDashoffset={351.86 - (351.86 * score) / 10}
+                        strokeLinecap="round"
+                        className={cn(
+                          "transition-all duration-1000 ease-out",
+                          scoreColors.stroke
+                        )}
+                      />
+                    </svg>
+                    <div className="absolute flex flex-col items-center">
+                      <span className={cn("text-2xl font-black tracking-tight", scoreColors.text)}>
+                        {score.toFixed(1)}
+                      </span>
+                      <span className="text-[8px] font-bold uppercase tracking-widest text-slate-400 mt-0.5">
+                        / 10
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
+
+              {/* Summary text */}
+              <div className="flex-1">
+                <p className="text-slate-600 text-base leading-relaxed">
+                  {executiveSummary || config.description}
+                </p>
+              </div>
             </div>
 
-            {/* Summary text */}
-            <div className="text-left">
-              <p className="text-slate-600 text-base lg:text-lg leading-relaxed">
-                {executiveSummary || config.description}
-              </p>
-            </div>
-
-            {/* CTA or Success State */}
-            <div className="justify-self-start lg:justify-self-end">
+            {/* Right side: CTA Card or Success State */}
+            <div className="lg:self-center">
               {isUnlocked ? (
-                <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
+                <div className="bg-green-50 border border-green-200 rounded-2xl p-5 text-center">
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <CheckCircle2 className="w-5 h-5 text-green-600" />
                     <span className="font-bold text-green-900">Check your inbox!</span>
@@ -190,39 +192,44 @@ export function ScoreHero({
                   )}
                 </div>
               ) : (
-                <Button
-                  onClick={onUnlockClick}
-                  size="lg"
-                  className="h-12 px-6 text-base font-bold bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/25 group whitespace-nowrap"
-                >
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  Get Optimized Version
-                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                </Button>
+                <div className="bg-gradient-to-br from-primary to-indigo-700 rounded-2xl p-5 text-white shadow-xl shadow-primary/20">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                      <Sparkles className="w-4 h-4" />
+                    </div>
+                    <span className="text-xs font-bold uppercase tracking-wider text-white/80">
+                      AI Optimization
+                    </span>
+                  </div>
+                  <h3 className="font-bold text-lg mb-2">
+                    Get the optimized version
+                  </h3>
+                  <p className="text-sm text-indigo-100 mb-4 leading-relaxed">
+                    Our AI rewrites your vacancy for maximum clarity and conversion.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={onUnlockClick}
+                    className="w-full bg-white text-primary font-bold py-3 px-4 rounded-xl hover:bg-indigo-50 transition-colors flex items-center justify-center gap-2 group"
+                  >
+                    Get It Free
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                  <div className="flex items-center justify-center gap-4 mt-4 text-xs text-indigo-200">
+                    <span className="flex items-center gap-1">
+                      <Mail className="w-3 h-3" />
+                      Sent to email
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <TrendingUp className="w-3 h-3" />
+                      +40% applicants
+                    </span>
+                  </div>
+                </div>
               )}
             </div>
           </div>
         </div>
-
-        {/* Bottom stats bar */}
-        {!isUnlocked && (
-          <div className="bg-slate-50 border-t border-slate-100 px-6 lg:px-8 py-4">
-            <div className="flex flex-wrap items-center justify-start gap-4 lg:gap-6 text-sm">
-              <div className="flex items-center gap-2 text-slate-600">
-                <Target className="w-4 h-4 text-primary" />
-                <span>Potential: <strong className="text-green-600">Significantly improved</strong></span>
-              </div>
-              <div className="flex items-center gap-2 text-slate-600">
-                <TrendingUp className="w-4 h-4 text-primary" />
-                <span>Est. <strong>+40%</strong> more applicants</span>
-              </div>
-              <div className="hidden sm:flex items-center gap-2 text-slate-500">
-                <Sparkles className="w-4 h-4" />
-                <span>AI-powered optimization</span>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </section>
   );
