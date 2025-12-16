@@ -96,48 +96,48 @@ export function ScoreHero({
         </Button>
       </div>
 
-      {/* Main hero card */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-6 lg:p-8">
-          {/* Top row: Title + Meta */}
-          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-6">
-            <div className="flex-1">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight mb-3">
-                {jobTitle}
-              </h1>
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                {organization && (
-                  <span className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-700">
-                    <Layout className="w-4 h-4 text-slate-400" />
-                    {organization}
+      {/* Two-column layout: Hero card + CTA card */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
+        {/* Main hero card */}
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="p-6 lg:p-8">
+            {/* Top row: Title + Meta */}
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
+              <div className="flex-1">
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight mb-3">
+                  {jobTitle}
+                </h1>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                  {organization && (
+                    <span className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-700">
+                      <Layout className="w-4 h-4 text-slate-400" />
+                      {organization}
+                    </span>
+                  )}
+                  <span className="inline-flex items-center gap-1.5 text-sm text-slate-500">
+                    <MapPin className="w-4 h-4 text-slate-400" />
+                    Remote / On-site
                   </span>
-                )}
-                <span className="inline-flex items-center gap-1.5 text-sm text-slate-500">
-                  <MapPin className="w-4 h-4 text-slate-400" />
-                  Remote / On-site
-                </span>
-                <span className="inline-flex items-center gap-1.5 text-sm text-slate-500">
-                  <Clock className="w-4 h-4 text-slate-400" />
-                  Full-time
-                </span>
+                  <span className="inline-flex items-center gap-1.5 text-sm text-slate-500">
+                    <Clock className="w-4 h-4 text-slate-400" />
+                    Full-time
+                  </span>
+                </div>
+              </div>
+
+              {/* Verdict badge */}
+              <div className={cn(
+                "inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold shrink-0",
+                config.bgColor,
+                config.textColor,
+                config.borderColor,
+                "border"
+              )}>
+                {config.label}
               </div>
             </div>
 
-            {/* Verdict badge - top right on desktop */}
-            <div className={cn(
-              "inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold shrink-0",
-              config.bgColor,
-              config.textColor,
-              config.borderColor,
-              "border"
-            )}>
-              {config.label}
-            </div>
-          </div>
-
-          {/* Main content: Two-column layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 lg:gap-8">
-            {/* Left side: Score + Summary */}
+            {/* Score + Summary */}
             <div className="flex flex-col sm:flex-row gap-5 items-start">
               {/* Score Circle */}
               <div className="relative group cursor-default shrink-0">
@@ -178,57 +178,57 @@ export function ScoreHero({
                 </p>
               </div>
             </div>
+          </div>
+        </div>
 
-            {/* Right side: CTA Card or Success State */}
-            <div className="lg:self-center">
-              {isUnlocked ? (
-                <div className="bg-green-50 border border-green-200 rounded-2xl p-5 text-center">
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <CheckCircle2 className="w-5 h-5 text-green-600" />
-                    <span className="font-bold text-green-900">Check your inbox!</span>
-                  </div>
-                  {submittedEmail && (
-                    <p className="text-sm text-green-700">{submittedEmail}</p>
-                  )}
-                </div>
-              ) : (
-                <div className="bg-gradient-to-br from-primary to-indigo-700 rounded-2xl p-5 text-white shadow-xl shadow-primary/20">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                      <Sparkles className="w-4 h-4" />
-                    </div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-white/80">
-                      AI Optimization
-                    </span>
-                  </div>
-                  <h3 className="font-bold text-lg mb-2">
-                    Get the optimized version
-                  </h3>
-                  <p className="text-sm text-indigo-100 mb-4 leading-relaxed">
-                    Our AI rewrites your vacancy for maximum clarity and conversion.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={onUnlockClick}
-                    className="w-full bg-white text-primary font-bold py-3 px-4 rounded-xl hover:bg-indigo-50 transition-colors flex items-center justify-center gap-2 group"
-                  >
-                    Get It Free
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </button>
-                  <div className="flex items-center justify-center gap-4 mt-4 text-xs text-indigo-200">
-                    <span className="flex items-center gap-1">
-                      <Mail className="w-3 h-3" />
-                      Sent to email
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <TrendingUp className="w-3 h-3" />
-                      +40% applicants
-                    </span>
-                  </div>
-                </div>
+        {/* CTA Card - Separate from hero */}
+        <div className="lg:self-start">
+          {isUnlocked ? (
+            <div className="bg-green-50 border border-green-200 rounded-2xl p-5 text-center">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <CheckCircle2 className="w-5 h-5 text-green-600" />
+                <span className="font-bold text-green-900">Check your inbox!</span>
+              </div>
+              {submittedEmail && (
+                <p className="text-sm text-green-700">{submittedEmail}</p>
               )}
             </div>
-          </div>
+          ) : (
+            <div className="bg-gradient-to-br from-primary to-indigo-700 rounded-2xl p-5 text-white shadow-xl shadow-primary/20">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                  <Sparkles className="w-4 h-4" />
+                </div>
+                <span className="text-xs font-bold uppercase tracking-wider text-white/80">
+                  AI Optimization
+                </span>
+              </div>
+              <h3 className="font-bold text-lg mb-2">
+                Get the optimized version
+              </h3>
+              <p className="text-sm text-indigo-100 mb-4 leading-relaxed">
+                Our AI rewrites your vacancy for maximum clarity and conversion.
+              </p>
+              <button
+                type="button"
+                onClick={onUnlockClick}
+                className="w-full bg-white text-primary font-bold py-3 px-4 rounded-xl hover:bg-indigo-50 transition-colors flex items-center justify-center gap-2 group"
+              >
+                Get It Free
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </button>
+              <div className="flex items-center justify-center gap-4 mt-4 text-xs text-indigo-200">
+                <span className="flex items-center gap-1">
+                  <Mail className="w-3 h-3" />
+                  Sent to email
+                </span>
+                <span className="flex items-center gap-1">
+                  <TrendingUp className="w-3 h-3" />
+                  +40% applicants
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </section>
