@@ -196,7 +196,7 @@ export function ScoreHero({
                   className="h-12 px-6 text-base font-bold bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/25 group whitespace-nowrap"
                 >
                   <Sparkles className="w-4 h-4 mr-2" />
-                  Get 10/10 Version
+                  Get Optimized Version
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               )}
@@ -210,7 +210,7 @@ export function ScoreHero({
             <div className="flex flex-wrap items-center justify-start gap-4 lg:gap-6 text-sm">
               <div className="flex items-center gap-2 text-slate-600">
                 <Target className="w-4 h-4 text-primary" />
-                <span>Potential score: <strong className="text-green-600">9.5+</strong></span>
+                <span>Potential: <strong className="text-green-600">Significantly improved</strong></span>
               </div>
               <div className="flex items-center gap-2 text-slate-600">
                 <TrendingUp className="w-4 h-4 text-primary" />

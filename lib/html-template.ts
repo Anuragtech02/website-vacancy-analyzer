@@ -89,13 +89,12 @@ function escapeHtml(text: string): string {
 }
 
 export function generateVacancyHTML(optimization: OptimizationResult): string {
-  const { metadata, content, estimated_scores, strategy_notes } = optimization;
+  const { metadata, strategy_notes } = optimization;
 
   const orgName = metadata.organization || "Organisatie";
   const orgInitials = getOrgInitials(metadata.organization);
   const jobTitle = metadata.job_title;
   const location = metadata.location || "";
-  const score = Math.round(estimated_scores.weighted_score);
 
   // Convert full_text_markdown to HTML for the editor content
   const editorContent = convertMarkdownToHTML(optimization.full_text_markdown);
@@ -107,7 +106,7 @@ export function generateVacancyHTML(optimization: OptimizationResult): string {
       (note) => `
       <div class="strategy-note p-4 rounded mb-5 shadow-sm">
         <div class="flex items-center mb-2">
-          <i data-lucide="${escapeHtml(note.icon)}" class="w-4 h-4 text-green-700 mr-2"></i>
+          <i data-lucide="${escapeHtml(note.icon)}" class="w-4 h-4 text-indigo-600 mr-2"></i>
           <h4 class="font-bold text-gray-800 text-sm">${escapeHtml(note.title)}</h4>
         </div>
         <p class="text-xs text-gray-600 leading-relaxed">
@@ -130,30 +129,26 @@ export function generateVacancyHTML(optimization: OptimizationResult): string {
   <style>
     body { font-family: 'Inter', sans-serif; background-color: white; }
 
-    /* BRANDING CLIENT */
-    .client-primary { background-color: #007b5f; }
-    .client-text { color: #007b5f; }
+    /* BRANDING - Indigo theme matching landing page */
+    .client-primary { background-color: #4F46E5; }
+    .client-text { color: #4F46E5; }
     .client-accent { color: #facc15; }
-    .client-btn { background-color: #005f4b; }
+    .client-btn { background-color: #4338CA; }
 
     /* BRANDING VACATURE TOVENAAR */
-    .wizard-bg { background-color: #1f2937; border-radius: 0 !important; }
+    .wizard-bg { background-color: #1E1B4B; border-radius: 0 !important; }
 
     /* STRATEGY NOTES */
-    .strategy-note { border-left: 4px solid #007b5f; background-color: #f0fdf4; }
+    .strategy-note { border-left: 4px solid #4F46E5; background-color: #EEF2FF; }
     .strategy-note h4 { color: #1f2937; }
-    .strategy-note i { color: #007b5f; }
+    .strategy-note i { color: #4F46E5; }
 
     /* EDITOR CONTENT */
-    .editor-content h3, .editor-h3 { font-size: 1.125rem; font-weight: 700; color: #007b5f; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+    .editor-content h3, .editor-h3 { font-size: 1.125rem; font-weight: 700; color: #4F46E5; margin-top: 1.5rem; margin-bottom: 0.5rem; }
     .editor-content p { margin-bottom: 1rem; line-height: 1.6; color: #374151; }
     .editor-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; color: #374151; }
     .editor-content li { margin-bottom: 0.25rem; }
     .editor-content strong { color: #111827; font-weight: 700; }
-
-    /* SCORE VISUAL */
-    .score-box { background-color: #005f4b; }
-    .score-text { font-size: 3.5rem; line-height: 1; font-weight: 900; }
 
     /* PDF specific - no background, no shadow, no spacing */
     html, body { margin: 0; padding: 0; }
@@ -173,23 +168,15 @@ export function generateVacancyHTML(optimization: OptimizationResult): string {
 <div class="w-full min-h-screen overflow-hidden bg-white flex flex-col">
   <!-- Header Banner -->
   <div class="client-primary text-white relative overflow-hidden">
-    <div class="flex items-center">
-      <!-- Left side: Logo and title (with max-width to prevent overlap) -->
-      <div class="relative z-10 flex items-center gap-5 p-8 pr-4" style="max-width: calc(100% - 180px);">
-        <div class="bg-white h-16 w-16 rounded flex items-center justify-center shadow-lg flex-shrink-0">
-          <span class="text-2xl font-black client-text tracking-tighter">${escapeHtml(orgInitials)}</span>
-        </div>
-        <div class="min-w-0">
-          <span class="bg-yellow-400 text-green-900 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider inline-block">Herschreven Versie</span>
-          <h1 class="text-xl font-bold leading-tight mt-1 truncate">${escapeHtml(jobTitle)}</h1>
-          <p class="text-green-100 text-sm truncate">Focus: Anti-Bureaucratie, Psychologische Veiligheid & Conversie</p>
-        </div>
+    <div class="flex items-center p-8">
+      <!-- Logo and title -->
+      <div class="bg-white h-16 w-16 rounded flex items-center justify-center shadow-lg flex-shrink-0">
+        <span class="text-2xl font-black client-text tracking-tighter">${escapeHtml(orgInitials)}</span>
       </div>
-
-      <!-- Right side: Score box (fixed width) -->
-      <div class="score-box ml-auto px-6 py-6 flex flex-col justify-center items-center text-white text-center flex-shrink-0" style="min-width: 160px;">
-        <span class="text-[10px] font-bold uppercase tracking-widest">EFFECTIVITEIT SCORE</span>
-        <div class="score-text mt-1">${score}<span class="text-xl">/100</span></div>
+      <div class="ml-5 min-w-0 flex-grow">
+        <span class="bg-yellow-400 text-indigo-900 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider inline-block">Geoptimaliseerde Versie</span>
+        <h1 class="text-2xl font-bold leading-tight mt-1">${escapeHtml(jobTitle)}</h1>
+        <p class="text-indigo-200 text-sm">Geoptimaliseerd door Vacature Tovenaar</p>
       </div>
     </div>
   </div>
@@ -235,7 +222,7 @@ export function generateVacancyHTML(optimization: OptimizationResult): string {
   <!-- Footer -->
   <div class="wizard-bg p-6 sm:p-8 flex flex-col sm:flex-row justify-between items-center text-gray-300 gap-4">
     <div class="flex items-center gap-3">
-      <div class="bg-green-600 p-2 rounded-lg">
+      <div class="bg-indigo-600 p-2 rounded-lg">
         <i data-lucide="wand-2" class="text-white w-5 h-5"></i>
       </div>
       <div>

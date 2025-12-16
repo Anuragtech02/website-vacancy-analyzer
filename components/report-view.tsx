@@ -99,7 +99,7 @@ function EmailModal({
               Where should we send it?
             </h3>
             <p className="text-slate-500 text-sm leading-relaxed max-w-[280px] mx-auto">
-              We'll email you the fully optimized 10/10 version of this vacancy.
+              We'll email you the fully optimized version of this vacancy.
             </p>
           </div>
 

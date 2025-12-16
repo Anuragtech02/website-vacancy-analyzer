@@ -55,7 +55,7 @@ export function StickyCTABanner({ onUnlockClick, isUnlocked }: StickyCTABannerPr
               </div>
               <div>
                 <h3 className="font-bold text-slate-900 text-base sm:text-lg">
-                  Transform this vacancy into a 10/10
+                  Get the optimized version of this vacancy
                 </h3>
                 <p className="text-sm text-slate-500 hidden sm:block">
                   Our AI will rewrite it to maximize clarity, inclusivity, and conversion.
