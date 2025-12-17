@@ -70,12 +70,12 @@ function EmailModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-[#0F172A]/80 backdrop-blur-md animate-in fade-in duration-300"
+        className="absolute inset-0 bg-secondary/80 backdrop-blur-md animate-in fade-in duration-300"
         onClick={status === 'loading' ? undefined : onClose}
       />
 
       {/* Modal */}
-      <div className="relative bg-white rounded-3xl shadow-2xl border border-white/20 p-8 max-w-md w-full mx-4 animate-in fade-in zoom-in-95 slide-in-from-bottom-5 duration-300">
+      <div className="relative bg-surface rounded-[28px] shadow-2xl p-8 max-w-md w-full mx-4 animate-in fade-in zoom-in-95 slide-in-from-bottom-5 duration-300">
 
         {/* Close Button */}
         <button
@@ -91,13 +91,13 @@ function EmailModal({
 
         <div className="space-y-6">
           <div className="text-center space-y-2 pt-4">
-            <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-6 transform rotate-3">
-              <Mail className="w-8 h-8 text-blue-600" />
+            <div className="w-16 h-16 bg-primary-container rounded-2xl flex items-center justify-center mx-auto mb-6 transform rotate-3">
+              <Mail className="w-8 h-8 text-primary" />
             </div>
-            <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+            <h3 className="text-3xl font-bold text-on-surface tracking-tight">
               Where should we send it?
             </h3>
-            <p className="text-slate-500 text-sm leading-relaxed max-w-[280px] mx-auto">
+            <p className="text-on-surface-variant text-sm leading-relaxed max-w-[280px] mx-auto">
               We'll email you the fully optimized version of this vacancy.
             </p>
           </div>
@@ -111,14 +111,14 @@ function EmailModal({
                  value={email}
                  onChange={(e) => setEmail(e.target.value)}
                  placeholder="name@company.com"
-                 className="w-full px-5 py-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all font-medium"
+                 className="w-full px-5 py-4 rounded-xl bg-surface-container-high border-none text-on-surface placeholder:text-muted-foreground focus:ring-2 focus:ring-primary outline-none transition-all font-medium"
                  disabled={status === "loading"}
                  autoFocus
                />
             </div>
             <Button
               type="submit"
-              className="w-full py-7 h-auto text-base font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-xl shadow-blue-600/20 active:scale-[0.98] transition-all"
+              className="w-full py-7 h-auto text-base font-bold rounded-xl shadow-xl hover:shadow-2xl active:scale-[0.98] transition-all"
               disabled={status === "loading" || !email}
             >
               {status === "loading" ? (
@@ -135,7 +135,7 @@ function EmailModal({
           </form>
 
           {status === "error" && (
-            <p className="text-red-500 text-sm text-center font-medium bg-red-50 py-2 rounded-lg">
+            <p className="text-error text-sm text-center font-medium bg-error-container py-2 rounded-lg">
               Something went wrong. Please try again.
             </p>
           )}
@@ -193,21 +193,57 @@ export function ReportView({
   };
 
   return (
-    <div className="font-sans text-slate-900">
-      <div className="max-w-[1200px] mx-auto px-4 sm:px-8">
+    <div className="font-sans text-slate-900 bg-slate-50 min-h-screen pb-20 relative overflow-hidden selection:bg-primary/20">
+      {/* Background Decorators */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        {/* Dot Pattern */}
+        <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:20px_20px] [mask-image:radial-gradient(ellipse_at_center,black_60%,transparent_100%)] opacity-70" />
+        
+        {/* Ambient Gradients - Aurora Effect */}
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-sky-200/20 blur-[120px]" />
+        <div className="absolute top-[20%] right-[-5%] w-[30%] h-[30%] rounded-full bg-secondary/10 blur-[100px]" />
+        <div className="absolute bottom-[-10%] left-[20%] w-[40%] h-[40%] rounded-full bg-blue-400/5 blur-[120px]" />
+
+        {/* Side Decorations (Visible on wider screens) */}
+        <div className="absolute left-10 top-0 bottom-0 w-px border-l border-dashed border-slate-300/50 hidden 2xl:block" />
+        <div className="absolute right-10 top-0 bottom-0 w-px border-l border-dashed border-slate-300/50 hidden 2xl:block" />
+        
+        {/* Geometric Accents */}
+        <div className="absolute top-40 left-6 hidden 2xl:block opacity-30 animate-pulse delay-700">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-slate-400"><rect x="2" y="2" width="20" height="20" rx="6" strokeWidth="1.5" strokeDasharray="4 4" /></svg>
+        </div>
+        <div className="absolute bottom-40 right-6 hidden 2xl:block opacity-30 animate-pulse delay-1000">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-slate-400"><circle cx="12" cy="12" r="10" strokeWidth="1.5" strokeDasharray="4 4" /></svg>
+        </div>
+        <div className="absolute top-1/2 left-6 hidden 2xl:block opacity-20">
+             <div className="h-32 w-0.5 bg-gradient-to-b from-transparent via-slate-400 to-transparent" />
+        </div>
+        <div className="absolute top-1/3 right-6 hidden 2xl:block opacity-20 transform rotate-45">
+             <div className="h-8 w-8 border border-slate-400" />
+        </div>
+      </div>
+
+      <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 py-8">
+        {/* Main Grid Content */}
+        
+        {/* Trust Bar (moved top for credibility first?) Or keep inside? Let's keep inside but clean. */}
+        {/* <TrustBar variant="full" /> */}
+
         {/* Hero Section with Score and Critical Issues */}
-        <ScoreHero
-          score={summary.total_score}
-          verdict={summary.verdict}
-          jobTitle={metadata?.job_title || "Vacancy Analysis"}
-          organization={metadata?.organization || null}
-          executiveSummary={summary.executive_summary}
-          reportId={reportId}
-          onUnlockClick={() => setShowModal(true)}
-          isUnlocked={isUnlocked}
-          submittedEmail={submittedEmail}
-          issues={summary.key_issues || []}
-        />
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">
+            <ScoreHero
+            score={summary.total_score}
+            verdict={summary.verdict}
+            jobTitle={metadata?.job_title || "Vacancy Analysis"}
+            organization={metadata?.organization || null}
+            executiveSummary={summary.executive_summary}
+            reportId={reportId}
+            onUnlockClick={() => setShowModal(true)}
+            isUnlocked={isUnlocked}
+            submittedEmail={submittedEmail}
+            issues={summary.key_issues || []}
+            />
+        </div>
 
         {/* Pillar Scores Grid */}
         <PillarGrid
@@ -217,13 +253,15 @@ export function ReportView({
         />
 
         {/* Trust Bar */}
-        <TrustBar variant="full" />
+        <div className="mb-12">
+             <TrustBar variant="full" />
+        </div>
 
         {/* Original Text (Collapsible) */}
         <OriginalTextCollapsible vacancyText={vacancyText} />
 
         {/* Disclaimer */}
-        <div className="mb-20 p-6 bg-slate-100 rounded-xl text-xs text-slate-500 leading-relaxed text-center max-w-2xl mx-auto">
+        <div className="mb-20 p-6 rounded-xl text-xs text-muted-foreground leading-relaxed text-center max-w-2xl mx-auto">
           Disclaimer: This analysis is generated by AI. While we strive for accuracy, please review all suggestions contextually.
         </div>
       </div>

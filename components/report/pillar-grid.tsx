@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { Card } from "@/components/ui/card";
+import { motion } from "framer-motion";
 import {
   Layout,
   Users,
@@ -51,73 +53,111 @@ interface PillarGridProps {
   isUnlocked: boolean;
 }
 
-const pillarConfig: Record<string, { label: string; icon: typeof Layout; color: string; bgColor: string }> = {
+const pillarConfig: Record<string, { label: string; icon: typeof Layout; color: string; bgColor: string; watermark: string; gradient: string }> = {
   structure_layout: {
     label: "Structure & Layout",
     icon: Layout,
     color: "text-blue-600",
     bgColor: "bg-blue-50 group-hover:bg-blue-100",
+    watermark: "text-blue-500",
+    gradient: "from-blue-50/40 via-white to-white",
   },
   persona_fit: {
     label: "Persona Fit",
     icon: Users,
     color: "text-purple-600",
     bgColor: "bg-purple-50 group-hover:bg-purple-100",
+    watermark: "text-purple-500",
+    gradient: "from-purple-50/40 via-white to-white",
   },
   evp_brand: {
     label: "EVP & Brand",
     icon: Award,
     color: "text-amber-600",
     bgColor: "bg-amber-50 group-hover:bg-amber-100",
+    watermark: "text-amber-500",
+    gradient: "from-amber-50/40 via-white to-white",
   },
   tone_of_voice: {
     label: "Tone of Voice",
     icon: MessageSquare,
     color: "text-pink-600",
     bgColor: "bg-pink-50 group-hover:bg-pink-100",
+    watermark: "text-pink-500",
+    gradient: "from-pink-50/40 via-white to-white",
   },
   inclusion_bias: {
     label: "Inclusion & Bias",
     icon: Heart,
     color: "text-rose-600",
     bgColor: "bg-rose-50 group-hover:bg-rose-100",
+    watermark: "text-rose-500",
+    gradient: "from-rose-50/40 via-white to-white",
   },
   mobile_experience: {
     label: "Mobile Experience",
     icon: Smartphone,
     color: "text-teal-600",
     bgColor: "bg-teal-50 group-hover:bg-teal-100",
+    watermark: "text-teal-500",
+    gradient: "from-teal-50/40 via-white to-white",
   },
   seo_findability: {
     label: "SEO Findability",
     icon: Search,
     color: "text-orange-600",
     bgColor: "bg-orange-50 group-hover:bg-orange-100",
+    watermark: "text-orange-500",
+    gradient: "from-orange-50/40 via-white to-white",
   },
   neuromarketing: {
     label: "Neuromarketing",
     icon: Brain,
     color: "text-indigo-600",
     bgColor: "bg-indigo-50 group-hover:bg-indigo-100",
+    watermark: "text-indigo-500",
+    gradient: "from-indigo-50/40 via-white to-white",
   },
 };
 
 function getScoreColor(score: number) {
   if (score >= 8) return { bg: "bg-green-500", text: "text-green-700", badge: "bg-green-100" };
-  if (score >= 6) return { bg: "bg-yellow-500", text: "text-yellow-700", badge: "bg-yellow-100" };
+  if (score >= 6) return { bg: "bg-amber-500", text: "text-amber-700", badge: "bg-amber-100" };
   return { bg: "bg-red-500", text: "text-red-700", badge: "bg-red-100" };
 }
+
+const getBentoSpan = (index: number) => {
+  // Config for 8 items in a 4-column grid (Desktop)
+  // Row 1: [2] [1] [1]
+  // Row 2: [1] [1] [2]
+  // Row 3: [2] [2]
+  const spans = [
+    "lg:col-span-2", // 0: Structure
+    "lg:col-span-1", // 1: Persona
+    "lg:col-span-1", // 2: EVP
+    "lg:col-span-1", // 3: Tone
+    "lg:col-span-1", // 4: Inclusion
+    "lg:col-span-2", // 5: Mobile
+    "lg:col-span-2", // 6: SEO
+    "lg:col-span-2", // 7: Neuro
+  ];
+  return spans[index] || "lg:col-span-1";
+};
 
 function PillarCard({
   pillarKey,
   pillar,
   estimatedScore,
   isUnlocked,
+  index,
+  className
 }: {
   pillarKey: string;
   pillar: PillarScore;
   estimatedScore?: number;
   isUnlocked: boolean;
+  index: number;
+  className?: string;
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const config = pillarConfig[pillarKey];
@@ -128,71 +168,69 @@ function PillarCard({
   const hasImprovement = isUnlocked && estimatedScore && estimatedScore > pillar.score;
 
   return (
-    <div
-      className={cn(
-        "bg-white rounded-xl border border-slate-200 p-4 transition-all duration-200 group cursor-pointer",
-        "hover:shadow-md hover:border-slate-300"
-      )}
-      onClick={() => setIsExpanded(!isExpanded)}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: index * 0.1 }}
+      className={className}
     >
-      {/* Header row */}
-      <div className="flex items-start justify-between gap-3 mb-3">
-        <div className="flex items-center gap-3">
-          <div className={cn("p-2 rounded-lg transition-colors", config.bgColor)}>
-            <Icon className={cn("w-4 h-4", config.color)} />
-          </div>
-          <span className="font-semibold text-slate-800 text-sm">{config.label}</span>
-        </div>
+      <Card
+        variant="outlined"
+        className={cn(
+          "h-full p-4 sm:p-5 relative overflow-hidden bg-gradient-to-br transition-all duration-300",
+          config.gradient
+        )}
+      >
+        {/* Decorative Watermark Icon */}
+        <Icon className={cn("absolute -bottom-8 -right-8 w-32 h-32 opacity-[0.03] transform -rotate-12 pointer-events-none", config.watermark)} />
 
-        {/* Score badge(s) */}
-        <div className="flex items-center gap-2">
-          {hasImprovement ? (
-            <>
-              <span className={cn("text-sm font-bold px-2 py-0.5 rounded", scoreColors.badge, scoreColors.text)}>
+        {/* Header row */}
+        <div className="flex items-start justify-between gap-3 mb-4">
+          <div className="flex items-center gap-3">
+            <div className={cn("p-2.5 rounded-xl transition-colors", config.bgColor)}>
+              <Icon className={cn("w-5 h-5", config.color)} />
+            </div>
+            <span className="font-bold text-slate-800 text-sm">{config.label}</span>
+          </div>
+
+          {/* Score badge(s) */}
+          <div className="flex items-center gap-2">
+            {hasImprovement ? (
+              <>
+                <span className={cn("text-xs font-bold px-2 py-1 rounded-md", scoreColors.badge, scoreColors.text)}>
+                  {pillar.score.toFixed(1)}
+                </span>
+                <ArrowRight className="w-3 h-3 text-green-500" />
+                <span className={cn("text-xs font-bold px-2 py-1 rounded-md", estimatedColors?.badge, estimatedColors?.text)}>
+                  {estimatedScore?.toFixed(1)}
+                </span>
+              </>
+            ) : (
+              <span className={cn("text-xs font-extrabold px-2.5 py-1 rounded-lg", scoreColors.badge, scoreColors.text)}>
                 {pillar.score.toFixed(1)}
               </span>
-              <ArrowRight className="w-3 h-3 text-green-500" />
-              <span className={cn("text-sm font-bold px-2 py-0.5 rounded", estimatedColors?.badge, estimatedColors?.text)}>
-                {estimatedScore?.toFixed(1)}
-              </span>
-              <TrendingUp className="w-3.5 h-3.5 text-green-500" />
-            </>
-          ) : (
-            <span className={cn("text-sm font-extrabold px-2 py-0.5 rounded", scoreColors.badge, scoreColors.text)}>
-              {pillar.score.toFixed(1)}
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* Progress bar */}
-      <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden mb-3">
-        <div
-          className={cn("h-full rounded-full transition-all duration-500", scoreColors.bg)}
-          style={{ width: `${pillar.score * 10}%` }}
-        />
-      </div>
-
-      {/* Diagnosis - always show first line, expand for more */}
-      <p className={cn(
-        "text-xs text-slate-500 leading-relaxed transition-all duration-200",
-        isExpanded ? "" : "line-clamp-2"
-      )}>
-        {pillar.diagnosis}
-      </p>
-
-      {/* Expand indicator */}
-      {pillar.diagnosis.length > 100 && (
-        <div className="flex items-center justify-center mt-2">
-          <ChevronDown
-            className={cn(
-              "w-4 h-4 text-slate-400 transition-transform duration-200",
-              isExpanded && "rotate-180"
             )}
+          </div>
+        </div>
+
+        {/* Progress bar */}
+        <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden mb-4">
+          <motion.div
+            className={cn("h-full rounded-full", scoreColors.bg)}
+            initial={{ width: 0 }}
+            animate={{ width: `${pillar.score * 10}%` }}
+            transition={{ duration: 1, delay: 0.5 + index * 0.1 }}
           />
         </div>
-      )}
-    </div>
+
+        {/* Diagnosis */}
+        <div className="relative">
+             <p className="text-sm text-slate-600 leading-relaxed">
+               {pillar.diagnosis}
+             </p>
+        </div>
+      </Card>
+    </motion.div>
   );
 }
 
@@ -200,34 +238,40 @@ export function PillarGrid({ pillars, estimatedScores, isUnlocked }: PillarGridP
   const pillarEntries = Object.entries(pillars) as [keyof Pillars, PillarScore][];
 
   return (
-    <section className="mb-10">
+    <section className="mb-12">
       {/* Section header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-xl font-bold text-slate-900">Score Breakdown</h2>
-          <p className="text-sm text-slate-500">
-            How your vacancy performs across 8 key areas
+          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Score Breakdown</h2>
+          <p className="text-sm text-slate-500 mt-1">
+            Detailed performance analysis across 8 key dimensions
           </p>
         </div>
         {isUnlocked && estimatedScores && (
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 border border-green-200 rounded-full">
+          <motion.div 
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-200 rounded-full shadow-sm"
+          >
             <TrendingUp className="w-4 h-4 text-green-600" />
-            <span className="text-sm font-semibold text-green-700">
-              Improved scores shown
+            <span className="text-sm font-bold text-green-700">
+              Optimization applied
             </span>
-          </div>
+          </motion.div>
         )}
       </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {pillarEntries.map(([key, pillar]) => (
+      {/* Bento-like Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 auto-rows-fr">
+        {pillarEntries.map(([key, pillar], idx) => (
           <PillarCard
             key={key}
             pillarKey={key}
             pillar={pillar}
             estimatedScore={estimatedScores?.[key]}
             isUnlocked={isUnlocked}
+            index={idx}
+            className={getBentoSpan(idx)}
           />
         ))}
       </div>

@@ -52,7 +52,7 @@ export function TrustBar({ variant = 'full', className }: TrustBarProps) {
 
   return (
     <section className={cn("mb-10", className)}>
-      <div className="bg-gradient-to-r from-slate-50 to-slate-100/50 rounded-2xl border border-slate-200 p-6">
+      <div className="bg-gradient-to-r from-surface-container to-surface-container-high/50 rounded-2xl border border-outline-variant/60 p-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           {/* Metrics */}
           <div className="flex flex-wrap items-center justify-start gap-4 lg:gap-8">

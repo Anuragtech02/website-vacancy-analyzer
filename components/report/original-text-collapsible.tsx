@@ -30,26 +30,26 @@ export function OriginalTextCollapsible({
 
   return (
     <section className="mb-10">
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-surface-container-low rounded-[20px] border border-outline-variant/60 overflow-hidden">
         {/* Header - clickable */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full px-6 py-4 flex items-center justify-between hover:bg-slate-50 transition-colors"
+          className="w-full px-6 py-4 flex items-center justify-between hover:bg-surface-container-high/50 transition-colors"
         >
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-slate-100 rounded-lg">
-              <FileText className="w-4 h-4 text-slate-600" />
+            <div className="p-2 bg-surface-container-high rounded-xl">
+              <FileText className="w-5 h-5 text-primary" />
             </div>
             <div className="text-left">
-              <h3 className="font-semibold text-slate-900">Original Vacancy Text</h3>
-              <p className="text-sm text-slate-500">
+              <h3 className="font-bold text-on-surface text-lg">Original Vacancy Text</h3>
+              <p className="text-sm text-muted-foreground font-medium">
                 {vacancyText.length.toLocaleString()} characters
               </p>
             </div>
           </div>
           <ChevronDown
             className={cn(
-              "w-5 h-5 text-slate-400 transition-transform duration-300",
+              "w-5 h-5 text-muted-foreground transition-transform duration-300",
               isOpen && "rotate-180"
             )}
           />
@@ -62,17 +62,17 @@ export function OriginalTextCollapsible({
             isOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
           )}
         >
-          <div className="border-t border-slate-100">
+          <div className="border-t border-outline-variant/60">
             {/* Copy button row */}
-            <div className="px-6 py-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
-              <span className="text-xs text-slate-500 font-medium uppercase tracking-wider">
+            <div className="px-6 py-3 bg-surface-container border-b border-outline-variant/60 flex items-center justify-between">
+              <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">
                 Raw Text
               </span>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleCopy}
-                className="h-8 text-xs font-medium text-slate-600 hover:text-slate-900"
+                className="h-8 text-xs font-bold text-primary hover:text-primary hover:bg-primary/10 rounded-full"
               >
                 {copied ? (
                   <>
@@ -89,11 +89,11 @@ export function OriginalTextCollapsible({
             </div>
 
             {/* Text content - scrollable */}
-            <div className="px-6 py-4 max-h-[400px] overflow-y-auto">
-              <div className="prose prose-sm prose-slate max-w-none">
+            <div className="px-6 py-4 max-h-[400px] overflow-y-auto bg-surface">
+              <div className="prose prose-sm prose-slate max-w-none text-on-surface-variant">
                 {vacancyText.split('\n').map((paragraph, idx) => (
                   paragraph.trim() ? (
-                    <p key={idx} className="text-slate-700 leading-relaxed mb-3 last:mb-0">
+                    <p key={idx} className="leading-relaxed mb-3 last:mb-0">
                       {paragraph}
                     </p>
                   ) : (

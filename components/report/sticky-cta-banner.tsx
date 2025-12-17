@@ -45,7 +45,7 @@ export function StickyCTABanner({ onUnlockClick, isUnlocked }: StickyCTABannerPr
       <div className="h-8 bg-gradient-to-t from-white/80 to-transparent pointer-events-none" />
 
       {/* Main banner */}
-      <div className="bg-white border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.1)]">
+      <div className="bg-surface-container-low border-t border-outline-variant/60 shadow-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             {/* Left side - Message */}

@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Sparkles, ArrowRight, CheckCircle2, Lock, Search, MessageSquare, FileText, Layout, Globe, Loader2 } from "lucide-react";
+import { Sparkles, ArrowRight, CheckCircle2, Lock, Search, MessageSquare, FileText, Layout, Globe, Loader2, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 const ANALYSIS_STEPS = [
   { id: 1, label: "Scanning for bias", icon: Search, duration: 2500, isFinal: false },
@@ -80,16 +81,28 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-[#F8FAFC] flex flex-col">
+    <main className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-primary/20 relative overflow-hidden">
+      {/* Background Decorators - Unique to Landing (Drafting/Creation Theme) */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        {/* Graph Paper Grid (Drafting Board) */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+        
+        {/* Central Spotlight - Creation Spark */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-gradient-to-b from-primary/5 via-indigo-50/20 to-transparent blur-[120px]" />
+        
+        {/* secondary ambient blobs */}
+        <div className="absolute top-[20%] right-0 w-[40%] h-[50%] bg-gradient-to-b from-secondary/5 to-transparent blur-[100px] rounded-full opacity-50" />
+      </div>
+
       {/* Header / Top Bar */}
-      <header className="w-full fixed top-0 z-50 bg-[#F8FAFC]/80 backdrop-blur-md border-b border-border/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <header className="w-full fixed top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-white/20 shadow-sm">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
-              <Sparkles className="w-6 h-6 text-primary-foreground" />
+            <div className="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center shadow-sm">
+              <Sparkles className="w-6 h-6 text-on-primary-container" />
             </div>
             <div>
-              <h1 className="font-bold text-xl text-foreground tracking-tight">
+              <h1 className="font-bold text-xl text-on-surface tracking-tight">
                 Vacancy Analyser
               </h1>
             </div>
@@ -97,63 +110,54 @@ export default function Home() {
           <div className="flex items-center gap-6">
             <a
                href="https://vacaturetovenaar.nl"
-               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block"
+               className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors hidden sm:block"
              >
                Visit Main Site
              </a>
-            <a
-              href="#analyze"
-              className="bg-primary text-primary-foreground px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-primary/90 transition-all shadow-md shadow-primary/25"
-            >
-              Get Started
-            </a>
+             <Button className="rounded-full shadow-lg hover:shadow-xl transition-all">
+                Get Started
+             </Button>
           </div>
         </div>
       </header>
 
       {/* Main Hero Content */}
-      <div className="flex-1 flex flex-col pt-32 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full justify-center">
+      <div className="flex-1 flex flex-col pt-32 pb-8 px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto w-full justify-center relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center mb-12">
             {/* Left Column: Copy */}
             <div className="space-y-8 text-left">
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-blue-700 font-medium text-xs uppercase tracking-wide">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-secondary-container text-on-secondary-container font-bold text-xs uppercase tracking-wide border border-outline-variant/50">
                     <Sparkles className="w-3.5 h-3.5" />
                     <span>Powered by Vacature Tovenaar</span>
                 </div>
 
-                <h2 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-foreground leading-[1.1]">
+                <h2 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tighter text-on-surface leading-[1.05]">
                     Write job ads that <br/>
                     <span className="text-primary relative inline-block">
                         actually convert.
-                        <svg className="absolute w-full h-3 -bottom-1 left-0 text-primary/20" viewBox="0 0 100 10" preserveAspectRatio="none">
-                            <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="8" fill="none" />
+                        <svg className="absolute w-full h-3 -bottom-2 left-0 text-primary/30" viewBox="0 0 100 10" preserveAspectRatio="none">
+                            <path d="M0 5 Q 50 15 100 5" stroke="currentColor" strokeWidth="12" fill="none" opacity="0.6" />
                         </svg>
                     </span>
                 </h2>
 
-                <p className="text-xl text-muted-foreground leading-relaxed max-w-lg">
+                <p className="text-xl text-on-surface-variant leading-relaxed max-w-lg font-medium">
                     Stop guessing. Our AI analyzes your vacancy for bias, clarity, and conversion aimed at top talent.
                 </p>
 
                 <div className="flex flex-col gap-4 pt-2">
-                   <div className="flex items-center gap-3">
-                      <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center shrink-0">
-                         <CheckCircle2 className="w-4 h-4 text-green-600" />
-                      </div>
-                      <span className="text-foreground/80 font-medium">Remove unconscious bias instantly</span>
-                   </div>
-                   <div className="flex items-center gap-3">
-                      <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center shrink-0">
-                         <CheckCircle2 className="w-4 h-4 text-green-600" />
-                      </div>
-                      <span className="text-foreground/80 font-medium">Boost SEO visibility & findability</span>
-                   </div>
-                   <div className="flex items-center gap-3">
-                      <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center shrink-0">
-                         <CheckCircle2 className="w-4 h-4 text-green-600" />
-                      </div>
-                      <span className="text-foreground/80 font-medium">Increase applicant conversion by 30%</span>
-                   </div>
+                   {[
+                     "Remove unconscious bias instantly",
+                     "Boost SEO visibility & findability",
+                     "Increase applicant conversion by 30%"
+                   ].map((text, idx) => (
+                      <div key={idx} className="flex items-center gap-3">
+                        <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+                            <CheckCircle2 className="w-4 h-4 text-green-700" />
+                        </div>
+                        <span className="text-on-surface/90 font-bold">{text}</span>
+                     </div>
+                   ))}
                 </div>
             </div>
 
@@ -161,177 +165,367 @@ export default function Home() {
             <div className="relative">
                 {/* Decorative blobs */}
                 <div className="absolute -top-12 -right-12 w-64 h-64 bg-primary/10 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
-                <div className="absolute -bottom-12 -left-12 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
+                <div className="absolute -bottom-12 -left-12 w-64 h-64 bg-secondary/10 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
 
                 {!isAnalyzing ? (
                   <>
-                    {/* Floating Elements (Graphics) - Only show when not analyzing */}
-                    <div className="absolute -right-8 top-12 bg-white p-3 rounded-xl shadow-xl border border-border/40 animate-bounce duration-[3000ms] hidden lg:block z-10">
+                    {/* Floating Badge */}
+                     <div className="absolute -right-4 top-8 bg-surface p-3 rounded-2xl shadow-xl border border-outline-variant/40 animate-bounce duration-[3000ms] hidden lg:block z-10">
                         <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                            <span className="text-xs font-bold text-foreground">Inclusive?</span>
-                        </div>
-                    </div>
-                    <div className="absolute -left-8 bottom-24 bg-white p-3 rounded-xl shadow-xl border border-border/40 animate-pulse hidden lg:block z-10">
-                        <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                                <span className="text-xs font-bold text-primary">A+</span>
-                            </div>
-                            <span className="text-xs font-bold text-foreground">Score: 9.8</span>
+                            <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
+                            <span className="text-xs font-bold text-on-surface">Inclusive?</span>
                         </div>
                     </div>
 
-                    {/* Input Card */}
-                    <div className="relative bg-white rounded-3xl shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
-                        {/* Fake Browser Header */}
-                        <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                    {/* Input Card - App Window Aesthetic */}
+                    <div className="relative bg-white rounded-[32px] shadow-2xl shadow-blue-900/10 border border-white/40 ring-1 ring-slate-200/50 overflow-hidden transform transition-all hover:scale-[1.005] duration-500 group">
+                        
+                        {/* Browser Header */}
+                        <div className="px-5 py-4 bg-slate-50/80 border-b border-slate-100 flex items-center justify-between gap-4">
                             <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                                <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
-                                <div className="w-3 h-3 rounded-full bg-green-400"></div>
+                                <div className="w-3 h-3 rounded-full bg-red-400/90 shadow-sm"></div>
+                                <div className="w-3 h-3 rounded-full bg-amber-400/90 shadow-sm"></div>
+                                <div className="w-3 h-3 rounded-full bg-emerald-400/90 shadow-sm"></div>
                             </div>
-                            <div className="text-xs font-medium text-muted-foreground/60 flex items-center gap-2">
-                                <Lock className="w-3 h-3" />
-                                Analyse Vacature
+                            
+                            {/* Fake URL Bar */}
+                            <div className="flex-1 max-w-[200px] hidden sm:flex items-center justify-center gap-2 px-3 py-1.5 bg-white rounded-lg border border-slate-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+                                <div className="w-2 h-2 rounded-full bg-green-500/20 flex items-center justify-center">
+                                    <div className="w-1 h-1 rounded-full bg-green-500"></div>
+                                </div>
+                                <span className="text-[10px] font-semibold text-slate-400 tracking-wide">vacancy-analyzer.ai</span>
                             </div>
+
+                            <div className="w-12"></div>
                         </div>
 
-                        <div className="p-6 sm:p-8 space-y-6">
-                            <div className="space-y-2">
-                                <label className="text-sm font-semibold text-foreground ml-1">Paste your vacancy text</label>
+                        <div className="p-6 sm:p-8 space-y-6 bg-white/50 relative z-10">
+                            {/* Watermark */}
+                            <FileText className="absolute -bottom-12 -left-12 w-48 h-48 text-slate-50 transform rotate-12 pointer-events-none z-0" />
+                            
+                            <div className="space-y-2 relative z-10">
+                                <label className="text-sm font-bold text-slate-700 ml-1 uppercase tracking-wide flex items-center gap-2">
+                                   Paste your vacancy text
+                                   <span className="text-[10px] font-extrabold px-1.5 py-0.5 bg-primary/10 text-primary rounded-md">AUTO-DETECT</span>
+                                </label>
                                 <textarea
                                     value={vacancyText}
                                     onChange={(e) => setVacancyText(e.target.value)}
-                                    placeholder="E.g. We are looking for a Marketing Manager who..."
-                                    className="w-full h-64 p-4 bg-slate-50 rounded-xl border border-slate-200 resize-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-base leading-relaxed placeholder:text-muted-foreground/50"
+                                    placeholder="e.g. 'We are looking for a Marketing Manager who...'"
+                                    className="w-full h-64 p-5 bg-slate-50/50 focus:bg-white rounded-2xl border-2 border-slate-100 resize-none focus:ring-4 focus:ring-primary/10 focus:border-primary/30 transition-all text-base leading-relaxed placeholder:text-slate-300 font-medium shadow-inner"
                                     style={{ whiteSpace: "pre-wrap" }}
                                 />
                             </div>
 
-                            <div className="flex items-center justify-between gap-4">
-                                <div className="text-xs text-muted-foreground font-medium pl-1">
-                                    {vacancyText.length > 0 ? `${vacancyText.length} chars` : 'Ready to analyze'}
+                            <div className="flex items-center justify-between gap-4 relative z-10">
+                                <div className="text-xs text-slate-400 font-bold pl-1 uppercase tracking-wider">
+                                    {vacancyText.length > 0 ? `${vacancyText.length} characters` : 'Ready to support'}
                                 </div>
-                                <button
+                                <Button
                                     onClick={handleAnalyze}
                                     disabled={!vacancyText.trim()}
-                                    className={cn(
-                                        "flex items-center gap-2 px-8 py-3.5 rounded-xl font-bold transition-all transform hover:-translate-y-0.5 active:translate-y-0",
-                                        "bg-primary text-primary-foreground hover:bg-primary/90 shadow-xl shadow-primary/25",
-                                        "disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:transform-none"
-                                    )}
+                                    className="px-8 py-6 rounded-2xl text-base font-bold shadow-lg shadow-primary/20 hover:scale-105 transition-all"
                                 >
                                     Analyze for Free
-                                    <ArrowRight className="w-5 h-5" />
-                                </button>
+                                    <ArrowRight className="w-5 h-5 ml-2" />
+                                </Button>
                             </div>
                         </div>
                     </div>
                   </>
                 ) : (
-                  /* Analysis Progress Card */
-                  <div className="relative bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    {/* Header */}
-                    <div className="px-5 py-3 border-b border-slate-100 bg-gradient-to-r from-primary to-indigo-600">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                          <Sparkles className="w-4 h-4 text-white" />
-                        </div>
-                        <div>
-                          <h3 className="font-semibold text-white text-sm">Analyzing Your Vacancy</h3>
-                          <p className="text-[11px] text-white/70">This usually takes 15-20 seconds</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Steps List */}
-                    <div className="p-4 space-y-2">
-                      {ANALYSIS_STEPS.map((step) => {
-                        const StepIcon = step.icon;
-                        const isCompleted = completedSteps.includes(step.id);
-                        const isActive = currentStep === step.id;
-                        const isPending = step.id > currentStep;
-                        const isFinalStep = step.isFinal;
-
-                        return (
-                          <div
-                            key={step.id}
-                            className={cn(
-                              "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-300 border",
-                              isCompleted && "bg-green-50 border-green-100",
-                              isActive && !isCompleted && "bg-primary/5 border-primary/20",
-                              isPending && "bg-slate-50/50 border-transparent opacity-40"
-                            )}
-                          >
-                            {/* Icon */}
-                            <div className={cn(
-                              "w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 shrink-0",
-                              isCompleted && "bg-green-500 text-white",
-                              isActive && !isCompleted && "bg-primary text-white",
-                              isPending && "bg-slate-200 text-slate-400"
-                            )}>
-                              {isCompleted ? (
-                                <CheckCircle2 className="w-4 h-4" />
-                              ) : isActive ? (
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                              ) : (
-                                <StepIcon className="w-4 h-4" />
-                              )}
-                            </div>
-
-                            {/* Label */}
-                            <div className="flex-1 min-w-0">
-                              <span className={cn(
-                                "text-sm font-medium transition-colors duration-300",
-                                isCompleted && "text-green-700",
-                                isActive && !isCompleted && "text-primary font-semibold",
-                                isPending && "text-slate-400"
-                              )}>
-                                {step.label}
-                              </span>
-                              {isActive && !isCompleted && !isFinalStep && (
-                                <div className="mt-1 h-1 bg-primary/20 rounded-full overflow-hidden">
-                                  <div className="h-full bg-primary rounded-full animate-progress" style={{ animationDuration: `${step.duration}ms` }} />
-                                </div>
-                              )}
-                            </div>
-
-                            {/* Status badge */}
-                            {isCompleted && (
-                              <span className="text-[10px] font-bold text-green-600 bg-green-100 px-1.5 py-0.5 rounded">
-                                Done
-                              </span>
-                            )}
-                            {isActive && !isCompleted && (
-                              <span className="text-[10px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded animate-pulse">
-                                {isFinalStep ? "Waiting..." : "In progress"}
-                              </span>
-                            )}
+                  /* Analysis Progress Card - App Window Aesthetic */
+                  <div className="relative bg-white rounded-[32px] shadow-2xl shadow-blue-900/10 border border-white/40 ring-1 ring-slate-200/50 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 min-h-[440px] flex flex-col">
+                      {/* Browser Header */}
+                      <div className="px-5 py-4 bg-slate-50/80 border-b border-slate-100 flex items-center justify-between gap-4">
+                          <div className="flex items-center gap-2">
+                              <div className="w-3 h-3 rounded-full bg-red-400/90 shadow-sm"></div>
+                              <div className="w-3 h-3 rounded-full bg-amber-400/90 shadow-sm"></div>
+                              <div className="w-3 h-3 rounded-full bg-emerald-400/90 shadow-sm"></div>
                           </div>
-                        );
-                      })}
-                    </div>
+                          
+                          {/* Fake URL Bar - Processing state */}
+                          <div className="flex-1 max-w-[200px] hidden sm:flex items-center justify-center gap-2 px-3 py-1.5 bg-white rounded-lg border border-slate-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+                              <Loader2 className="w-2.5 h-2.5 text-indigo-500 animate-spin" />
+                              <span className="text-[10px] font-semibold text-slate-400 tracking-wide">processing vacancy...</span>
+                          </div>
+
+                          <div className="w-12"></div>
+                      </div>
+
+                      {/* Main Loading Content */}
+                      <div className="flex-1 p-10 flex flex-col items-center justify-center relative bg-white/50">
+                          
+                          {/* Animated Focal Point */}
+                          <div className="relative mb-10 group">
+                             <div className="absolute inset-0 bg-indigo-500/10 rounded-full animate-[ping_3s_cubic-bezier(0,0,0.2,1)_infinite] opacity-50"></div>
+                             <div className="absolute inset-0 bg-primary/5 rounded-full animate-pulse opacity-30 delay-150"></div>
+                             
+                             {/* Central Circle */}
+                             <div className="relative w-28 h-28 bg-gradient-to-br from-white to-slate-50 rounded-full border border-indigo-50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-center ring-4 ring-white">
+                                {(() => {
+                                   const activeStep = ANALYSIS_STEPS.find(s => s.id === currentStep) || ANALYSIS_STEPS[ANALYSIS_STEPS.length - 1]; // Fallback to last if finishing
+                                   const StepIcon = activeStep?.icon || Sparkles;
+                                   return <StepIcon className="w-12 h-12 text-primary transition-all duration-500 animate-[bounce_2s_infinite]" />;
+                                })()}
+                             </div>
+
+                             {/* Orbital particles (Pure CSS decoration) */}
+                             <div className="absolute inset-[-20px] animate-[spin_3s_linear_infinite] pointer-events-none">
+                                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 bg-indigo-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]"></div>
+                             </div>
+                          </div>
+
+                          {/* Dynamic Text */}
+                          <div className="space-y-3 text-center max-w-lg mx-auto mb-16 px-4">
+                             <h3 className="text-3xl font-black text-slate-800 tracking-tight leading-tight">
+                                {ANALYSIS_STEPS.find(s => s.id === currentStep)?.label || "Finalizing analysis..."}
+                             </h3>
+                             <p className="text-sm text-slate-400 font-bold uppercase tracking-widest opacity-80">
+                                AI Analyst is working...
+                             </p>
+                          </div>
+
+                          {/* Timeline / Progress Dots */}
+                          <div className="flex items-center gap-3">
+                             {ANALYSIS_STEPS.map((step) => {
+                                const isCompleted = completedSteps.includes(step.id);
+                                const isCurrent = currentStep === step.id;
+                                
+                                return (
+                                  <div 
+                                    key={step.id} 
+                                    className={cn(
+                                      "h-1.5 rounded-full transition-all duration-700 ease-out",
+                                      isCompleted ? "w-4 bg-green-500 shadow-sm" :
+                                      isCurrent ? "w-12 bg-primary shadow-md shadow-primary/20" : 
+                                      "w-1.5 bg-slate-200"
+                                    )}
+                                  />
+                                );
+                             })}
+                          </div>
+                      </div>
                   </div>
                 )}
             </div>
         </div>
 
-        {/* Social Proof Strip */}
-        <div className="w-full border-t border-border/40 pt-10 mt-12 mb-8">
-             <p className="text-center text-sm font-medium text-muted-foreground mb-6 uppercase tracking-widest opacity-70">
-                Trusted by
-             </p>
-             <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-8 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
-                <div className="flex items-center gap-3">
-                    {/* Rijkswaterstaat Logo Representation */}
-                    <div className="w-10 h-10 bg-[#003366] rounded-sm flex items-center justify-center">
-                        <div className="w-6 h-6 border-2 border-white transform rotate-45"></div>
-                    </div>
-                    <span className="text-xl font-bold text-[#003366] tracking-tight">Rijkswaterstaat</span>
-                </div>
-             </div>
-        </div>
       </div>
+
+      {/* SECTION 2: THE REALITY (Blueprint Mode) */}
+      <section className="relative z-10 w-full bg-slate-50 py-32 border-t border-slate-200 overflow-hidden">
+        {/* 1. Technical Grid Background */}
+        <div className="absolute inset-0 z-0 opacity-[0.6]" 
+             style={{ backgroundImage: 'linear-gradient(#cbd5e1 1px, transparent 1px), linear-gradient(to right, #cbd5e1 1px, transparent 1px)', backgroundSize: '40px 40px' }}>
+        </div>
+        
+        {/* 2. Visual Fill: Subtle "Warning" Gradient Aura */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100vw] h-[800px] bg-gradient-to-b from-red-100/30 via-orange-50/30 to-transparent blur-[120px] pointer-events-none"></div>
+
+        {/* 3. Structural Guide Lines */}
+        <div className="absolute left-1/2 top-0 bottom-0 w-px border-l border-dashed border-red-200/50 hidden md:block"></div>
+        <div className="absolute top-[280px] left-0 right-0 h-px border-t border-dashed border-slate-300/80"></div>
+        
+        {/* Crosshair Decor at intersection */}
+        <div className="absolute top-[280px] left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 border-l border-t border-red-300 transform -rotate-45 hidden md:block"></div>
+
+
+        <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center max-w-3xl mx-auto mb-24 relative">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white text-slate-600 text-xs font-bold uppercase tracking-wider mb-6 border border-slate-200 shadow-none relative z-10">
+                    The Problem
+                </div>
+                <h2 className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight mb-6 leading-[1.05] relative z-10">
+                    Why 76% of vacancies <br/> <span className="text-red-600 relative inline-block">
+                        fail to convert.
+                        {/* Underline decor */}
+                        <svg className="absolute w-full h-3 -bottom-1 left-0 text-red-200 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
+                            <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="8" fill="none" />
+                        </svg>
+                    </span>
+                </h2>
+                <p className="text-xl text-slate-600 font-medium leading-relaxed bg-slate-50/80 inline-block px-4 rounded-lg backdrop-blur-sm">
+                    Unconscious bias, poor structure, and generic language are silent killers.
+                </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+                {/* Card 1 */}
+                <div className="group p-8 rounded-[24px] border border-slate-200 bg-white shadow-none hover:border-red-200 transition-all duration-300 relative overflow-hidden">
+                     <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity transform group-hover:scale-110 duration-500">
+                        <Lock className="w-32 h-32 text-red-500 -rotate-12" />
+                     </div>
+                    <div className="w-14 h-14 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center mb-8 relative z-10">
+                         <Lock className="w-6 h-6 text-red-600" />
+                    </div>
+                    <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight relative z-10">Hidden Bias</h3>
+                    <p className="text-slate-500 font-medium leading-relaxed relative z-10">Gender-coded language turns away 40% of diverse talent instantly.</p>
+                </div>
+
+                {/* Card 2 */}
+                <div className="group p-8 rounded-[24px] border border-slate-200 bg-white shadow-none hover:border-orange-200 transition-all duration-300 relative overflow-hidden">
+                     <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity transform group-hover:scale-110 duration-500">
+                        <Globe className="w-32 h-32 text-orange-500 -rotate-12" />
+                     </div>
+                    <div className="w-14 h-14 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center mb-8 relative z-10">
+                         <Globe className="w-6 h-6 text-orange-600" />
+                    </div>
+                    <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight relative z-10">Invisible to Search</h3>
+                    <p className="text-slate-500 font-medium leading-relaxed relative z-10">Missing structural keywords mean your job never appears in Google Jobs.</p>
+                </div>
+
+                {/* Card 3 */}
+                <div className="group p-8 rounded-[24px] border border-slate-200 bg-white shadow-none hover:border-amber-200 transition-all duration-300 relative overflow-hidden">
+                     <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity transform group-hover:scale-110 duration-500">
+                        <FileText className="w-32 h-32 text-amber-500 -rotate-12" />
+                     </div>
+                    <div className="w-14 h-14 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-8 relative z-10">
+                         <FileText className="w-6 h-6 text-amber-600" />
+                    </div>
+                    <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight relative z-10">Generic & Boring</h3>
+                    <p className="text-slate-500 font-medium leading-relaxed relative z-10">"Rockstar wanted" clichés fail to trigger any emotional response.</p>
+                </div>
+            </div>
+        </div>
+      </section>
+
+      {/* SECTION 3: THE STANDARD (Clean + Ambient Colors) */}
+      <section className="relative z-10 w-full bg-white py-32 border-t border-slate-200 overflow-hidden">
+        {/* M3 Expressive Ambient Backgrounds - Left */}
+        <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-blue-100/40 rounded-full blur-[120px] pointer-events-none -translate-x-1/3 -translate-y-1/3"></div>
+        <div className="absolute bottom-0 left-20 w-[500px] h-[500px] bg-purple-100/40 rounded-full blur-[100px] pointer-events-none translate-y-1/3"></div>
+        
+        {/* M3 Expressive Ambient Backgrounds - Right */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-100/40 rounded-full blur-[100px] pointer-events-none translate-x-1/3 -translate-y-1/3"></div>
+        <div className="absolute bottom-0 right-20 w-[600px] h-[600px] bg-teal-100/40 rounded-full blur-[120px] pointer-events-none translate-x-1/3 translate-y-1/3"></div>
+
+        {/* Existing Green Aura (Center-Right Focus) */}
+        <div className="absolute top-1/2 right-0 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-l from-emerald-50/60 via-teal-50/30 to-transparent blur-[120px] pointer-events-none"></div>
+
+         <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+             <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                 <div>
+                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white text-slate-600 text-xs font-bold uppercase tracking-wider mb-6 border border-slate-200 shadow-none">
+                        The Solution
+                     </div>
+                     <h2 className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight mb-8 leading-[1.05]">
+                        Data-driven <br/> <span className="text-primary">optimization.</span>
+                     </h2>
+                     <p className="text-xl text-slate-600 font-medium leading-relaxed mb-10">
+                        Our AI engine analyzes your text against 8 key dimensions proven to increase applicant conversion.
+                     </p>
+                     
+                     {/* MARQUEE SECTION */}
+                     <div className="w-full overflow-hidden mask-linear-fade relative mb-12">
+                         {/* Fade Masks */}
+                         <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-slate-50 to-transparent z-10"></div>
+                         <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-slate-50 to-transparent z-10"></div>
+
+                         {/* Moving Track */}
+                         <div className="flex gap-4 w-max animate-marquee">
+                             {[...Array(2)].map((_, i) => (
+                                 <div key={i} className="flex gap-4">
+                                    {[
+                                        "Bias Detection", "Tone Analysis", "Readability Score", "SEO Keywords",
+                                        "Formatting Check", "Sentiment Scan", "Length Optimization", "Structure Audit"
+                                    ].map((feature, j) => (
+                                        <div key={j} className="flex items-center gap-2 px-6 py-3 rounded-full bg-white border border-slate-200 shadow-sm text-slate-700 font-bold whitespace-nowrap">
+                                            <CheckCircle2 className="w-4 h-4 text-green-500" />
+                                            {feature}
+                                        </div>
+                                    ))}
+                                 </div>
+                             ))}
+                         </div>
+                     </div>
+                     
+                     <div>
+                        <Button className="h-14 px-10 rounded-full text-lg font-bold shadow-none border border-transparent bg-primary text-primary-foreground hover:bg-primary/90 transition-all" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+                           Analyze for Free
+                        </Button>
+                     </div>
+                 </div>
+                 
+                 {/* Visual decoration - Satellite Cards */}
+                 <div className="relative flex justify-center lg:justify-end">
+                      {/* Decorative wireframe background */}
+                      <div className="absolute inset-0 border border-dashed border-slate-300 rounded-[40px] transform rotate-6 z-0 lg:left-20"></div>
+
+                      {/* The "Perfect Score" Card */}
+                      <div className="relative bg-white rounded-[40px] border border-slate-200 p-10 aspect-square flex flex-col items-center justify-center text-center shadow-none z-10 w-full max-w-md">
+                           <div className="w-32 h-32 rounded-3xl bg-slate-50 border border-slate-100 flex items-center justify-center mb-8 relative">
+                                <span className="text-6xl font-black text-slate-900 tracking-tighter">9.8</span>
+                           </div>
+                           <h3 className="text-2xl font-black text-slate-900 mb-2 tracking-tight">Optimized</h3>
+                           <p className="text-slate-500 font-medium mb-8">Ready to publish</p>
+                           
+                           <div className="w-full max-w-[200px] flex gap-2">
+                                <div className="h-3 flex-1 bg-green-500 rounded-full"></div>
+                                <div className="h-3 flex-1 bg-green-500 rounded-full"></div>
+                                <div className="h-3 flex-1 bg-slate-100 rounded-full"></div>
+                           </div>
+                           
+                           {/* SATELLITES */}
+                           <div className="absolute -left-12 top-12 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3 animate-bounce duration-[3000ms]">
+                               <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                                   <CheckCircle2 className="w-4 h-4 text-green-600" />
+                               </div>
+                               <div>
+                                   <div className="text-xs font-bold text-slate-500 uppercase">Bias</div>
+                                   <div className="text-sm font-black text-slate-900">None</div>
+                               </div>
+                           </div>
+
+                           <div className="absolute -right-8 bottom-24 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3 animate-bounce duration-[4000ms]">
+                               <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
+                                   <Search className="w-4 h-4 text-indigo-600" />
+                               </div>
+                               <div>
+                                   <div className="text-xs font-bold text-slate-500 uppercase">SEO</div>
+                                   <div className="text-sm font-black text-slate-900">Top 10</div>
+                               </div>
+                           </div>
+                      </div>
+                 </div>
+             </div>
+         </div>
+      </section>
+
+      {/* SECTION 4: PROFESSIONAL FOOTER (Compact) */}
+      <footer className="w-full bg-slate-950 py-12 border-t border-slate-900">
+          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12">
+                  {/* Brand & Mission */}
+                  <div className="max-w-md">
+                      <div className="flex items-center gap-2 mb-4">
+                          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+                              <Sparkles className="w-5 h-5 text-white" />
+                          </div>
+                          <span className="text-xl font-bold text-white tracking-tight">Vacature Tovenaar</span>
+                      </div>
+                      <p className="text-slate-400 leading-relaxed">
+                          Transforming generic job descriptions into high-converting assets.
+                      </p>
+                  </div>
+
+                  {/* Socials */}
+                  <div className="flex gap-4">
+                      {[1, 2, 3].map((_, i) => (
+                          <div key={i} className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center border border-slate-800 hover:bg-slate-800 hover:border-slate-700 transition-all cursor-pointer group">
+                              <div className="w-4 h-4 bg-slate-600 rounded-sm group-hover:bg-slate-400 transition-colors"></div>
+                          </div>
+                      ))}
+                  </div>
+              </div>
+
+              {/* Bottom Bar */}
+              <div className="pt-8 border-t border-slate-900 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500">
+                  <p>© {new Date().getFullYear()} Vacature Tovenaar. All rights reserved.</p>
+                  <p>Made with <span className="text-red-500">♥</span> in Amsterdam</p>
+              </div>
+          </div>
+      </footer>
 
     </main>
   );
