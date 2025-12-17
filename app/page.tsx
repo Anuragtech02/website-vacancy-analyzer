@@ -2,16 +2,16 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Sparkles, ArrowRight, CheckCircle2, Lock, Search, MessageSquare, FileText, Layout, Smartphone, Globe, Loader2 } from "lucide-react";
+import { Sparkles, ArrowRight, CheckCircle2, Lock, Search, MessageSquare, FileText, Layout, Globe, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const ANALYSIS_STEPS = [
-  { id: 1, label: "Scanning for bias", icon: Search, duration: 2000 },
-  { id: 2, label: "Checking tone of voice", icon: MessageSquare, duration: 2500 },
-  { id: 3, label: "Analyzing readability", icon: FileText, duration: 2000 },
-  { id: 4, label: "Evaluating structure", icon: Layout, duration: 1500 },
-  { id: 5, label: "Checking mobile experience", icon: Smartphone, duration: 1500 },
-  { id: 6, label: "Analyzing SEO findability", icon: Globe, duration: 2000 },
+  { id: 1, label: "Scanning for bias", icon: Search, duration: 2500, isFinal: false },
+  { id: 2, label: "Checking tone of voice", icon: MessageSquare, duration: 2500, isFinal: false },
+  { id: 3, label: "Analyzing readability", icon: FileText, duration: 2500, isFinal: false },
+  { id: 4, label: "Evaluating structure", icon: Layout, duration: 2500, isFinal: false },
+  { id: 5, label: "Checking SEO findability", icon: Globe, duration: 2500, isFinal: false },
+  { id: 6, label: "Finalizing analysis", icon: Sparkles, duration: 0, isFinal: true },
 ];
 
 export default function Home() {
@@ -30,25 +30,28 @@ export default function Home() {
     }
 
     let stepIndex = 0;
+    let timeoutId: NodeJS.Timeout;
 
     const runStep = () => {
-      if (stepIndex >= ANALYSIS_STEPS.length) return;
-
+      const step = ANALYSIS_STEPS[stepIndex];
       setCurrentStep(stepIndex + 1);
 
-      const timeout = setTimeout(() => {
+      // If this is the final step (duration: 0), stay on it indefinitely
+      if (step.isFinal) {
+        return;
+      }
+
+      timeoutId = setTimeout(() => {
         setCompletedSteps(prev => [...prev, stepIndex + 1]);
         stepIndex++;
         if (stepIndex < ANALYSIS_STEPS.length) {
           runStep();
         }
-      }, ANALYSIS_STEPS[stepIndex].duration);
-
-      return timeout;
+      }, step.duration);
     };
 
-    const timeout = runStep();
-    return () => { if (timeout) clearTimeout(timeout); };
+    runStep();
+    return () => { if (timeoutId) clearTimeout(timeoutId); };
   }, [isAnalyzing]);
 
   const handleAnalyze = async () => {
@@ -227,66 +230,67 @@ export default function Home() {
                   </>
                 ) : (
                   /* Analysis Progress Card */
-                  <div className="relative bg-white rounded-3xl shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <div className="relative bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
                     {/* Header */}
-                    <div className="px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-primary to-indigo-600">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                          <Sparkles className="w-5 h-5 text-white" />
+                    <div className="px-5 py-3 border-b border-slate-100 bg-gradient-to-r from-primary to-indigo-600">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                          <Sparkles className="w-4 h-4 text-white" />
                         </div>
                         <div>
-                          <h3 className="font-bold text-white">Analyzing Your Vacancy</h3>
-                          <p className="text-xs text-white/70">This usually takes 10-15 seconds</p>
+                          <h3 className="font-semibold text-white text-sm">Analyzing Your Vacancy</h3>
+                          <p className="text-[11px] text-white/70">This usually takes 15-20 seconds</p>
                         </div>
                       </div>
                     </div>
 
                     {/* Steps List */}
-                    <div className="p-6 sm:p-8 space-y-4">
+                    <div className="p-4 space-y-2">
                       {ANALYSIS_STEPS.map((step) => {
                         const StepIcon = step.icon;
                         const isCompleted = completedSteps.includes(step.id);
-                        const isActive = currentStep === step.id && !isCompleted;
+                        const isActive = currentStep === step.id;
                         const isPending = step.id > currentStep;
+                        const isFinalStep = step.isFinal;
 
                         return (
                           <div
                             key={step.id}
                             className={cn(
-                              "flex items-center gap-4 p-4 rounded-xl transition-all duration-300",
-                              isCompleted && "bg-green-50 border border-green-100",
-                              isActive && "bg-primary/5 border border-primary/20 scale-[1.02]",
-                              isPending && "bg-slate-50 border border-transparent opacity-50"
+                              "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-300 border",
+                              isCompleted && "bg-green-50 border-green-100",
+                              isActive && !isCompleted && "bg-primary/5 border-primary/20",
+                              isPending && "bg-slate-50/50 border-transparent opacity-40"
                             )}
                           >
                             {/* Icon */}
                             <div className={cn(
-                              "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 shrink-0",
+                              "w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 shrink-0",
                               isCompleted && "bg-green-500 text-white",
-                              isActive && "bg-primary text-white",
+                              isActive && !isCompleted && "bg-primary text-white",
                               isPending && "bg-slate-200 text-slate-400"
                             )}>
                               {isCompleted ? (
-                                <CheckCircle2 className="w-5 h-5" />
+                                <CheckCircle2 className="w-4 h-4" />
                               ) : isActive ? (
-                                <Loader2 className="w-5 h-5 animate-spin" />
+                                <Loader2 className="w-4 h-4 animate-spin" />
                               ) : (
-                                <StepIcon className="w-5 h-5" />
+                                <StepIcon className="w-4 h-4" />
                               )}
                             </div>
 
                             {/* Label */}
-                            <div className="flex-1">
+                            <div className="flex-1 min-w-0">
                               <span className={cn(
-                                "font-medium transition-colors duration-300",
+                                "text-sm font-medium transition-colors duration-300",
                                 isCompleted && "text-green-700",
-                                isActive && "text-primary font-semibold",
+                                isActive && !isCompleted && "text-primary font-semibold",
                                 isPending && "text-slate-400"
                               )}>
                                 {step.label}
                               </span>
-                              {isActive && (
-                                <div className="mt-1.5 h-1.5 bg-primary/20 rounded-full overflow-hidden">
+                              {isActive && !isCompleted && !isFinalStep && (
+                                <div className="mt-1 h-1 bg-primary/20 rounded-full overflow-hidden">
                                   <div className="h-full bg-primary rounded-full animate-progress" style={{ animationDuration: `${step.duration}ms` }} />
                                 </div>
                               )}
@@ -294,33 +298,18 @@ export default function Home() {
 
                             {/* Status badge */}
                             {isCompleted && (
-                              <span className="text-xs font-bold text-green-600 bg-green-100 px-2 py-1 rounded-full">
+                              <span className="text-[10px] font-bold text-green-600 bg-green-100 px-1.5 py-0.5 rounded">
                                 Done
                               </span>
                             )}
-                            {isActive && (
-                              <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded-full animate-pulse">
-                                In progress
+                            {isActive && !isCompleted && (
+                              <span className="text-[10px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded animate-pulse">
+                                {isFinalStep ? "Waiting..." : "In progress"}
                               </span>
                             )}
                           </div>
                         );
                       })}
-
-                      {/* Completion message */}
-                      {completedSteps.length === ANALYSIS_STEPS.length && (
-                        <div className="mt-6 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200 animate-in fade-in duration-300">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
-                              <CheckCircle2 className="w-5 h-5 text-white" />
-                            </div>
-                            <div>
-                              <p className="font-bold text-green-800">Analysis Complete!</p>
-                              <p className="text-sm text-green-600">Redirecting to your report...</p>
-                            </div>
-                          </div>
-                        </div>
-                      )}
                     </div>
                   </div>
                 )}

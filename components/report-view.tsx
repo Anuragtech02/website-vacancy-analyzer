@@ -17,7 +17,6 @@ const OPTIMIZATION_MESSAGES = [
 ];
 
 import { ScoreHero } from "@/components/report/score-hero";
-import { IssueCards } from "@/components/report/issue-cards";
 import { PillarGrid } from "@/components/report/pillar-grid";
 import { OriginalTextCollapsible } from "@/components/report/original-text-collapsible";
 import { TrustBar } from "@/components/report/trust-bar";
@@ -195,8 +194,8 @@ export function ReportView({
 
   return (
     <div className="font-sans text-slate-900">
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-8">
-        {/* Hero Section with Score */}
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-8">
+        {/* Hero Section with Score and Critical Issues */}
         <ScoreHero
           score={summary.total_score}
           verdict={summary.verdict}
@@ -207,11 +206,8 @@ export function ReportView({
           onUnlockClick={() => setShowModal(true)}
           isUnlocked={isUnlocked}
           submittedEmail={submittedEmail}
-          estimatedScore={optimizationResult?.estimated_scores?.total_score}
+          issues={summary.key_issues || []}
         />
-
-        {/* Critical Issues */}
-        <IssueCards issues={summary.key_issues || []} />
 
         {/* Pillar Scores Grid */}
         <PillarGrid
