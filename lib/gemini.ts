@@ -100,7 +100,7 @@ export async function analyzeVacancy(vacancyText: string): Promise<AnalysisResul
     throw new Error("GEMINI_API_KEY is not set");
   }
 
-  const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+  const model = genAI.getGenerativeModel({ model: "gemini-3-pro-preview" });
 
   const result = await model.generateContent({
     contents: [
