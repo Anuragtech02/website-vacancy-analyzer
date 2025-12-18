@@ -100,7 +100,7 @@ export async function analyzeVacancy(vacancyText: string): Promise<AnalysisResul
     throw new Error("GEMINI_API_KEY is not set");
   }
 
-  const model = genAI.getGenerativeModel({ model: "gemini-3-pro-preview" });
+  const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
 
   const result = await model.generateContent({
     contents: [
@@ -126,7 +126,7 @@ export async function optimizeVacancy(vacancyText: string, analysis?: AnalysisRe
     throw new Error("GEMINI_API_KEY is not set");
   }
 
-  const model = genAI.getGenerativeModel({ model: "gemini-3-pro-preview" });
+  const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
 
   const promptParts = [
     { text: OPTIMIZER_PROMPT },
