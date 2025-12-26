@@ -83,6 +83,7 @@ You do not give compliments for "effort". You grade strictly on **RESULT**.
   "metadata": {
     "organization": "string | null",
     "job_title": "string",
+    "job_type": "string | null (e.g. Full-time, Part-time, Remote, Hybrid - infer from text)",
     "location": "string | null (detected location if any)",
     "detected_evp": "string (1-2 sentence summary of culture/vibe in Dutch)",
     "word_count": "number (total word count of the vacancy)",

@@ -5,6 +5,8 @@ import { AnalysisResult, OptimizationResult } from "@/lib/gemini";
 import { Button } from "@/components/ui/button";
 import { Loader2, Mail, ArrowRight } from "lucide-react";
 
+import { OptimizationResultView } from "@/components/report/optimization-result-view";
+
 const OPTIMIZATION_MESSAGES = [
   "Verwijderen bureaucratische termen...",
   "Toevoegen psychologische veiligheid...",
@@ -28,7 +30,53 @@ interface ReportViewProps {
   reportId: string;
 }
 
-// Email capture modal component
+// Limit Reached Modal
+function LimitReachedModal({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+       {/* Backdrop */}
+       <div
+         className="absolute inset-0 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300"
+         onClick={onClose}
+       />
+       {/* Modal */}
+       <div className="relative bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full mx-4 animate-in fade-in zoom-in-95 slide-in-from-bottom-5 duration-300 text-center">
+           <button
+             onClick={onClose}
+             className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors"
+           >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+           </button>
+
+           <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <span className="text-3xl">🔒</span>
+           </div>
+           
+           <h3 className="text-2xl font-black text-slate-900 mb-2">Limit Reached</h3>
+           <p className="text-slate-600 mb-8 leading-relaxed">
+             You’ve already used two free rewrites. Full rewriting is available only with a demo or license.
+           </p>
+
+           <Button
+              className="w-full h-12 text-base font-bold shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 rounded-xl"
+              onClick={() => window.open("https://vacaturetovenaar.nl/demo", "_blank")}
+           >
+              Schedule a Demo to Unlock
+           </Button>
+       </div>
+    </div>
+  );
+}
+
+// Email capture modal component (unchanged most logic, just kept minimal for brevity in diff if unchanged)
 function EmailModal({
   isOpen,
   onClose,
@@ -160,11 +208,29 @@ export function ReportView({
 }: ReportViewProps) {
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showLimitModal, setShowLimitModal] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [optimizationResult, setOptimizationResult] = useState<OptimizationResult | null>(null);
   const [submittedEmail, setSubmittedEmail] = useState<string>("");
+  const [phase, setPhase] = useState<number>(1);
 
   const { summary, metadata, pillars } = analysis;
+
+  useEffect(() => {
+     // Determine User Phase from LocalStorage
+     const count = parseInt(localStorage.getItem("vacancy_usage_count") || "0", 10);
+     if (count > 2) setPhase(3);
+     else if (count === 2) setPhase(2);
+     else setPhase(1);
+  }, []);
+
+  const handleUnlockClick = () => {
+      if (phase >= 3) {
+          setShowLimitModal(true);
+      } else {
+          setShowModal(true);
+      }
+  };
 
   const handleUnlock = async (email: string) => {
     setStatus("loading");
@@ -224,11 +290,7 @@ export function ReportView({
       </div>
 
       <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 py-8">
-        {/* Main Grid Content */}
         
-        {/* Trust Bar (moved top for credibility first?) Or keep inside? Let's keep inside but clean. */}
-        {/* <TrustBar variant="full" /> */}
-
         {/* Hero Section with Score and Critical Issues */}
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">
             <ScoreHero
@@ -236,14 +298,24 @@ export function ReportView({
             verdict={summary.verdict}
             jobTitle={metadata?.job_title || "Vacancy Analysis"}
             organization={metadata?.organization || null}
+            jobType={metadata?.job_type || null}
             executiveSummary={summary.executive_summary}
             reportId={reportId}
-            onUnlockClick={() => setShowModal(true)}
+            onUnlockClick={handleUnlockClick}
             isUnlocked={isUnlocked}
             submittedEmail={submittedEmail}
             issues={summary.key_issues || []}
             />
         </div>
+
+        {/* Display Optimization Result if Unlocked */}
+        {isUnlocked && optimizationResult && (
+             <OptimizationResultView 
+                result={optimizationResult} 
+                email={submittedEmail}
+                phase={phase}
+             />
+        )}
 
         {/* Pillar Scores Grid */}
         <PillarGrid
@@ -268,8 +340,9 @@ export function ReportView({
 
       {/* Sticky CTA Banner */}
       <StickyCTABanner
-        onUnlockClick={() => setShowModal(true)}
+        onUnlockClick={handleUnlockClick}
         isUnlocked={isUnlocked}
+        phase={phase}
       />
 
       {/* Email Modal */}
@@ -279,6 +352,12 @@ export function ReportView({
         onSubmit={handleUnlock}
         status={status}
       />
+
+       {/* Limit Reached Modal */}
+       <LimitReachedModal 
+         isOpen={showLimitModal}
+         onClose={() => setShowLimitModal(false)}
+       />
     </div>
   );
 }

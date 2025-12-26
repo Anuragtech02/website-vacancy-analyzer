@@ -8,9 +8,10 @@ import { cn } from "@/lib/utils";
 interface StickyCTABannerProps {
   onUnlockClick: () => void;
   isUnlocked: boolean;
+  phase: number;
 }
 
-export function StickyCTABanner({ onUnlockClick, isUnlocked }: StickyCTABannerProps) {
+export function StickyCTABanner({ onUnlockClick, isUnlocked, phase }: StickyCTABannerProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
 
@@ -68,10 +69,15 @@ export function StickyCTABanner({ onUnlockClick, isUnlocked }: StickyCTABannerPr
               <Button
                 onClick={onUnlockClick}
                 size="lg"
-                className="flex-1 sm:flex-none h-12 px-6 font-bold bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20"
+                className={cn(
+                  "flex-1 sm:flex-none h-12 px-6 font-bold text-white shadow-lg",
+                  phase >= 3 
+                    ? "bg-slate-900 hover:bg-slate-800 shadow-slate-900/20" 
+                    : "bg-primary hover:bg-primary/90 shadow-primary/20"
+                )}
               >
                 <Lock className="w-4 h-4 mr-2" />
-                Unlock Now - It's Free
+                {phase >= 3 ? "Unlock with Demo" : "Unlock Now - It's Free"}
               </Button>
 
               {/* Dismiss button - mobile only */}

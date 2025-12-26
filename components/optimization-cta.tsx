@@ -6,13 +6,15 @@ import { cn } from "@/lib/utils";
 
 interface OptimizationCTAProps {
   reportId: string;
+  phase: 1 | 2 | 3;
 }
 
 import type { OptimizationResult } from "@/lib/gemini";
+import { Button } from "@/components/ui/button";
 
 // ...
 
-export function OptimizationCTA({ reportId }: OptimizationCTAProps) {
+export function OptimizationCTA({ reportId, phase }: OptimizationCTAProps) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [result, setResult] = useState<OptimizationResult | null>(null);
@@ -51,6 +53,31 @@ export function OptimizationCTA({ reportId }: OptimizationCTAProps) {
           <p className="text-green-700">
             Here is your optimized vacancy. We've also sent a copy to <strong>{email}</strong>.
           </p>
+          
+          {/* Phase-based Actions */}
+          <div className="pt-4">
+             {phase === 1 ? (
+               <Button 
+                onClick={() => window.location.href = "/"}
+                className="bg-white text-green-700 border border-green-200 hover:bg-green-100 hover:text-green-800 font-bold shadow-sm"
+               >
+                 <ArrowRight className="w-4 h-4 mr-2 rotate-180" /> Analyze Another Vacancy
+               </Button>
+             ) : (
+                <div className="bg-white/50 p-6 rounded-xl border border-green-200/50 max-w-sm mx-auto">
+                    <h4 className="font-bold text-green-900 mb-2">Want to scale this?</h4>
+                    <p className="text-sm text-green-800 mb-4">
+                       Get a custom license for your whole team or integrate logically.
+                    </p>
+                    <Button 
+                      onClick={() => window.open("https://vacaturetovenaar.nl/demo", "_blank")}
+                      className="w-full bg-green-600 hover:bg-green-700 text-white font-bold"
+                    >
+                       Schedule a Demo
+                    </Button>
+                </div>
+             )}
+          </div>
         </div>
 
         <div className="bg-card rounded-3xl p-8 sm:p-12 shadow-xl border border-border/50 space-y-8">

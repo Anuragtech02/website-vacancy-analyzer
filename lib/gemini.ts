@@ -7,6 +7,7 @@ export interface AnalysisResult {
   metadata: {
     organization: string | null;
     job_title: string;
+    job_type: string | null;
     location: string | null;
     detected_evp: string;
     word_count: number;

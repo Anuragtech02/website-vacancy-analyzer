@@ -71,6 +71,10 @@ export default function Home() {
         throw new Error("Analysis failed");
       }
 
+      // Increment usage count locally
+      const currentCount = parseInt(localStorage.getItem("vacancy_usage_count") || "0", 10);
+      localStorage.setItem("vacancy_usage_count", (currentCount + 1).toString());
+
       const data = (await response.json()) as { reportId: string };
       router.push(`/report/${data.reportId}`);
     } catch (error) {
@@ -132,17 +136,12 @@ export default function Home() {
                 </div>
 
                 <h2 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tighter text-on-surface leading-[1.05]">
-                    Write job ads that <br/>
-                    <span className="text-primary relative inline-block">
-                        actually convert.
-                        <svg className="absolute w-full h-3 -bottom-2 left-0 text-primary/30" viewBox="0 0 100 10" preserveAspectRatio="none">
-                            <path d="M0 5 Q 50 15 100 5" stroke="currentColor" strokeWidth="12" fill="none" opacity="0.6" />
-                        </svg>
-                    </span>
+                    Vacancy Analyzer <br/>
+
                 </h2>
 
                 <p className="text-xl text-on-surface-variant leading-relaxed max-w-lg font-medium">
-                    Stop guessing. Our AI analyzes your vacancy for bias, clarity, and conversion aimed at top talent.
+                    Analyze and rewrite your job post in 1 minute.
                 </p>
 
                 <div className="flex flex-col gap-4 pt-2">
@@ -211,7 +210,7 @@ export default function Home() {
                                 <textarea
                                     value={vacancyText}
                                     onChange={(e) => setVacancyText(e.target.value)}
-                                    placeholder="e.g. 'We are looking for a Marketing Manager who...'"
+                                    placeholder="Paste vacancy text here"
                                     className="w-full h-64 p-5 bg-slate-50/50 focus:bg-white rounded-2xl border-2 border-slate-100 resize-none focus:ring-4 focus:ring-primary/10 focus:border-primary/30 transition-all text-base leading-relaxed placeholder:text-slate-300 font-medium shadow-inner"
                                     style={{ whiteSpace: "pre-wrap" }}
                                 />
@@ -314,7 +313,7 @@ export default function Home() {
       </div>
 
       {/* SECTION 2: THE REALITY (Blueprint Mode) */}
-      <section className="relative z-10 w-full bg-slate-50 py-32 border-t border-slate-200 overflow-hidden">
+      <section className="relative z-10 w-full bg-slate-50 py-16 border-t border-slate-200 overflow-hidden">
         {/* 1. Technical Grid Background */}
         <div className="absolute inset-0 z-0 opacity-[0.6]" 
              style={{ backgroundImage: 'linear-gradient(#cbd5e1 1px, transparent 1px), linear-gradient(to right, #cbd5e1 1px, transparent 1px)', backgroundSize: '40px 40px' }}>
@@ -332,13 +331,14 @@ export default function Home() {
 
 
         <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-3xl mx-auto mb-24 relative">
+            <div className="text-center max-w-3xl mx-auto mb-16 relative">
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white text-slate-600 text-xs font-bold uppercase tracking-wider mb-6 border border-slate-200 shadow-none relative z-10">
                     The Problem
                 </div>
+
                 <h2 className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight mb-6 leading-[1.05] relative z-10">
-                    Why 76% of vacancies <br/> <span className="text-red-600 relative inline-block">
-                        fail to convert.
+                    Why so many vacancies <br/> <span className="text-red-600 relative inline-block">
+                        fail to attract suitable candidates.
                         {/* Underline decor */}
                         <svg className="absolute w-full h-3 -bottom-1 left-0 text-red-200 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
                             <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="8" fill="none" />
@@ -346,7 +346,7 @@ export default function Home() {
                     </span>
                 </h2>
                 <p className="text-xl text-slate-600 font-medium leading-relaxed bg-slate-50/80 inline-block px-4 rounded-lg backdrop-blur-sm">
-                    Unconscious bias, poor structure, and generic language are silent killers.
+                    Unconscious wording, weak structure and vague language push qualified applicants away.
                 </p>
             </div>
 
@@ -354,37 +354,37 @@ export default function Home() {
                 {/* Card 1 */}
                 <div className="group p-8 rounded-[24px] border border-slate-200 bg-white shadow-none hover:border-red-200 transition-all duration-300 relative overflow-hidden">
                      <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity transform group-hover:scale-110 duration-500">
-                        <Lock className="w-32 h-32 text-red-500 -rotate-12" />
+                        <MessageSquare className="w-32 h-32 text-red-500 -rotate-12" />
                      </div>
                     <div className="w-14 h-14 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center mb-8 relative z-10">
-                         <Lock className="w-6 h-6 text-red-600" />
+                         <MessageSquare className="w-6 h-6 text-red-600" />
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight relative z-10">Hidden Bias</h3>
-                    <p className="text-slate-500 font-medium leading-relaxed relative z-10">Gender-coded language turns away 40% of diverse talent instantly.</p>
+                    <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight relative z-10">Mismatch & noise</h3>
+                    <p className="text-slate-500 font-medium leading-relaxed relative z-10">Vague wording attracts unsuitable applicants.</p>
                 </div>
 
                 {/* Card 2 */}
                 <div className="group p-8 rounded-[24px] border border-slate-200 bg-white shadow-none hover:border-orange-200 transition-all duration-300 relative overflow-hidden">
                      <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity transform group-hover:scale-110 duration-500">
-                        <Globe className="w-32 h-32 text-orange-500 -rotate-12" />
+                        <Search className="w-32 h-32 text-orange-500 -rotate-12" />
                      </div>
                     <div className="w-14 h-14 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center mb-8 relative z-10">
-                         <Globe className="w-6 h-6 text-orange-600" />
+                         <Search className="w-6 h-6 text-orange-600" />
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight relative z-10">Invisible to Search</h3>
-                    <p className="text-slate-500 font-medium leading-relaxed relative z-10">Missing structural keywords mean your job never appears in Google Jobs.</p>
+                    <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight relative z-10">Missing latent candidates</h3>
+                    <p className="text-slate-500 font-medium leading-relaxed relative z-10">Only active job seekers are reached, not ideal profiles.</p>
                 </div>
 
                 {/* Card 3 */}
                 <div className="group p-8 rounded-[24px] border border-slate-200 bg-white shadow-none hover:border-amber-200 transition-all duration-300 relative overflow-hidden">
                      <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity transform group-hover:scale-110 duration-500">
-                        <FileText className="w-32 h-32 text-amber-500 -rotate-12" />
+                        <Lock className="w-32 h-32 text-amber-500 -rotate-12" />
                      </div>
                     <div className="w-14 h-14 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-8 relative z-10">
-                         <FileText className="w-6 h-6 text-amber-600" />
+                         <Lock className="w-6 h-6 text-amber-600" />
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight relative z-10">Generic & Boring</h3>
-                    <p className="text-slate-500 font-medium leading-relaxed relative z-10">"Rockstar wanted" clichés fail to trigger any emotional response.</p>
+                    <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight relative z-10">Unconscious copy bias</h3>
+                    <p className="text-slate-500 font-medium leading-relaxed relative z-10">Subtle wording causes drop-off before applying.</p>
                 </div>
             </div>
         </div>
@@ -410,10 +410,10 @@ export default function Home() {
                         The Solution
                      </div>
                      <h2 className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight mb-8 leading-[1.05]">
-                        Data-driven <br/> <span className="text-primary">optimization.</span>
+                        Structural vacancy <br/> <span className="text-primary">improvement</span>
                      </h2>
                      <p className="text-xl text-slate-600 font-medium leading-relaxed mb-10">
-                        Our AI engine analyzes your text against 8 key dimensions proven to increase applicant conversion.
+                        Our AI engine analyzes your text against key dimensions proven to increase applicant conversion and quality.
                      </p>
                      
                      {/* MARQUEE SECTION */}
@@ -427,8 +427,8 @@ export default function Home() {
                              {[...Array(2)].map((_, i) => (
                                  <div key={i} className="flex gap-4">
                                     {[
-                                        "Bias Detection", "Tone Analysis", "Readability Score", "SEO Keywords",
-                                        "Formatting Check", "Sentiment Scan", "Length Optimization", "Structure Audit"
+                                        "Candidate fit check", "Tone & psychological safety", "Inclusive language", "Mobile scanability",
+                                        "Keywords & discoverability", "Structure & order", "Benefits clarity", "Noise & mismatch reduction"
                                     ].map((feature, j) => (
                                         <div key={j} className="flex items-center gap-2 px-6 py-3 rounded-full bg-white border border-slate-200 shadow-sm text-slate-700 font-bold whitespace-nowrap">
                                             <CheckCircle2 className="w-4 h-4 text-green-500" />
