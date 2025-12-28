@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Sparkles, ArrowRight, CheckCircle2, Lock, Search, MessageSquare, FileText, Layout, Globe, Loader2, Play } from "lucide-react";
+import { Sparkles, ArrowRight, CheckCircle2, Lock, Search, MessageSquare, FileText, Layout, Globe, Loader2, Play, Building2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -17,6 +17,7 @@ const ANALYSIS_STEPS = [
 
 export default function Home() {
   const [vacancyText, setVacancyText] = useState("");
+  const [category, setCategory] = useState("General");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
@@ -64,7 +65,7 @@ export default function Home() {
       const response = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ vacancyText }),
+        body: JSON.stringify({ vacancyText, category }),
       });
 
       if (!response.ok) {
@@ -205,8 +206,11 @@ export default function Home() {
                             <div className="space-y-2 relative z-10">
                                 <label className="text-sm font-bold text-slate-700 ml-1 uppercase tracking-wide flex items-center gap-2">
                                    Paste your vacancy text
-                                   <span className="text-[10px] font-extrabold px-1.5 py-0.5 bg-primary/10 text-primary rounded-md">AUTO-DETECT</span>
+                                    <span className="text-[10px] font-extrabold px-1.5 py-0.5 bg-primary/10 text-primary rounded-md">AUTO-DETECT</span>
                                 </label>
+
+
+
                                 <textarea
                                     value={vacancyText}
                                     onChange={(e) => setVacancyText(e.target.value)}
@@ -217,8 +221,26 @@ export default function Home() {
                             </div>
 
                             <div className="flex items-center justify-between gap-4 relative z-10">
-                                <div className="text-xs text-slate-400 font-bold pl-1 uppercase tracking-wider">
-                                    {vacancyText.length > 0 ? `${vacancyText.length} characters` : 'Ready to support'}
+                                <div>
+                                   <div className="relative group/cat">
+                                       <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-hover/cat:text-primary transition-colors pointer-events-none" />
+                                       <select 
+                                         value={category}
+                                         onChange={(e) => setCategory(e.target.value)}
+                                         className="appearance-none pl-9 pr-8 py-2.5 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/30 hover:border-slate-300 transition-all shadow-sm cursor-pointer"
+                                         style={{ backgroundImage: "none" }}
+                                       >
+                                           <option value="General">General (Default)</option>
+                                           <option value="Government / Public Sector">Government / Public</option>
+                                           <option value="Technology / Startups">Tech / Startup</option>
+                                           <option value="Healthcare / Education">Healthcare / Education</option>
+                                           <option value="Legal / Corporate">Legal / Corporate</option>
+                                           <option value="Blue Collar / Manual">Blue Collar / Operations</option>
+                                       </select>
+                                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+                                            <svg className="h-3 w-3 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+                                        </div>
+                                   </div>
                                 </div>
                                 <Button
                                     onClick={handleAnalyze}

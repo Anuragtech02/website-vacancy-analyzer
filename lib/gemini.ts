@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { ANALYZER_PROMPT, OPTIMIZER_PROMPT } from "./prompts";
+import { getAnalyzerPrompt, OPTIMIZER_PROMPT } from "./prompts";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
@@ -96,7 +96,7 @@ export interface OptimizationResult {
   };
 }
 
-export async function analyzeVacancy(vacancyText: string): Promise<AnalysisResult> {
+export async function analyzeVacancy(vacancyText: string, category: string = "General"): Promise<AnalysisResult> {
   if (!process.env.GEMINI_API_KEY) {
     throw new Error("GEMINI_API_KEY is not set");
   }
@@ -108,7 +108,7 @@ export async function analyzeVacancy(vacancyText: string): Promise<AnalysisResul
       {
         role: "user",
         parts: [
-          { text: ANALYZER_PROMPT },
+          { text: getAnalyzerPrompt(category) },
           { text: `Vacancy Text:\n${vacancyText}` }
         ]
       }

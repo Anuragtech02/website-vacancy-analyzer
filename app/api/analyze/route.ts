@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { vacancyText } = await req.json() as { vacancyText: string };
+    const { vacancyText, category } = await req.json() as { vacancyText: string, category?: string };
 
     if (!vacancyText || typeof vacancyText !== "string") {
       return NextResponse.json(
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Analyze with Gemini
-    const analysis = await analyzeVacancy(vacancyText);
+    const analysis = await analyzeVacancy(vacancyText, category || "General");
     
     // Generate Report ID
     const reportId = nanoid(10);
