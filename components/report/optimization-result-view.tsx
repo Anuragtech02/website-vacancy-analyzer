@@ -20,7 +20,7 @@ export function OptimizationResultView({ result, email, phase }: OptimizationRes
         </div>
         <h3 className="text-xl font-bold text-green-900">Optimization Complete!</h3>
         <p className="text-green-700">
-          Here is your optimized vacancy. We've also sent a copy to <strong>{email}</strong>.
+          We've sent the optimized vacancy to <strong>{email}</strong>.
         </p>
         
         {/* Phase-based Actions */}
@@ -34,59 +34,27 @@ export function OptimizationResultView({ result, email, phase }: OptimizationRes
              </Button>
            ) : (
               <div className="bg-white/60 p-6 rounded-xl border border-green-200/50 max-w-sm mx-auto backdrop-blur-sm">
-                  <h4 className="font-bold text-green-900 mb-2">Want to scale this?</h4>
+                  <h4 className="font-bold text-green-900 mb-2">Curious how to use this structurally?</h4>
                   <p className="text-sm text-green-800 mb-4">
-                     Get a custom license for your whole team or integrate logically.
+                     This approach attracts better-fit candidates faster across multiple vacancies.
                   </p>
-                  <Button 
-                    onClick={() => window.open("https://vacaturetovenaar.nl/demo", "_blank")}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white font-bold"
-                  >
-                     Schedule a Demo
-                  </Button>
+                  <div className="space-y-2">
+                    <Button 
+                      onClick={() => window.open("https://vacaturetovenaar.nl/demo", "_blank")}
+                      className="w-full bg-green-600 hover:bg-green-700 text-white font-bold"
+                    >
+                       Schedule a Demo
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      onClick={() => window.location.href = "mailto:joost@vacaturetovenaar.nl"}
+                      className="w-full text-green-800 hover:text-green-950 hover:bg-green-100/50 h-8 text-sm"
+                    >
+                       Contact Us
+                    </Button>
+                  </div>
               </div>
            )}
-        </div>
-      </div>
-
-      {/* Result Card */}
-      <div className="bg-bg-surface-container-low rounded-3xl p-6 sm:p-12 shadow-xl border border-outline-variant/60 space-y-8 bg-white relative overflow-hidden">
-        <div className="relative z-10 space-y-8">
-            <div className="space-y-4">
-               <h2 className="text-2xl font-bold text-slate-900">Optimized Vacancy</h2>
-               <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                    <span className="block text-slate-500 mb-1 font-medium">New Structure Score</span>
-                    <span className="text-3xl font-black text-primary">{result.estimated_scores.structure_layout.toFixed(1)}/10</span>
-                  </div>
-                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                    <span className="block text-slate-500 mb-1 font-medium">New Total Score</span>
-                    <span className="text-3xl font-black text-primary">{result.estimated_scores.total_score.toFixed(1)}/10</span>
-                  </div>
-               </div>
-            </div>
-
-            <div className="prose prose-lg max-w-none prose-slate bg-slate-50/50 p-6 sm:p-8 rounded-2xl border border-slate-100">
-              <pre className="whitespace-pre-wrap font-sans text-base leading-relaxed text-slate-700">
-                {result.full_text_markdown}
-              </pre>
-            </div>
-            
-            <div className="space-y-4">
-              <h3 className="text-xl font-bold text-slate-900">Key Improvements</h3>
-              <ul className="space-y-3">
-                {result.changes.improvements.map((imp, i) => (
-                  <li key={i} className="flex gap-3 text-sm group">
-                    <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-green-200 transition-colors">
-                        <Check className="w-3.5 h-3.5 text-green-700" />
-                    </div>
-                    <span className="text-slate-600 leading-relaxed">
-                      <strong className="font-semibold text-slate-900">{imp.pillar}:</strong> {imp.change}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
         </div>
       </div>
     </div>

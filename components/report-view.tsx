@@ -62,15 +62,25 @@ function LimitReachedModal({
            
            <h3 className="text-2xl font-black text-slate-900 mb-2">Limit Reached</h3>
            <p className="text-slate-600 mb-8 leading-relaxed">
-             You’ve already used two free rewrites. Full rewriting is available only with a demo or license.
+             You’ve already used two free rewrites with Vacature Tovenaar. You can continue analyzing vacancies, but rewriting is available only with a demo or license.
            </p>
 
-           <Button
-              className="w-full h-12 text-base font-bold shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 rounded-xl"
-              onClick={() => window.open("https://vacaturetovenaar.nl/demo", "_blank")}
-           >
-              Schedule a Demo to Unlock
-           </Button>
+           <div className="space-y-3">
+             <Button
+                className="w-full h-12 text-base font-bold shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 rounded-xl"
+                onClick={() => window.open("https://vacaturetovenaar.nl/demo", "_blank")}
+             >
+                Schedule a Demo
+             </Button>
+             
+             <Button
+                variant="ghost"
+                className="w-full text-slate-500 hover:text-slate-900"
+                onClick={() => window.location.href = "mailto:joost@vacaturetovenaar.nl"}
+             >
+                Contact Us
+             </Button>
+           </div>
        </div>
     </div>
   );
@@ -243,15 +253,34 @@ export function ReportView({
         body: JSON.stringify({ email, reportId }),
       });
 
-      if (!response.ok) throw new Error("Failed to submit");
+      const data = await response.json();
 
-      const data = (await response.json()) as {
-        optimization: OptimizationResult;
-      };
+      if (data.isLocked) {
+        setPhase(3);
+        localStorage.setItem("vacancy_usage_count", "3"); // Force sync
+        setShowLimitModal(true);
+        setStatus("idle");
+        setShowModal(false);
+        return;
+      }
+
+      if (!data.success || !data.optimization) {
+         throw new Error("Failed to optimize");
+      }
+
       setOptimizationResult(data.optimization);
       setIsUnlocked(true);
       setStatus("success");
       setShowModal(false);
+      
+      // Update usage count in local storage
+      const currentCount = parseInt(localStorage.getItem("vacancy_usage_count") || "0", 10);
+      const newCount = currentCount + 1;
+      localStorage.setItem("vacancy_usage_count", newCount.toString());
+      
+      // Update phase based on new count
+      if (newCount >= 2) setPhase(2); // If 2nd, set Phase 2
+      
     } catch (error) {
       console.error(error);
       setStatus("error");

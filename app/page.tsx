@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Sparkles, ArrowRight, CheckCircle2, Lock, Search, MessageSquare, FileText, Layout, Globe, Loader2, Play, Building2 } from "lucide-react";
+import { Wand2, ArrowRight, CheckCircle2, Lock, Search, MessageSquare, FileText, Layout, Globe, Loader2, Play, Building2, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -87,16 +87,13 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-primary/20 relative overflow-hidden">
-      {/* Background Decorators - Unique to Landing (Drafting/Creation Theme) */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        {/* Graph Paper Grid (Drafting Board) */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+      {/* Background Decorators - Minimalist White */}
+      <div className="fixed inset-0 z-0 pointer-events-none bg-white">
+        {/* Subtle Grid */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808005_1px,transparent_1px),linear-gradient(to_bottom,#80808005_1px,transparent_1px)] bg-[size:40px_40px]" />
         
-        {/* Central Spotlight - Creation Spark */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-gradient-to-b from-primary/5 via-indigo-50/20 to-transparent blur-[120px]" />
-        
-        {/* secondary ambient blobs */}
-        <div className="absolute top-[20%] right-0 w-[40%] h-[50%] bg-gradient-to-b from-secondary/5 to-transparent blur-[100px] rounded-full opacity-50" />
+        {/* Ambient Bloom */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[800px] bg-gradient-to-b from-indigo-50/50 to-transparent blur-[120px] opacity-60" />
       </div>
 
       {/* Header / Top Bar */}
@@ -112,15 +109,15 @@ export default function Home() {
               </h1>
             </div>
           </div>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-8">
             <a
                href="https://vacaturetovenaar.nl"
-               className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors hidden sm:block"
+               className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors hidden md:block"
              >
-               Visit Main Site
+               Ontdek Vacature Tovenaar
              </a>
-             <Button className="rounded-full shadow-lg hover:shadow-xl transition-all">
-                Get Started
+             <Button className="rounded-full shadow-lg hover:shadow-xl transition-all bg-indigo-600 hover:bg-indigo-700 font-bold px-6">
+                Analyseer vacature
              </Button>
           </div>
         </div>
@@ -130,32 +127,35 @@ export default function Home() {
       <div className="flex-1 flex flex-col pt-32 pb-8 px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto w-full justify-center relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center mb-12">
             {/* Left Column: Copy */}
-            <div className="space-y-8 text-left">
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-secondary-container text-on-secondary-container font-bold text-xs uppercase tracking-wide border border-outline-variant/50">
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>Powered by Vacature Tovenaar</span>
+            <div className="space-y-6 text-left">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-600 font-bold text-[10px] uppercase tracking-wider border border-blue-100/50">
+                    <Wand2 className="w-3 h-3" />
+                    <span>DOOR VACATURE TOVENAAR</span>
                 </div>
 
-                <h2 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tighter text-on-surface leading-[1.05]">
-                    Vacancy Analyzer <br/>
-
+                <h2 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tighter text-slate-900 leading-[1.05]">
+                    Betere vacatures <br/>
+                    <span className="relative inline-block mt-2">
+                        <span className="relative z-10 text-indigo-600">Betere kandidaten</span>
+                        <div className="absolute left-0 right-0 -bottom-1 h-3 bg-indigo-100/70 -z-0"></div>
+                    </span>
                 </h2>
 
-                <p className="text-xl text-on-surface-variant leading-relaxed max-w-lg font-medium">
-                    Analyze and rewrite your job post in 1 minute.
+                <p className="text-lg text-slate-500 leading-relaxed max-w-md font-medium">
+                    Analyseer en herschrijf je vacaturetekst in 1 minuut.
                 </p>
 
                 <div className="flex flex-col gap-4 pt-2">
                    {[
-                     "Remove unconscious bias instantly",
-                     "Boost SEO visibility & findability",
-                     "Increase applicant conversion by 30%"
+                     "Trek passende kandidaten aan",
+                     "Laat ongeschikte kandidaten afhaken",
+                     "Overtuig schaarse profielen om te reageren"
                    ].map((text, idx) => (
                       <div key={idx} className="flex items-center gap-3">
-                        <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center shrink-0">
-                            <CheckCircle2 className="w-4 h-4 text-green-700" />
+                        <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                         </div>
-                        <span className="text-on-surface/90 font-bold">{text}</span>
+                        <span className="text-slate-700 font-semibold text-base">{text}</span>
                      </div>
                    ))}
                 </div>
@@ -164,92 +164,86 @@ export default function Home() {
             {/* Right Column: Interactive Card */}
             <div className="relative">
                 {/* Decorative blobs */}
-                <div className="absolute -top-12 -right-12 w-64 h-64 bg-primary/10 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
-                <div className="absolute -bottom-12 -left-12 w-64 h-64 bg-secondary/10 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
+                <div className="absolute -top-12 -right-12 w-64 h-64 bg-indigo-100/50 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
+                <div className="absolute -bottom-12 -left-12 w-64 h-64 bg-indigo-50/50 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
 
                 {!isAnalyzing ? (
                   <>
-                    {/* Floating Badge */}
-                     <div className="absolute -right-4 top-8 bg-surface p-3 rounded-2xl shadow-xl border border-outline-variant/40 animate-bounce duration-[3000ms] hidden lg:block z-10">
-                        <div className="flex items-center gap-2">
-                            <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
-                            <span className="text-xs font-bold text-on-surface">Inclusive?</span>
-                        </div>
+                    {/* Floating Badge - Top Right */}
+                    <div className="absolute -right-8 -top-4 bg-white py-2.5 px-4 rounded-xl shadow-xl border border-slate-100 flex items-center gap-2 z-20 animate-in fade-in slide-in-from-right-4 duration-1000">
+                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                        <span className="text-sm font-bold text-slate-700">De juiste kandidaten</span>
                     </div>
 
                     {/* Input Card - App Window Aesthetic */}
-                    <div className="relative bg-white rounded-[32px] shadow-2xl shadow-blue-900/10 border border-white/40 ring-1 ring-slate-200/50 overflow-hidden transform transition-all hover:scale-[1.005] duration-500 group">
+                    <div className="relative bg-white rounded-[32px] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.08)] border border-slate-100 transform transition-all hover:scale-[1.005] duration-500">
                         
                         {/* Browser Header */}
-                        <div className="px-5 py-4 bg-slate-50/80 border-b border-slate-100 flex items-center justify-between gap-4">
+                        <div className="px-6 py-4 bg-slate-50/50 border-b border-slate-100 flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-full bg-red-400/90 shadow-sm"></div>
-                                <div className="w-3 h-3 rounded-full bg-amber-400/90 shadow-sm"></div>
-                                <div className="w-3 h-3 rounded-full bg-emerald-400/90 shadow-sm"></div>
+                                <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                                <div className="w-3 h-3 rounded-full bg-amber-400"></div>
+                                <div className="w-3 h-3 rounded-full bg-emerald-400"></div>
                             </div>
-                            
-                            {/* Fake URL Bar */}
-                            <div className="flex-1 max-w-[200px] hidden sm:flex items-center justify-center gap-2 px-3 py-1.5 bg-white rounded-lg border border-slate-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
-                                <div className="w-2 h-2 rounded-full bg-green-500/20 flex items-center justify-center">
-                                    <div className="w-1 h-1 rounded-full bg-green-500"></div>
-                                </div>
-                                <span className="text-[10px] font-semibold text-slate-400 tracking-wide">vacancy-analyzer.ai</span>
+                            <div className="flex items-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                               <Lock className="w-3 h-3" />
+                               Analyse Vacature
                             </div>
-
                             <div className="w-12"></div>
                         </div>
 
-                        <div className="p-6 sm:p-8 space-y-6 bg-white/50 relative z-10">
-                            {/* Watermark */}
-                            <FileText className="absolute -bottom-12 -left-12 w-48 h-48 text-slate-50 transform rotate-12 pointer-events-none z-0" />
-                            
-                            <div className="space-y-2 relative z-10">
-                                <label className="text-sm font-bold text-slate-700 ml-1 uppercase tracking-wide flex items-center gap-2">
-                                   Paste your vacancy text
-                                    <span className="text-[10px] font-extrabold px-1.5 py-0.5 bg-primary/10 text-primary rounded-md">AUTO-DETECT</span>
-                                </label>
-
-
-
+                        <div className="p-6 space-y-6 relative">
+                            <div className="relative">
                                 <textarea
                                     value={vacancyText}
                                     onChange={(e) => setVacancyText(e.target.value)}
-                                    placeholder="Paste vacancy text here"
-                                    className="w-full h-64 p-5 bg-slate-50/50 focus:bg-white rounded-2xl border-2 border-slate-100 resize-none focus:ring-4 focus:ring-primary/10 focus:border-primary/30 transition-all text-base leading-relaxed placeholder:text-slate-300 font-medium shadow-inner"
+                                    placeholder="Plak hier je vacaturetekst"
+                                    className="w-full h-64 p-5 bg-slate-50/30 focus:bg-white rounded-2xl border-2 border-slate-100/50 resize-none focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500/20 transition-all text-base leading-relaxed placeholder:text-slate-300 font-medium"
                                     style={{ whiteSpace: "pre-wrap" }}
                                 />
+
+                                {/* Floating Badge - Bottom Left (Inside/Overlapping Textarea) */}
+                                <div className="absolute left-4 lg:-left-6 xl:-left-12 bottom-8 bg-white py-2.5 px-4 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-3 z-20 transition-all duration-300">
+                                   <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center">
+                                       <span className="text-indigo-600 font-black text-xs">A+</span>
+                                   </div>
+                                   <span className="text-sm font-bold text-slate-700">Vacaturekwaliteit</span>
+                                </div>
                             </div>
 
-                            <div className="flex items-center justify-between gap-4 relative z-10">
-                                <div>
+                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 relative z-10 pt-2">
+                                <div className="w-full sm:w-auto">
                                    <div className="relative group/cat">
-                                       <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-hover/cat:text-primary transition-colors pointer-events-none" />
+                                       <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-hover/cat:text-indigo-600 transition-colors pointer-events-none" />
                                        <select 
                                          value={category}
                                          onChange={(e) => setCategory(e.target.value)}
-                                         className="appearance-none pl-9 pr-8 py-2.5 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/30 hover:border-slate-300 transition-all shadow-sm cursor-pointer"
+                                         className="appearance-none w-full sm:w-auto pl-9 pr-8 py-3.5 sm:py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500/30 hover:border-slate-300 transition-all shadow-sm cursor-pointer"
                                          style={{ backgroundImage: "none" }}
                                        >
-                                           <option value="General">General (Default)</option>
-                                           <option value="Government / Public Sector">Government / Public</option>
-                                           <option value="Technology / Startups">Tech / Startup</option>
-                                           <option value="Healthcare / Education">Healthcare / Education</option>
-                                           <option value="Legal / Corporate">Legal / Corporate</option>
-                                           <option value="Blue Collar / Manual">Blue Collar / Operations</option>
+                                           <option value="General">Algemeen (Standaard)</option>
+                                           <option value="Government / Public Sector">Overheid / Publiek</option>
+                                           <option value="Technology / Startups">Tech / IT</option>
+                                           <option value="Healthcare / Education">Zorg / Onderwijs</option>
+                                           <option value="Legal / Corporate">Zakelijk / Corporate</option>
+                                           <option value="Blue Collar / Manual">Bouw / Techniek</option>
                                        </select>
                                         <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
                                             <svg className="h-3 w-3 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
                                         </div>
                                    </div>
                                 </div>
-                                <Button
-                                    onClick={handleAnalyze}
-                                    disabled={!vacancyText.trim()}
-                                    className="px-8 py-6 rounded-2xl text-base font-bold shadow-lg shadow-primary/20 hover:scale-105 transition-all"
-                                >
-                                    Analyze for Free
-                                    <ArrowRight className="w-5 h-5 ml-2" />
-                                </Button>
+
+                                <div className="flex items-center gap-4 w-full sm:w-auto">
+                                    <Button
+                                        onClick={handleAnalyze}
+                                        disabled={!vacancyText.trim()}
+                                        className="w-full sm:w-auto px-6 py-6 rounded-2xl text-base font-bold shadow-lg shadow-indigo-500/20 bg-indigo-500 hover:bg-indigo-600 hover:scale-[1.02] active:scale-[0.98] transition-all group"
+                                    >
+                                        Analyseer vacature
+                                        <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                                    </Button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -515,7 +509,7 @@ export default function Home() {
       </section>
 
       {/* SECTION 4: PROFESSIONAL FOOTER (Compact) */}
-      <footer className="w-full bg-slate-950 py-12 border-t border-slate-900">
+      <footer className="w-full bg-slate-950 py-12 border-t border-slate-900 relative z-10">
           <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12">
                   {/* Brand & Mission */}

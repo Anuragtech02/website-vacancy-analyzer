@@ -14,12 +14,14 @@ interface SendOptimizedVacancyEmailParams {
   to: string;
   optimization: OptimizationResult;
   reportId: string;
+  usageCount: number;
 }
 
 export async function sendOptimizedVacancyEmail({
   to,
   optimization,
   reportId,
+  usageCount,
 }: SendOptimizedVacancyEmailParams): Promise<{
   success: boolean;
   error?: string;
@@ -31,6 +33,76 @@ export async function sendOptimizedVacancyEmail({
 
     // Generate PDF from HTML template
     const pdfBuffer = await generateVacancyPDF(optimization);
+
+    // Determines content based on phase
+    const isPhase2 = usageCount >= 2;
+    
+    // --- CONTENT VARIABLES ---
+    const introText = isPhase2
+      ? `Je hebt inmiddels twee vacatures geanalyseerd met Vacature Tovenaar. Dat betekent meestal dat teams willen weten of deze aanpak ook structureel werkt wanneer meerdere vacatures tegelijkertijd openstaan.`
+      : `We hebben jouw vacature voor <strong style="color: #0f172a;">${jobTitle}</strong>${organization ? ` bij ${organization}` : ""} geoptimaliseerd met onze Human AI methode.`;
+
+    const whyMattersTitle = isPhase2 
+      ? "🧠 De kwaliteit van kandidaten lijkt vaak een kwestie van bereik, maar in de praktijk zit het verschil in:"
+      : "Waarom dit belangrijk is:";
+
+    const whyMattersContent = isPhase2
+      ? `
+        hoe je de tekst formuleert<br>
+        welke kandidaten zich aangesproken voelen<br>
+        welke profielen afhaken<br><br>
+        <strong>Met deze aanpak zie je:</strong><br>
+        ✅ minder tijd kwijt aan mismatch<br>
+        ✅ sneller shortlist<br>
+        ✅ lagere advertentiekosten<br>
+        ✅ meer consistente kwaliteit
+      `
+      : `
+        kleine copy-aanpassingen sturen wie zich wél meldt en wie niet.<br>
+        Dat maakt direct verschil in:<br>
+        ✅ kwaliteit van reacties<br>
+        ✅ uitval tijdens selectie<br>
+        ✅ advertentiekosten
+      `;
+      
+    // Phase 2 CTA section (Demo/Reply)
+    const phase2CTA = `
+      <p style="margin: 0 0 16px 0; font-size: 16px; line-height: 1.6; color: #475569;">
+        💬 <strong>Wil je weten wat dit voor jullie processen kan betekenen?</strong><br>
+        Reply op deze mail – dan laat ik je live zien hoe je dit toepast op meerdere vacatures en tot welke resultaten dit leidt bij vergelijkbare organisaties.
+      </p>
+      <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td align="center">
+            <a href="https://calendly.com/vacaturetovenaar/demo" style="display: inline-block; padding: 14px 32px; background-color: #007b5f; color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; border-radius: 8px;">
+              Plan Direct Een Moment
+            </a>
+          </td>
+        </tr>
+      </table>
+    `;
+
+    // Phase 1 CTA section (Analyze another)
+    const phase1CTA = `
+      <p style="margin: 0 0 16px 0; font-size: 16px; line-height: 1.6; color: #475569;">
+        💬 <strong>Benieuwd hoe je met deze aanpak structureel meer passende kandidaten aantrekt?</strong><br>
+        Reply op deze mail, dan laat ik je live zien wat deze aanpak voor jullie organisatie kan betekenen.
+      </p>
+      <p style="margin: 0 0 24px 0; font-size: 16px; line-height: 1.6; color: #475569;">
+        Wil je ondertussen nog een vacature analyseren? Dat kan via de knop hieronder:
+      </p>
+      <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td align="center">
+            <a href="https://vacaturetovenaar.nl" style="display: inline-block; padding: 14px 32px; background-color: #007b5f; color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; border-radius: 8px;">
+              Analyseer Nog Een Vacature
+            </a>
+          </td>
+        </tr>
+      </table>
+    `;
+
+    const ctaSection = isPhase2 ? phase2CTA : phase1CTA;
 
     const resend = getResendClient();
     const { data, error } = await resend.emails.send({
@@ -60,11 +132,11 @@ export async function sendOptimizedVacancyEmail({
                     <tr>
                       <td style="padding: 40px;">
                         <h2 style="margin: 0 0 16px 0; font-size: 22px; font-weight: 600; color: #0f172a;">
-                          Jouw geoptimaliseerde vacature is klaar!
+                          ${isPhase2 ? "Je analyse is klaar" : "Jouw geoptimaliseerde vacature is klaar!"}
                         </h2>
 
                         <p style="margin: 0 0 24px 0; font-size: 16px; line-height: 1.6; color: #475569;">
-                          We hebben jouw vacature voor <strong style="color: #0f172a;">${jobTitle}</strong>${organization ? ` bij ${organization}` : ""} geoptimaliseerd met onze Human AI methode.
+                          ${introText}
                         </p>
 
                         <!-- Score Box -->
@@ -83,38 +155,25 @@ export async function sendOptimizedVacancyEmail({
                           📎 <strong>De herschreven vacature zit als PDF in de bijlage.</strong> Je kunt de tekst direct kopiëren en plakken in je ATS of vacaturesite.
                         </p>
 
-                        <!-- What We Changed -->
+                        <!-- Variable Improvements Section -->
                         <h3 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 600; color: #0f172a;">
-                          Wat we verbeterd hebben:
+                          🧾 Een paar concrete verbeteringen:
                         </h3>
                         <p style="margin: 0 0 24px 0; font-size: 14px; line-height: 1.6; color: #475569;">
                           ${optimization.changes.summary}
                         </p>
 
-                        <!-- Highlights -->
-                        <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 24px;">
-                          <tr>
-                            <td style="padding: 12px 16px; background-color: #f8fafc; border-radius: 6px;">
-                              <p style="margin: 0; font-size: 13px; color: #64748b;">
-                                ✅ Bureaucratische termen verwijderd<br>
-                                ✅ Psychologische veiligheid toegevoegd<br>
-                                ✅ SEO-geoptimaliseerde titel met locatie<br>
-                                ✅ Actieve, warme toon
-                              </p>
-                            </td>
-                          </tr>
-                        </table>
+                        <!-- Variable 'Why this matters' Section -->
+                         <h3 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 600; color: #0f172a;">
+                          ${whyMattersTitle}
+                        </h3>
+                        <p style="margin: 0 0 24px 0; font-size: 14px; line-height: 1.6; color: #475569;">
+                           ${whyMattersContent}
+                        </p>
 
-                        <!-- CTA -->
-                        <table width="100%" cellpadding="0" cellspacing="0">
-                          <tr>
-                            <td align="center">
-                              <a href="https://vacaturetovenaar.nl" style="display: inline-block; padding: 14px 32px; background-color: #007b5f; color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; border-radius: 8px;">
-                                Analyseer Nog Een Vacature
-                              </a>
-                            </td>
-                          </tr>
-                        </table>
+                        <!-- CTA Section (Phase Specific) -->
+                        ${ctaSection}
+
                       </td>
                     </tr>
 

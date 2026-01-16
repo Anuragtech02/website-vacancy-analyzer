@@ -1,7 +1,7 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { reports, leads } from "./db/schema";
-import { eq } from "drizzle-orm";
+import { eq, count } from "drizzle-orm";
 
 const connectionString = process.env.DATABASE_URL!;
 
@@ -41,5 +41,13 @@ export const dbClient = {
       email,
       report_id: reportId,
     });
+  },
+
+  countLeadsByEmail: async (email: string) => {
+    const result = await db
+      .select({ count: count() })
+      .from(leads)
+      .where(eq(leads.email, email));
+    return result[0]?.count || 0;
   },
 };
