@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { dbClient } from "@/lib/db";
 import { optimizeVacancy } from "@/lib/gemini";
 import { sendOptimizedVacancyEmail } from "@/lib/email";
+import { syncHubSpotContact } from "@/lib/hubspot";
 
 export async function POST(req: NextRequest) {
   try {
@@ -53,6 +54,12 @@ export async function POST(req: NextRequest) {
     // Generate optimization
     const analysis = JSON.parse(report.analysis_json);
     const optimizationResult = await optimizeVacancy(report.vacancy_text, analysis);
+
+    // Sync to HubSpot (Fire and Forget)
+    syncHubSpotContact(email, {
+      jobtitle: analysis.metadata?.job_title || "Unknown Vacancy",
+      vacancy_report_id: reportId
+    }).catch(err => console.error("HubSpot Sync Failed", err));
 
     // Send email with PDF attachment
     const emailResult = await sendOptimizedVacancyEmail({

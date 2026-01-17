@@ -1,14 +1,23 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
+import { SESClient, SendRawEmailCommand } from "@aws-sdk/client-ses";
 import { OptimizationResult } from "./gemini";
 import { generateVacancyPDF } from "./pdf-generator";
 
-function getResendClient() {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) {
-    throw new Error("RESEND_API_KEY is not set");
-  }
-  return new Resend(apiKey);
-}
+// Initialize SES Client
+const ses = new SESClient({
+  region: process.env.AWS_REGION || "eu-central-1",
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
+  },
+});
+
+// Create Nodemailer Transporter for Stream Generation (Buffer)
+const mailGenerator = nodemailer.createTransport({
+  streamTransport: true,
+  newline: "unix",
+  buffer: true,
+});
 
 interface SendOptimizedVacancyEmailParams {
   to: string;
@@ -94,7 +103,7 @@ export async function sendOptimizedVacancyEmail({
       <table width="100%" cellpadding="0" cellspacing="0">
         <tr>
           <td align="center">
-            <a href="https://vacaturetovenaar.nl" style="display: inline-block; padding: 14px 32px; background-color: #007b5f; color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; border-radius: 8px;">
+            <a href="https://analyse.vacaturetovenaar.nl" style="display: inline-block; padding: 14px 32px; background-color: #007b5f; color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; border-radius: 8px;">
               Analyseer Nog Een Vacature
             </a>
           </td>
@@ -104,12 +113,7 @@ export async function sendOptimizedVacancyEmail({
 
     const ctaSection = isPhase2 ? phase2CTA : phase1CTA;
 
-    const resend = getResendClient();
-    const { data, error } = await resend.emails.send({
-      from: "Vacature Tovenaar <noreply@vacaturetovenaar.nl>",
-      to: [to],
-      subject: `Jouw Geoptimaliseerde Vacature: ${jobTitle}`,
-      html: `
+    const htmlContent = `
         <!DOCTYPE html>
         <html>
           <head>
@@ -194,21 +198,32 @@ export async function sendOptimizedVacancyEmail({
             </table>
           </body>
         </html>
-      `,
+    `;
+
+    // 1. Generate Raw MIME Message using Nodemailer
+    const emailInfo = await mailGenerator.sendMail({
+      from: process.env.AWS_FROM_EMAIL || "Vacature Tovenaar <noreply@vacaturetovenaar.nl>",
+      to: to,
+      subject: `Jouw Geoptimaliseerde Vacature: ${jobTitle}`,
+      html: htmlContent,
       attachments: [
         {
           filename: `${jobTitle.replace(/[^a-zA-Z0-9\s]/g, "").replace(/\s+/g, "-")}-geoptimaliseerd.pdf`,
-          content: pdfBuffer,
+          content: Buffer.from(pdfBuffer),
         },
       ],
     });
 
-    if (error) {
-      console.error("Resend error:", error);
-      return { success: false, error: error.message };
-    }
+    // 2. Send Raw Message with AWS SES
+    const rawMessage = emailInfo.message as Buffer;
+    
+    const command = new SendRawEmailCommand({
+      RawMessage: { Data: rawMessage },
+    });
 
-    console.log("Email sent successfully:", data);
+    const result = await ses.send(command);
+
+    console.log("Email sent successfully via SES (Raw):", result.MessageId);
     return { success: true };
   } catch (error) {
     console.error("Email sending error:", error);
