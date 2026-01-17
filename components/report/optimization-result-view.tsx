@@ -40,7 +40,7 @@ export function OptimizationResultView({ result, email, phase }: OptimizationRes
                   </p>
                   <div className="space-y-2">
                     <Button 
-                      onClick={() => window.open("https://vacaturetovenaar.nl/demo", "_blank")}
+                      onClick={() => window.open("https://meetings-eu1.hubspot.com/jknuvers", "_blank")}
                       className="w-full bg-green-600 hover:bg-green-700 text-white font-bold"
                     >
                        Schedule a Demo

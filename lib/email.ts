@@ -83,7 +83,7 @@ export async function sendOptimizedVacancyEmail({
       <table width="100%" cellpadding="0" cellspacing="0">
         <tr>
           <td align="center">
-            <a href="https://calendly.com/vacaturetovenaar/demo" style="display: inline-block; padding: 14px 32px; background-color: #007b5f; color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; border-radius: 8px;">
+            <a href="https://meetings-eu1.hubspot.com/jknuvers" style="display: inline-block; padding: 14px 32px; background-color: #007b5f; color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; border-radius: 8px;">
               Plan Direct Een Moment
             </a>
           </td>
