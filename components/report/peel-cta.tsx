@@ -31,7 +31,7 @@ export function PeelCTA({ onUnlock, currentScore }: PeelCTAProps) {
         <div className="relative z-10 w-full h-full p-5 sm:p-6 flex flex-col justify-center max-w-[60%] sm:max-w-[50%]">
            <h3 className="text-2xl sm:text-3xl font-black text-white leading-none tracking-tight mb-3">
              Unlock <br/>
-             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
+             <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400">
                maximum potential
              </span>
            </h3>
@@ -41,7 +41,7 @@ export function PeelCTA({ onUnlock, currentScore }: PeelCTAProps) {
            </p>
            
            <Button 
-             className="w-fit bg-blue-600 hover:bg-blue-500 text-white border-none shadow-lg shadow-blue-900/40 rounded-full px-6 py-6 text-sm font-bold group-hover:scale-105 active:scale-95 transition-all"
+             className="w-fit bg-primary hover:bg-primary/90 text-white border-none shadow-lg shadow-primary/40 rounded-full px-6 py-6 text-sm font-bold group-hover:scale-105 active:scale-95 transition-all"
            >
               Unlock Now <ArrowRight className="w-4 h-4 ml-2" />
            </Button>
@@ -58,7 +58,7 @@ export function PeelCTA({ onUnlock, currentScore }: PeelCTAProps) {
                    
                    {/* Decorative Illustrations / Shapes */}
                    <div className="absolute top-[-30px] right-[-30px] w-40 h-40 bg-yellow-400 rounded-full blur-3xl opacity-60 animate-pulse" />
-                   <div className="absolute bottom-[-20px] left-[-20px] w-32 h-32 bg-blue-500 rounded-full blur-3xl opacity-60" />
+                   <div className="absolute bottom-[-20px] left-[-20px] w-32 h-32 bg-primary rounded-full blur-3xl opacity-60" />
                    
                    {/* Geometric Shapes */}
                    <svg className="absolute inset-0 w-full h-full opacity-80 pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">

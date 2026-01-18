@@ -95,9 +95,9 @@ export function ScoreHero({
           <div className="space-y-4">
               <div className="flex items-center justify-between">
                  <div className="flex items-center gap-2">
-                    <span className="px-2.5 py-1 bg-indigo-50 rounded-md text-[10px] font-bold text-indigo-600 uppercase tracking-wider">
-                      Analysis Report
-                    </span>
+                     <span className="px-2.5 py-1 bg-primary/10 rounded-md text-[10px] font-bold text-primary uppercase tracking-wider">
+                       Analysis Report
+                     </span>
                     <span className="text-[10px] text-slate-400 font-mono">#{reportId.slice(0, 8)}</span>
                  </div>
                  <Share2 className="w-4 h-4 text-slate-400 hover:text-slate-600 cursor-pointer transition-colors" />

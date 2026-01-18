@@ -106,7 +106,7 @@ export function generateVacancyHTML(optimization: OptimizationResult): string {
       (note) => `
       <div class="strategy-note p-4 rounded mb-5 shadow-sm">
         <div class="flex items-center mb-2">
-          <i data-lucide="${escapeHtml(note.icon)}" class="w-4 h-4 text-indigo-600 mr-2"></i>
+          <i data-lucide="${escapeHtml(note.icon)}" class="w-4 h-4 text-[#FF6B35] mr-2"></i>
           <h4 class="font-bold text-gray-800 text-sm">${escapeHtml(note.title)}</h4>
         </div>
         <p class="text-xs text-gray-600 leading-relaxed">
@@ -129,22 +129,22 @@ export function generateVacancyHTML(optimization: OptimizationResult): string {
   <style>
     body { font-family: 'Inter', sans-serif; background-color: white; }
 
-    /* BRANDING - Indigo theme matching landing page */
-    .client-primary { background-color: #4F46E5; }
-    .client-text { color: #4F46E5; }
+    /* BRANDING - Orange theme matching landing page */
+    .client-primary { background-color: #FF6B35; }
+    .client-text { color: #FF6B35; }
     .client-accent { color: #facc15; }
-    .client-btn { background-color: #4338CA; }
+    .client-btn { background-color: #E85D2E; }
 
     /* BRANDING VACATURE TOVENAAR */
-    .wizard-bg { background-color: #1E1B4B; border-radius: 0 !important; }
+    .wizard-bg { background-color: #1F1B16; border-radius: 0 !important; }
 
     /* STRATEGY NOTES */
-    .strategy-note { border-left: 4px solid #4F46E5; background-color: #EEF2FF; }
-    .strategy-note h4 { color: #1f2937; }
-    .strategy-note i { color: #4F46E5; }
+    .strategy-note { border-left: 4px solid #FF6B35; background-color: #FFF8F6; }
+    .strategy-note h4 { color: #1F1B16; }
+    .strategy-note i { color: #FF6B35; }
 
     /* EDITOR CONTENT */
-    .editor-content h3, .editor-h3 { font-size: 1.125rem; font-weight: 700; color: #4F46E5; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+    .editor-content h3, .editor-h3 { font-size: 1.125rem; font-weight: 700; color: #FF6B35; margin-top: 1.5rem; margin-bottom: 0.5rem; }
     .editor-content p { margin-bottom: 1rem; line-height: 1.6; color: #374151; }
     .editor-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; color: #374151; }
     .editor-content li { margin-bottom: 0.25rem; }
@@ -174,9 +174,9 @@ export function generateVacancyHTML(optimization: OptimizationResult): string {
         <span class="text-2xl font-black client-text tracking-tighter">${escapeHtml(orgInitials)}</span>
       </div>
       <div class="ml-5 min-w-0 flex-grow">
-        <span class="bg-yellow-400 text-indigo-900 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider inline-block">Geoptimaliseerde Versie</span>
+        <span class="bg-yellow-400 text-amber-900 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider inline-block">Geoptimaliseerde Versie</span>
         <h1 class="text-2xl font-bold leading-tight mt-1">${escapeHtml(jobTitle)}</h1>
-        <p class="text-indigo-200 text-sm">Geoptimaliseerd door Vacature Tovenaar</p>
+        <p class="text-orange-100 text-sm">Geoptimaliseerd door Vacature Tovenaar</p>
       </div>
     </div>
   </div>
@@ -216,13 +216,13 @@ export function generateVacancyHTML(optimization: OptimizationResult): string {
     <div class="w-full lg:w-1/3 bg-gray-50 border-l border-gray-200 p-8">
       
       <!-- Impact Forecast (New) -->
-      <div class="bg-indigo-900 rounded-xl p-6 text-white mb-8 shadow-lg relative overflow-hidden">
+      <div class="bg-[#1F1B16] rounded-xl p-6 text-white mb-8 shadow-lg relative overflow-hidden">
          <div class="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
-         <h3 class="text-xs font-bold text-indigo-300 uppercase tracking-widest mb-4">Impact Forecast</h3>
+         <h3 class="text-xs font-bold text-orange-300 uppercase tracking-widest mb-4">Impact Forecast</h3>
          
          <div class="mb-4">
              <div class="text-4xl font-black text-white tracking-tighter leading-none mb-1">+40%</div>
-             <div class="text-xs text-indigo-200 font-medium">Estimated Apps</div>
+             <div class="text-xs text-orange-200 font-medium">Estimated Apps</div>
          </div>
          
          <div class="flex items-center gap-2 text-xs font-bold text-yellow-400 bg-white/10 px-3 py-1.5 rounded-full w-fit">
@@ -239,7 +239,7 @@ export function generateVacancyHTML(optimization: OptimizationResult): string {
   <!-- Footer -->
   <div class="wizard-bg p-6 sm:p-8 flex flex-col sm:flex-row justify-between items-center text-gray-300 gap-4">
     <div class="flex items-center gap-3">
-      <div class="bg-indigo-600 p-2 rounded-lg">
+      <div class="bg-[#FF6B35] p-2 rounded-lg">
         <i data-lucide="wand-2" class="text-white w-5 h-5"></i>
       </div>
       <div>

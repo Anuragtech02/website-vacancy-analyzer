@@ -113,10 +113,10 @@ const pillarConfig: Record<string, { label: string; icon: typeof Layout; color: 
   neuromarketing: {
     label: "Neuromarketing",
     icon: Brain,
-    color: "text-indigo-600",
-    bgColor: "bg-indigo-50 group-hover:bg-indigo-100",
-    watermark: "text-indigo-500",
-    gradient: "from-indigo-50/40 via-white to-white",
+    color: "text-violet-600",
+    bgColor: "bg-violet-50 group-hover:bg-violet-100",
+    watermark: "text-violet-500",
+    gradient: "from-violet-50/40 via-white to-white",
   },
 };
 
