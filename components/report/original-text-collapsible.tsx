@@ -32,28 +32,50 @@ export function OriginalTextCollapsible({
     <section className="mb-10">
       <div className="bg-surface-container-low rounded-[20px] border border-outline-variant/60 overflow-hidden">
         {/* Header - clickable */}
-        <button
+        <div
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full px-6 py-4 flex items-center justify-between hover:bg-surface-container-high/50 transition-colors"
+          className="w-full px-6 py-4 flex items-center justify-between hover:bg-surface-container-high/50 transition-colors cursor-pointer group"
         >
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-surface-container-high rounded-xl">
+            <div className="p-2 bg-surface-container-high rounded-xl group-hover:bg-white transition-colors">
               <FileText className="w-5 h-5 text-primary" />
             </div>
             <div className="text-left">
-              <h3 className="font-bold text-on-surface text-lg">Original Vacancy Text</h3>
-              <p className="text-sm text-muted-foreground font-medium">
-                {vacancyText.length.toLocaleString()} characters
+              <h3 className="font-bold text-on-surface text-lg">Originele Vacaturetekst</h3>
+              <p className="text-sm text-muted-foreground font-medium flex items-center gap-2">
+                <span>{vacancyText.length.toLocaleString()} tekens</span>
               </p>
             </div>
           </div>
-          <ChevronDown
-            className={cn(
-              "w-5 h-5 text-muted-foreground transition-transform duration-300",
-              isOpen && "rotate-180"
-            )}
-          />
-        </button>
+          
+          <div className="flex items-center gap-4">
+            <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCopy}
+                className="h-8 text-xs font-bold text-primary hover:text-primary hover:bg-primary/10 rounded-full hidden sm:flex"
+              >
+                {copied ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 mr-1.5 text-green-600" />
+                    Gekopieerd!
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5 mr-1.5" />
+                    Tekst kopiëren
+                  </>
+                )}
+            </Button>
+
+            <ChevronDown
+                className={cn(
+                "w-5 h-5 text-muted-foreground transition-transform duration-300",
+                isOpen && "rotate-180"
+                )}
+            />
+          </div>
+        </div>
 
         {/* Collapsible content */}
         <div
@@ -63,34 +85,9 @@ export function OriginalTextCollapsible({
           )}
         >
           <div className="border-t border-outline-variant/60">
-            {/* Copy button row */}
-            <div className="px-6 py-3 bg-surface-container border-b border-outline-variant/60 flex items-center justify-between">
-              <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">
-                Raw Text
-              </span>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleCopy}
-                className="h-8 text-xs font-bold text-primary hover:text-primary hover:bg-primary/10 rounded-full"
-              >
-                {copied ? (
-                  <>
-                    <Check className="w-3.5 h-3.5 mr-1.5 text-green-600" />
-                    Copied!
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-3.5 h-3.5 mr-1.5" />
-                    Copy text
-                  </>
-                )}
-              </Button>
-            </div>
-
             {/* Text content - scrollable */}
             <div className="px-6 py-4 max-h-[400px] overflow-y-auto bg-surface">
-              <div className="prose prose-sm prose-slate max-w-none text-on-surface-variant">
+              <div className="prose prose-sm prose-slate max-w-none text-on-surface-variant font-medium">
                 {vacancyText.split('\n').map((paragraph, idx) => (
                   paragraph.trim() ? (
                     <p key={idx} className="leading-relaxed mb-3 last:mb-0">

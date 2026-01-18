@@ -60,17 +60,17 @@ function LimitReachedModal({
               <span className="text-3xl">🔒</span>
            </div>
            
-           <h3 className="text-2xl font-black text-slate-900 mb-2">Limit Reached</h3>
+           <h3 className="text-2xl font-black text-slate-900 mb-2">Limiet Bereikt</h3>
            <p className="text-slate-600 mb-8 leading-relaxed">
-             You’ve already used two free rewrites with Vacature Tovenaar. You can continue analyzing vacancies, but rewriting is available only with a demo or license.
+             Je hebt al twee gratis herschrijvingen gebruikt met Vacature Tovenaar. Je kunt doorgaan met analyseren, maar herschrijven is alleen beschikbaar met een demo of licentie.
            </p>
 
            <div className="space-y-3">
              <Button
                 className="w-full h-12 text-base font-bold shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 rounded-xl"
-                onClick={() => window.open("https://vacaturetovenaar.nl/demo", "_blank")}
+                onClick={() => window.open("https://meetings-eu1.hubspot.com/jknuvers", "_blank")}
              >
-                Schedule a Demo
+                Plan een Demo
              </Button>
              
              <Button
@@ -78,7 +78,7 @@ function LimitReachedModal({
                 className="w-full text-slate-500 hover:text-slate-900"
                 onClick={() => window.location.href = "mailto:joost@vacaturetovenaar.nl"}
              >
-                Contact Us
+                Contacteer Ons
              </Button>
            </div>
        </div>
@@ -153,22 +153,22 @@ function EmailModal({
               <Mail className="w-8 h-8 text-primary" />
             </div>
             <h3 className="text-3xl font-bold text-on-surface tracking-tight">
-              Where should we send it?
+              Waar mogen we het heen sturen?
             </h3>
             <p className="text-on-surface-variant text-sm leading-relaxed max-w-[280px] mx-auto">
-              We'll email you the fully optimized version of this vacancy.
+              We sturen je de geoptimaliseerde versie van deze vacature per e-mail.
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-               <label className="text-xs font-bold uppercase text-slate-400 tracking-wider ml-1">Work Email</label>
+               <label className="text-xs font-bold uppercase text-slate-400 tracking-wider ml-1">Werk Email</label>
                <input
                  type="email"
                  required
                  value={email}
                  onChange={(e) => setEmail(e.target.value)}
-                 placeholder="name@company.com"
+                 placeholder="naam@bedrijf.nl"
                  className="w-full px-5 py-4 rounded-xl bg-surface-container-high border-none text-on-surface placeholder:text-muted-foreground focus:ring-2 focus:ring-primary outline-none transition-all font-medium"
                  disabled={status === "loading"}
                  autoFocus
@@ -186,7 +186,7 @@ function EmailModal({
                 </>
               ) : (
                 <>
-                  Send My Optimized Vacancy <ArrowRight className="w-5 h-5 ml-2" />
+                  Verstuur Mijn Geoptimaliseerde Vacature <ArrowRight className="w-5 h-5 ml-2" />
                 </>
               )}
             </Button>
@@ -194,15 +194,15 @@ function EmailModal({
 
           {status === "error" && (
             <p className="text-error text-sm text-center font-medium bg-error-container py-2 rounded-lg">
-              Something went wrong. Please try again.
+              Er ging iets mis. Probeer het opnieuw.
             </p>
           )}
 
           <div className="flex items-center justify-center gap-2 text-[10px] text-slate-400 font-medium uppercase tracking-widest">
              <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-             No Spam
+             Geen Spam
              <div className="w-1 h-1 rounded-full bg-slate-300"></div>
-             Secure
+             Veilig
           </div>
         </div>
       </div>

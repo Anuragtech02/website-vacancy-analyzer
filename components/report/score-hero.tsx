@@ -36,26 +36,26 @@ interface ScoreHeroProps {
 
 const verdictConfig = {
   excellent: {
-    label: "Excellent",
-    description: "Your vacancy is performing great!",
+    label: "Uitstekend",
+    description: "Je vacature presteert geweldig!",
     bgColor: "bg-green-100",
     textColor: "text-green-800",
   },
   good: {
-    label: "Good",
-    description: "Your vacancy is solid but has room for improvement.",
+    label: "Goed",
+    description: "Je vacature is solide maar heeft ruimte voor verbetering.",
     bgColor: "bg-blue-100",
     textColor: "text-blue-800",
   },
   needs_work: {
-    label: "Needs Work",
-    description: "Your vacancy has issues.",
+    label: "Verbetering nodig",
+    description: "Je vacature heeft aandachtspunten.",
     bgColor: "bg-amber-100",
     textColor: "text-amber-800",
   },
   poor: {
-    label: "Poor",
-    description: "Critical issues detected.",
+    label: "Zwak",
+    description: "Kritieke problemen gedetecteerd.",
     bgColor: "bg-red-100",
     textColor: "text-red-800",
   },
@@ -96,7 +96,7 @@ export function ScoreHero({
               <div className="flex items-center justify-between">
                  <div className="flex items-center gap-2">
                      <span className="px-2.5 py-1 bg-primary/10 rounded-md text-[10px] font-bold text-primary uppercase tracking-wider">
-                       Analysis Report
+                       Analyse Rapport
                      </span>
                     <span className="text-[10px] text-slate-400 font-mono">#{reportId.slice(0, 8)}</span>
                  </div>
@@ -154,7 +154,7 @@ export function ScoreHero({
                          {score.toFixed(1)}
                      </span>
                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wide mt-1">
-                         Out of 10
+                         Van de 10
                      </span>
                  </div>
              </div>
@@ -180,7 +180,7 @@ export function ScoreHero({
              <Card variant="filled" className="h-full bg-red-50/50 border-red-100 flex flex-col">
                 <div className="p-5 border-b border-red-100 flex items-center gap-2 bg-red-50">
                    <AlertCircle className="w-5 h-5 text-red-600" />
-                   <h3 className="font-bold text-red-900 text-sm">Critical Issues Found</h3>
+                   <h3 className="font-bold text-red-900 text-sm">Kritieke Punten</h3>
                    <span className="ml-auto bg-white px-2 py-0.5 rounded-full text-xs font-bold text-red-600 border border-red-100">{issues.length}</span>
                 </div>
                 <div className="flex-1 p-4 overflow-y-auto max-h-[350px] space-y-3 custom-scrollbar">
@@ -196,8 +196,8 @@ export function ScoreHero({
                    )) : (
                      <div className="h-full flex flex-col items-center justify-center text-center p-4">
                         <CheckCircle2 className="w-12 h-12 text-green-400 mb-4" />
-                        <p className="text-sm text-slate-600 font-bold">Excellent work!</p>
-                        <p className="text-xs text-slate-500">No critical issues detected.</p>
+                        <p className="text-sm text-slate-600 font-bold">Uitstekend werk!</p>
+                        <p className="text-xs text-slate-500">Geen kritieke problemen gedetecteerd.</p>
                      </div>
                    )}
                 </div>

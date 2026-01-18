@@ -46,7 +46,7 @@ export function StickyCTABanner({ onUnlockClick, isUnlocked, phase }: StickyCTAB
       <div className="h-8 bg-gradient-to-t from-white/80 to-transparent pointer-events-none" />
 
       {/* Main banner */}
-      <div className="bg-surface-container-low border-t border-outline-variant/60 shadow-xl">
+      <div className="bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-[0_-8px_30px_rgb(0,0,0,0.08)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             {/* Left side - Message */}
@@ -56,10 +56,10 @@ export function StickyCTABanner({ onUnlockClick, isUnlocked, phase }: StickyCTAB
               </div>
               <div>
                 <h3 className="font-bold text-slate-900 text-base sm:text-lg">
-                  Get the optimized version of this vacancy
+                  Krijg de geoptimaliseerde versie van deze vacature
                 </h3>
                 <p className="text-sm text-slate-500 hidden sm:block">
-                  Our AI will rewrite it to maximize clarity, inclusivity, and conversion.
+                  Onze AI herschrijft hem voor maximale helderheid, inclusiviteit en conversie.
                 </p>
               </div>
             </div>
@@ -77,7 +77,7 @@ export function StickyCTABanner({ onUnlockClick, isUnlocked, phase }: StickyCTAB
                 )}
               >
                 <Lock className="w-4 h-4 mr-2" />
-                {phase >= 3 ? "Unlock with Demo" : "Unlock Now - It's Free"}
+                {phase >= 3 ? "Ontgrendel met Demo" : "Nu Gratis Ontgrendelen"}
               </Button>
 
               {/* Dismiss button - mobile only */}

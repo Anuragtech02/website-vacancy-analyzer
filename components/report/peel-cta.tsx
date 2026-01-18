@@ -30,20 +30,20 @@ export function PeelCTA({ onUnlock, currentScore }: PeelCTAProps) {
         {/* TEXT CONTENT - LEFT side */}
         <div className="relative z-10 w-full h-full p-5 sm:p-6 flex flex-col justify-center max-w-[60%] sm:max-w-[50%]">
            <h3 className="text-2xl sm:text-3xl font-black text-white leading-none tracking-tight mb-3">
-             Unlock <br/>
+             Ontgrendel <br/>
              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400">
-               maximum potential
+               maximum potentieel
              </span>
            </h3>
            
            <p className="text-slate-400 text-xs sm:text-sm leading-relaxed mb-6 font-medium max-w-[200px]">
-             Get the optimized version of your vacancy. Instant conversion boost.
+             Krijg de geoptimaliseerde versie van je vacature. Directe conversie boost.
            </p>
            
            <Button 
              className="w-fit bg-primary hover:bg-primary/90 text-white border-none shadow-lg shadow-primary/40 rounded-full px-6 py-6 text-sm font-bold group-hover:scale-105 active:scale-95 transition-all"
            >
-              Unlock Now <ArrowRight className="w-4 h-4 ml-2" />
+              Nu Ontgrendelen <ArrowRight className="w-4 h-4 ml-2" />
            </Button>
         </div>
 
@@ -69,7 +69,7 @@ export function PeelCTA({ onUnlock, currentScore }: PeelCTAProps) {
                    {/* TOP RIGHT BADGE - Visible immediately on peel */}
                    <div className="absolute top-4 right-4 flex flex-col items-end opacity-90">
                        <span className="bg-white/20 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-full border border-white/30 uppercase tracking-wider mb-1">
-                           Optimized
+                           Geoptimaliseerd
                        </span>
                        <span className="text-white font-black text-xl tracking-tighter shadow-sm">8+</span>
                    </div>
@@ -79,7 +79,7 @@ export function PeelCTA({ onUnlock, currentScore }: PeelCTAProps) {
                            <Sparkles className="w-8 h-8 text-green-600" />
                        </div>
                        <div className="text-6xl font-black text-white tracking-tighter drop-shadow-lg leading-none">8+</div>
-                       <div className="text-xs font-bold text-white uppercase tracking-widest mt-2 bg-black/10 px-2 py-1 rounded-full">Potential Score</div>
+                       <div className="text-xs font-bold text-white uppercase tracking-widest mt-2 bg-black/10 px-2 py-1 rounded-full">Potentiële Score</div>
                    </div>
                </div>
 
@@ -106,10 +106,10 @@ export function PeelCTA({ onUnlock, currentScore }: PeelCTAProps) {
                        <Lock className="w-8 h-8 text-slate-400" />
                    </div>
                    <div className="text-5xl font-black text-slate-800 tracking-tighter">{currentScore.toFixed(1)}</div>
-                   <div className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Current Score</div>
+                   <div className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Huidige Score</div>
                    
                    <div className="absolute bottom-5 flex flex-col items-center gap-1 animate-pulse">
-                        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Hover to peel</span>
+                        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Hover voor resultaat</span>
                    </div>
                </motion.div>
 

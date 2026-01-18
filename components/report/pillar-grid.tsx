@@ -55,7 +55,7 @@ interface PillarGridProps {
 
 const pillarConfig: Record<string, { label: string; icon: typeof Layout; color: string; bgColor: string; watermark: string; gradient: string }> = {
   structure_layout: {
-    label: "Structure & Layout",
+    label: "Structuur & Opmaak",
     icon: Layout,
     color: "text-blue-600",
     bgColor: "bg-blue-50 group-hover:bg-blue-100",
@@ -63,7 +63,7 @@ const pillarConfig: Record<string, { label: string; icon: typeof Layout; color: 
     gradient: "from-blue-50/40 via-white to-white",
   },
   persona_fit: {
-    label: "Persona Fit",
+    label: "Doelgroep Match",
     icon: Users,
     color: "text-purple-600",
     bgColor: "bg-purple-50 group-hover:bg-purple-100",
@@ -71,7 +71,7 @@ const pillarConfig: Record<string, { label: string; icon: typeof Layout; color: 
     gradient: "from-purple-50/40 via-white to-white",
   },
   evp_brand: {
-    label: "EVP & Brand",
+    label: "EVP & Merk",
     icon: Award,
     color: "text-amber-600",
     bgColor: "bg-amber-50 group-hover:bg-amber-100",
@@ -87,7 +87,7 @@ const pillarConfig: Record<string, { label: string; icon: typeof Layout; color: 
     gradient: "from-pink-50/40 via-white to-white",
   },
   inclusion_bias: {
-    label: "Inclusion & Bias",
+    label: "Inclusie & Bias",
     icon: Heart,
     color: "text-rose-600",
     bgColor: "bg-rose-50 group-hover:bg-rose-100",
@@ -95,7 +95,7 @@ const pillarConfig: Record<string, { label: string; icon: typeof Layout; color: 
     gradient: "from-rose-50/40 via-white to-white",
   },
   mobile_experience: {
-    label: "Mobile Experience",
+    label: "Mobiele Ervaring",
     icon: Smartphone,
     color: "text-teal-600",
     bgColor: "bg-teal-50 group-hover:bg-teal-100",
@@ -103,7 +103,7 @@ const pillarConfig: Record<string, { label: string; icon: typeof Layout; color: 
     gradient: "from-teal-50/40 via-white to-white",
   },
   seo_findability: {
-    label: "SEO Findability",
+    label: "SEO Vindbaarheid",
     icon: Search,
     color: "text-orange-600",
     bgColor: "bg-orange-50 group-hover:bg-orange-100",
@@ -242,9 +242,9 @@ export function PillarGrid({ pillars, estimatedScores, isUnlocked }: PillarGridP
       {/* Section header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Score Breakdown</h2>
+          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Score Verdeling</h2>
           <p className="text-sm text-slate-500 mt-1">
-            Detailed performance analysis across 8 key dimensions
+            Gedetailleerde analyse van 8 belangrijke onderdelen
           </p>
         </div>
         {isUnlocked && estimatedScores && (
@@ -255,7 +255,7 @@ export function PillarGrid({ pillars, estimatedScores, isUnlocked }: PillarGridP
           >
             <TrendingUp className="w-4 h-4 text-green-600" />
             <span className="text-sm font-bold text-green-700">
-              Optimization applied
+              Optimalisatie toegepast
             </span>
           </motion.div>
         )}

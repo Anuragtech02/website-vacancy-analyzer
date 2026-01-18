@@ -31,7 +31,7 @@ export default async function ReportPage({ params }: PageProps) {
               className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground hover:text-foreground transition-colors shrink-0"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span className="font-medium text-sm hidden sm:inline">New Analysis</span>
+              <span className="font-medium text-sm hidden sm:inline">Nieuwe Analyse</span>
             </Link>
             <div className="h-5 w-[1px] bg-border hidden sm:block" />
             <div className="flex items-center gap-2 sm:gap-3">
@@ -43,14 +43,14 @@ export default async function ReportPage({ params }: PageProps) {
                   Vacature Tovenaar
                 </h1>
                 <p className="text-xs text-muted-foreground hidden sm:block">
-                  The #1 Recruitment Software
+                  De #1 Recruitment Software
                 </p>
               </div>
             </div>
           </div>
           {/* Right side */}
           <div className="text-sm text-muted-foreground shrink-0">
-            <span className="hidden sm:inline">Report </span>
+            <span className="hidden sm:inline">Rapport </span>
             <span className="font-mono text-xs bg-muted px-1.5 sm:px-2 py-0.5 sm:py-1 rounded">
               {id.slice(0, 8)}
             </span>
@@ -78,13 +78,13 @@ export default async function ReportPage({ params }: PageProps) {
               href="/privacy"
               className="hover:text-foreground transition-colors"
             >
-              Privacy Policy
+              Privacybeleid
             </a>
             <a
               href="/terms"
               className="hover:text-foreground transition-colors"
             >
-              Terms of Service
+              Algemene Voorwaarden
             </a>
           </div>
         </div>

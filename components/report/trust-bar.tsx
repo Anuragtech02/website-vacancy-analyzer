@@ -12,21 +12,21 @@ const metrics = [
   {
     icon: Clock,
     value: "75%",
-    label: "less time per vacancy",
+    label: "minder tijd per vacature",
     color: "text-blue-600",
     bgColor: "bg-blue-50",
   },
   {
     icon: TrendingUp,
     value: "25%",
-    label: "higher conversion",
+    label: "hogere conversie",
     color: "text-green-600",
     bgColor: "bg-green-50",
   },
   {
     icon: Users,
     value: "15%",
-    label: "more applicants",
+    label: "meer sollicitanten",
     color: "text-purple-600",
     bgColor: "bg-purple-50",
   },
@@ -43,7 +43,7 @@ export function TrustBar({ variant = 'full', className }: TrustBarProps) {
           className="flex items-center gap-2 hover:text-slate-700 transition-colors"
         >
           <Sparkles className="w-4 h-4 text-primary" />
-          <span className="font-medium">Powered by Vacature Tovenaar</span>
+          <span className="font-medium">Mogelijk gemaakt door Vacature Tovenaar</span>
           <ExternalLink className="w-3 h-3" />
         </a>
       </div>
@@ -81,7 +81,7 @@ export function TrustBar({ variant = 'full', className }: TrustBarProps) {
           >
             <Sparkles className="w-4 h-4 text-primary" />
             <span className="font-semibold text-slate-700 group-hover:text-primary transition-colors">
-              Powered by Vacature Tovenaar
+              Mogelijk gemaakt door Vacature Tovenaar
             </span>
             <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-primary transition-colors" />
           </a>
