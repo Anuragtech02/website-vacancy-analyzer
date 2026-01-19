@@ -128,12 +128,12 @@ function EmailModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-secondary/80 backdrop-blur-md animate-in fade-in duration-300"
+        className="absolute inset-0 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300"
         onClick={status === 'loading' ? undefined : onClose}
       />
 
       {/* Modal */}
-      <div className="relative bg-surface rounded-[28px] shadow-2xl p-8 max-w-md w-full mx-4 animate-in fade-in zoom-in-95 slide-in-from-bottom-5 duration-300">
+      <div className="relative bg-white rounded-[28px] shadow-2xl p-8 max-w-md w-full mx-4 animate-in fade-in zoom-in-95 slide-in-from-bottom-5 duration-300">
 
         {/* Close Button */}
         <button
@@ -149,13 +149,13 @@ function EmailModal({
 
         <div className="space-y-6">
           <div className="text-center space-y-2 pt-4">
-            <div className="w-16 h-16 bg-primary-container rounded-2xl flex items-center justify-center mx-auto mb-6 transform rotate-3">
-              <Mail className="w-8 h-8 text-primary" />
+            <div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-6 transform rotate-3">
+              <Mail className="w-8 h-8 text-orange-600" />
             </div>
-            <h3 className="text-3xl font-bold text-on-surface tracking-tight">
+            <h3 className="text-3xl font-bold text-slate-900 tracking-tight">
               Waar mogen we het heen sturen?
             </h3>
-            <p className="text-on-surface-variant text-sm leading-relaxed max-w-[280px] mx-auto">
+            <p className="text-slate-600 text-sm leading-relaxed max-w-[280px] mx-auto">
               We sturen je de geoptimaliseerde versie van deze vacature per e-mail.
             </p>
           </div>
@@ -169,7 +169,7 @@ function EmailModal({
                  value={email}
                  onChange={(e) => setEmail(e.target.value)}
                  placeholder="naam@bedrijf.nl"
-                 className="w-full px-5 py-4 rounded-xl bg-surface-container-high border-none text-on-surface placeholder:text-muted-foreground focus:ring-2 focus:ring-primary outline-none transition-all font-medium"
+                 className="w-full px-5 py-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all font-medium"
                  disabled={status === "loading"}
                  autoFocus
                />
@@ -193,7 +193,7 @@ function EmailModal({
           </form>
 
           {status === "error" && (
-            <p className="text-error text-sm text-center font-medium bg-error-container py-2 rounded-lg">
+            <p className="text-red-700 text-sm text-center font-medium bg-red-50 py-2 rounded-lg">
               Er ging iets mis. Probeer het opnieuw.
             </p>
           )}

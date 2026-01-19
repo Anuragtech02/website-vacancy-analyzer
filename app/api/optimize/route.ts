@@ -55,11 +55,20 @@ export async function POST(req: NextRequest) {
     const analysis = JSON.parse(report.analysis_json);
     const optimizationResult = await optimizeVacancy(report.vacancy_text, analysis);
 
-    // Sync to HubSpot (Fire and Forget)
-    syncHubSpotContact(email, {
-      jobtitle: analysis.metadata?.job_title || "Unknown Vacancy",
-      vacancy_report_id: reportId
-    }).catch(err => console.error("HubSpot Sync Failed", err));
+    // Sync to HubSpot (with proper error handling)
+    const hubspotResult = await syncHubSpotContact(email, {
+      company: analysis.metadata?.organization || "",
+      website: "",
+      vacature_titel: analysis.metadata?.job_title || "Unknown Vacancy",
+      vacature_report_id: reportId,
+      count_analyzer_flow: String(usageCount + 1) // NEW total count (1 for first submission, 2 for second)
+    });
+
+    if (hubspotResult && !hubspotResult.success) {
+      console.warn(`⚠️ HubSpot sync failed for ${email}:`, hubspotResult.reason);
+    } else if (hubspotResult && hubspotResult.success) {
+      console.log(`✅ HubSpot sync successful for ${email}: ${hubspotResult.action}`);
+    }
 
     // Send email with PDF attachment
     const emailResult = await sendOptimizedVacancyEmail({

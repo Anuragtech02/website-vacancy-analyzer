@@ -38,7 +38,6 @@ export async function sendOptimizedVacancyEmail({
   try {
     const jobTitle = optimization.metadata.job_title || "Optimized Vacancy";
     const organization = optimization.metadata.organization || "";
-    const score = Math.round(optimization.estimated_scores.weighted_score);
 
     // Generate PDF from HTML template
     const pdfBuffer = await generateVacancyPDF(optimization);
@@ -142,18 +141,6 @@ export async function sendOptimizedVacancyEmail({
                         <p style="margin: 0 0 24px 0; font-size: 16px; line-height: 1.6; color: #475569;">
                           ${introText}
                         </p>
-
-                        <!-- Score Box -->
-                        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f0fdf4; border-radius: 8px; margin-bottom: 24px; border-left: 4px solid #007b5f;">
-                          <tr>
-                            <td style="padding: 20px;">
-                              <p style="margin: 0 0 8px 0; font-size: 14px; color: #166534;">Nieuwe Effectiviteit Score</p>
-                              <p style="margin: 0; font-size: 32px; font-weight: 700; color: #007b5f;">
-                                ${score}<span style="font-size: 18px; color: #94a3b8;">/100</span>
-                              </p>
-                            </td>
-                          </tr>
-                        </table>
 
                         <p style="margin: 0 0 24px 0; font-size: 16px; line-height: 1.6; color: #475569;">
                           📎 <strong>De herschreven vacature zit als PDF in de bijlage.</strong> Je kunt de tekst direct kopiëren en plakken in je ATS of vacaturesite.
