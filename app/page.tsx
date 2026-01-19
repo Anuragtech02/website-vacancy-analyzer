@@ -200,7 +200,7 @@ export default function Home() {
                                 <textarea
                                     value={vacancyText}
                                     onChange={(e) => setVacancyText(e.target.value)}
-                                    placeholder="Plak hier je vacaturetekst"
+                                    placeholder="Plak hier je vacaturetekst inclusief vacaturetitel"
                                     className="peer w-full h-64 p-5 bg-slate-50/30 focus:bg-white rounded-2xl border-2 border-slate-100/50 resize-none focus:ring-4 focus:ring-primary/5 focus:border-primary/20 transition-all text-base leading-relaxed placeholder:text-slate-300 font-medium"
                                     style={{ whiteSpace: "pre-wrap" }}
                                 />
@@ -300,7 +300,7 @@ export default function Home() {
                                 {ANALYSIS_STEPS.find(s => s.id === currentStep)?.label || "Analyse afronden..."}
                              </h3>
                              <p className="text-sm text-slate-400 font-bold uppercase tracking-widest opacity-80">
-                                AI Analist is aan het werk...
+                                Onze software is aan het werk...
                              </p>
                           </div>
 
@@ -385,25 +385,25 @@ export default function Home() {
                 {/* Card 2 */}
                 <div className="group p-8 rounded-[24px] border border-slate-200 bg-white shadow-none hover:border-orange-200 transition-all duration-300 relative overflow-hidden">
                      <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity transform group-hover:scale-110 duration-500">
-                        <Search className="w-32 h-32 text-orange-500 -rotate-12" />
+                        <Layout className="w-32 h-32 text-orange-500 -rotate-12" />
                      </div>
                     <div className="w-14 h-14 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center mb-8 relative z-10">
-                         <Search className="w-6 h-6 text-orange-600" />
+                         <Layout className="w-6 h-6 text-orange-600" />
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight relative z-10">Latente kandidaten missen</h3>
-                    <p className="text-slate-500 font-medium leading-relaxed relative z-10">Bereikt alleen actieve zoekers, niet de ideale profielen.</p>
+                    <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight relative z-10">Onduidelijke structuur</h3>
+                    <p className="text-slate-500 font-medium leading-relaxed relative z-10">Grote lappen tekst zonder witruimte zorgen dat kandidaten direct afhaken.</p>
                 </div>
 
                 {/* Card 3 */}
                 <div className="group p-8 rounded-[24px] border border-slate-200 bg-white shadow-none hover:border-amber-200 transition-all duration-300 relative overflow-hidden">
                      <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity transform group-hover:scale-110 duration-500">
-                        <Lock className="w-32 h-32 text-amber-500 -rotate-12" />
+                        <Sparkles className="w-32 h-32 text-amber-500 -rotate-12" />
                      </div>
                     <div className="w-14 h-14 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-8 relative z-10">
-                         <Lock className="w-6 h-6 text-amber-600" />
+                         <Sparkles className="w-6 h-6 text-amber-600" />
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight relative z-10">Onbewuste bias</h3>
-                    <p className="text-slate-500 font-medium leading-relaxed relative z-10">Subtiele bewoordingen zorgen voor afhakers.</p>
+                    <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight relative z-10">Gebrek aan overtuigingskracht</h3>
+                    <p className="text-slate-500 font-medium leading-relaxed relative z-10">Een droge eisenlijst inspireert niet. Je mist de emotionele klik om talent te winnen.</p>
                 </div>
             </div>
         </div>
@@ -432,7 +432,7 @@ export default function Home() {
                         Structurele vacature <br/> <span className="text-primary">verbetering</span>
                      </h2>
                      <p className="text-xl text-slate-600 font-medium leading-relaxed mb-10">
-                        Onze AI-engine analyseert je tekst op belangrijke dimensies die bewezen zorgen voor hogere conversie en kwaliteit.
+                        Onze software analyseert je tekst op belangrijke dimensies die bewezen zorgen voor hogere conversie en kwaliteit.
                      </p>
                      
                      {/* MARQUEE SECTION */}
@@ -537,7 +537,6 @@ export default function Home() {
               {/* Bottom Bar */}
               <div className="pt-8 border-t border-slate-900 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500">
                   <p>© {new Date().getFullYear()} Vacature Tovenaar. All rights reserved.</p>
-                  <p>Made with <span className="text-red-500">♥</span> in Amsterdam</p>
               </div>
           </div>
       </footer>

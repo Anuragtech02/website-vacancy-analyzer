@@ -195,21 +195,9 @@ function PillarCard({
 
           {/* Score badge(s) */}
           <div className="flex items-center gap-2">
-            {hasImprovement ? (
-              <>
-                <span className={cn("text-xs font-bold px-2 py-1 rounded-md", scoreColors.badge, scoreColors.text)}>
-                  {pillar.score.toFixed(1)}
-                </span>
-                <ArrowRight className="w-3 h-3 text-green-500" />
-                <span className={cn("text-xs font-bold px-2 py-1 rounded-md", estimatedColors?.badge, estimatedColors?.text)}>
-                  {estimatedScore?.toFixed(1)}
-                </span>
-              </>
-            ) : (
-              <span className={cn("text-xs font-extrabold px-2.5 py-1 rounded-lg", scoreColors.badge, scoreColors.text)}>
-                {pillar.score.toFixed(1)}
-              </span>
-            )}
+            <span className={cn("text-xs font-extrabold px-2.5 py-1 rounded-lg", scoreColors.badge, scoreColors.text)}>
+              {pillar.score.toFixed(1)}
+            </span>
           </div>
         </div>
 
@@ -247,18 +235,6 @@ export function PillarGrid({ pillars, estimatedScores, isUnlocked }: PillarGridP
             Gedetailleerde analyse van 8 belangrijke onderdelen
           </p>
         </div>
-        {isUnlocked && estimatedScores && (
-          <motion.div 
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-200 rounded-full shadow-sm"
-          >
-            <TrendingUp className="w-4 h-4 text-green-600" />
-            <span className="text-sm font-bold text-green-700">
-              Optimalisatie toegepast
-            </span>
-          </motion.div>
-        )}
       </div>
 
       {/* Bento-like Grid */}

@@ -77,13 +77,13 @@ export async function sendOptimizedVacancyEmail({
     const phase2CTA = `
       <p style="margin: 0 0 16px 0; font-size: 16px; line-height: 1.6; color: #475569;">
         💬 <strong>Wil je weten wat dit voor jullie processen kan betekenen?</strong><br>
-        Reply op deze mail – dan laat ik je live zien hoe je dit toepast op meerdere vacatures en tot welke resultaten dit leidt bij vergelijkbare organisaties.
+        Ik laat je live zien hoe je dit toepast op meerdere vacatures en tot welke resultaten dit leidt bij vergelijkbare organisaties.
       </p>
       <table width="100%" cellpadding="0" cellspacing="0">
         <tr>
           <td align="center">
             <a href="https://meetings-eu1.hubspot.com/jknuvers" style="display: inline-block; padding: 14px 32px; background-color: #007b5f; color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; border-radius: 8px;">
-              Plan Direct Een Moment
+              Plan een Demo
             </a>
           </td>
         </tr>
@@ -94,8 +94,17 @@ export async function sendOptimizedVacancyEmail({
     const phase1CTA = `
       <p style="margin: 0 0 16px 0; font-size: 16px; line-height: 1.6; color: #475569;">
         💬 <strong>Benieuwd hoe je met deze aanpak structureel meer passende kandidaten aantrekt?</strong><br>
-        Reply op deze mail, dan laat ik je live zien wat deze aanpak voor jullie organisatie kan betekenen.
+        Ik laat je live zien wat deze aanpak voor jullie organisatie kan betekenen.
       </p>
+      <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 16px;">
+        <tr>
+          <td align="center">
+            <a href="https://meetings-eu1.hubspot.com/jknuvers" style="display: inline-block; padding: 14px 32px; background-color: #007b5f; color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; border-radius: 8px;">
+              Plan een Demo
+            </a>
+          </td>
+        </tr>
+      </table>
       <p style="margin: 0 0 24px 0; font-size: 16px; line-height: 1.6; color: #475569;">
         Wil je ondertussen nog een vacature analyseren? Dat kan via de knop hieronder:
       </p>

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
-import { GDPRConsent } from "@/components/gdpr-consent";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -10,8 +9,46 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Vacature Tovenaar - AI Vacancy Analyzer",
-  description: "Analyze and optimize your vacancy text with AI.",
+  title: "Vacature Tovenaar - Gratis Vacature Analyse & Optimalisatie",
+  description: "Analyseer en optimaliseer je vacaturetekst in 1 minuut. Trek passende kandidaten aan en laat ongeschikte kandidaten afhaken met onze software.",
+  keywords: ["vacature", "vacatureoptimalisatie", "recruitment", "kandidaten", "werving", "selectie", "vacaturetekst", "Nederland"],
+  authors: [{ name: "Vacature Tovenaar" }],
+  creator: "Vacature Tovenaar",
+  publisher: "Vacature Tovenaar",
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/logo-icon.png",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
+  },
+  openGraph: {
+    type: "website",
+    locale: "nl_NL",
+    url: "https://analyse.vacaturetovenaar.nl",
+    title: "Vacature Tovenaar - Gratis Vacature Analyse",
+    description: "Analyseer en optimaliseer je vacaturetekst in 1 minuut. Trek betere kandidaten aan met onze gratis vacature analyse tool.",
+    siteName: "Vacature Tovenaar",
+    images: [
+      {
+        url: "/logo.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Vacature Tovenaar Logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Vacature Tovenaar - Gratis Vacature Analyse",
+    description: "Analyseer en optimaliseer je vacaturetekst in 1 minuut.",
+    images: ["/logo.jpg"],
+  },
 };
 
 export default function RootLayout({
@@ -20,7 +57,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="nl">
       <head>
         {/* Google Tag Manager */}
         <Script id="gtm-script" strategy="afterInteractive">
@@ -44,7 +81,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           />
         </noscript>
         {children}
-        <GDPRConsent />
       </body>
     </html>
   );

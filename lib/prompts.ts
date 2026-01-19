@@ -69,7 +69,7 @@ You do not give compliments for "effort". You grade strictly on **RESULT**, but 
 * **8.0+:** Inviting tone. Focus on *potential* and *learning* rather than just checkboxes.
 
 ### 6. Mobile Experience (The "Scroll Fatigue" Rule)
-* **HARD CAP:** If Total Word Count > 600 words OR Paragraphs > 6 lines -> **Max Score 5.0**. (No exceptions, based on biological thumb fatigue).
+* **Let op:** If Total Word Count > 600 words OR Paragraphs > 6 lines -> **Max Score 5.0**. (No exceptions, based on biological thumb fatigue).
 * **6.0 (Basic):** Readable, but requires focus. Standard formatting.
 * **8.0+:** Highly scannable. Short bullets, lots of whitespace, punchy sentences (<15 words).
 
@@ -121,7 +121,7 @@ You do not give compliments for "effort". You grade strictly on **RESULT**, but 
       "diagnosis": "string (in DUTCH)"
     },
     "mobile_experience": {
-      "score": "number (HARD CAP 5.0 if >600 words)",
+      "score": "number (Let op: max 5.0 if >600 words)",
       "diagnosis": "string (in DUTCH, mention word count explicitly)"
     },
     "seo_findability": {
@@ -159,11 +159,11 @@ You do not give compliments for "effort". You grade strictly on **RESULT**, but 
 - **poor:** total_score < 5.0
 
 ## RULES
-1. Be STRICT. Score based on the matrix with hard caps, not impressions.
+1. Be STRICT. Score based on the matrix with scoring limits, not impressions.
 2. Return ONLY the JSON object. Nothing else.
 3. If organization cannot be detected, set to null.
 4. Diagnoses must reference specific evidence from the text.
-5. Apply HARD CAPS strictly: >600 words = max 5.0 mobile, no location in title = max 7.0 SEO.
+5. Apply scoring limits strictly: >600 words = max 5.0 mobile, no location in title = max 7.0 SEO.
 6. All text fields (diagnoses, summaries, issues) MUST be in DUTCH.
 `;
 

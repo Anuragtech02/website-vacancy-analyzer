@@ -59,7 +59,7 @@ export function StickyCTABanner({ onUnlockClick, isUnlocked, phase }: StickyCTAB
                   Krijg de geoptimaliseerde versie van deze vacature
                 </h3>
                 <p className="text-sm text-slate-500 hidden sm:block">
-                  Onze AI herschrijft hem voor maximale helderheid, inclusiviteit en conversie.
+                  Onze software herschrijft hem voor maximale helderheid, inclusiviteit en conversie.
                 </p>
               </div>
             </div>
@@ -71,13 +71,13 @@ export function StickyCTABanner({ onUnlockClick, isUnlocked, phase }: StickyCTAB
                 size="lg"
                 className={cn(
                   "flex-1 sm:flex-none h-12 px-6 font-bold text-white shadow-lg",
-                  phase >= 3 
-                    ? "bg-slate-900 hover:bg-slate-800 shadow-slate-900/20" 
+                  phase >= 3
+                    ? "bg-slate-900 hover:bg-slate-800 shadow-slate-900/20"
                     : "bg-primary hover:bg-primary/90 shadow-primary/20"
                 )}
               >
                 <Lock className="w-4 h-4 mr-2" />
-                {phase >= 3 ? "Ontgrendel met Demo" : "Nu Gratis Ontgrendelen"}
+                {phase >= 3 ? "Ontgrendel met Demo" : "Bekijk verbeterde versie"}
               </Button>
 
               {/* Dismiss button - mobile only */}
@@ -95,11 +95,11 @@ export function StickyCTABanner({ onUnlockClick, isUnlocked, phase }: StickyCTAB
           <div className="flex items-center justify-center gap-4 mt-3 sm:hidden">
             <div className="flex items-center gap-1.5 text-xs text-slate-400">
               <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-              <span>No Spam</span>
+              <span>Geen Spam</span>
             </div>
             <div className="flex items-center gap-1.5 text-xs text-slate-400">
               <Shield className="w-3 h-3" />
-              <span>Secure</span>
+              <span>Veilig</span>
             </div>
           </div>
         </div>

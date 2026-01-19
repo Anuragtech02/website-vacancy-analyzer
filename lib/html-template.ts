@@ -220,14 +220,24 @@ export function generateVacancyHTML(optimization: OptimizationResult): string {
          <div class="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
          <h3 class="text-xs font-bold text-orange-300 uppercase tracking-widest mb-4">Impact Forecast</h3>
          
-         <div class="mb-4">
-             <div class="text-4xl font-black text-white tracking-tighter leading-none mb-1">+40%</div>
-             <div class="text-xs text-orange-200 font-medium">Estimated Apps</div>
+         <div class="grid grid-cols-3 gap-3 mb-3">
+             <div>
+                 <div class="text-2xl font-black text-white tracking-tighter leading-none mb-1">+20%</div>
+                 <div class="text-[10px] text-orange-200 font-medium">Kwaliteit kandidaten</div>
+             </div>
+             <div>
+                 <div class="text-2xl font-black text-white tracking-tighter leading-none mb-1">+25%</div>
+                 <div class="text-[10px] text-orange-200 font-medium">Tijdswinst proces</div>
+             </div>
+             <div>
+                 <div class="text-2xl font-black text-white tracking-tighter leading-none mb-1">-14%</div>
+                 <div class="text-[10px] text-orange-200 font-medium">Campagnekosten</div>
+             </div>
          </div>
-         
+
          <div class="flex items-center gap-2 text-xs font-bold text-yellow-400 bg-white/10 px-3 py-1.5 rounded-full w-fit">
             <i data-lucide="trending-up" class="w-3 h-3"></i>
-            <span>Higher Conversions</span>
+            <span>Hogere Conversie</span>
          </div>
       </div>
 
