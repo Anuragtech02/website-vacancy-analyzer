@@ -50,33 +50,33 @@ export async function sendOptimizedVacancyEmail({
       ? `Je hebt inmiddels twee vacatures geanalyseerd met Vacature Tovenaar. Dat betekent meestal dat teams willen weten of deze aanpak ook structureel werkt wanneer meerdere vacatures tegelijkertijd openstaan.`
       : `We hebben jouw vacature voor <strong style="color: #0f172a;">${jobTitle}</strong>${organization ? ` bij ${organization}` : ""} geoptimaliseerd met onze Human AI methode.`;
 
-    const whyMattersTitle = isPhase2 
-      ? "🧠 De kwaliteit van kandidaten lijkt vaak een kwestie van bereik, maar in de praktijk zit het verschil in:"
-      : "Waarom dit belangrijk is:";
+    const whyMattersTitle = isPhase2
+      ? "De kwaliteit van kandidaten lijkt vaak een kwestie van bereik, maar in de praktijk zit het verschil in:"
+      : "Waarom dit belangrijk is";
 
     const whyMattersContent = isPhase2
       ? `
-        hoe je de tekst formuleert<br>
-        welke kandidaten zich aangesproken voelen<br>
-        welke profielen afhaken<br><br>
+        • Hoe je de tekst formuleert<br>
+        • Welke kandidaten zich aangesproken voelen<br>
+        • Welke profielen afhaken<br><br>
         <strong>Met deze aanpak zie je:</strong><br>
-        ✅ minder tijd kwijt aan mismatch<br>
-        ✅ sneller shortlist<br>
-        ✅ lagere advertentiekosten<br>
-        ✅ meer consistente kwaliteit
+        • Minder tijd kwijt aan mismatch<br>
+        • Sneller shortlist<br>
+        • Lagere advertentiekosten<br>
+        • Meer consistente kwaliteit
       `
       : `
-        kleine copy-aanpassingen sturen wie zich wél meldt en wie niet.<br>
-        Dat maakt direct verschil in:<br>
-        ✅ kwaliteit van reacties<br>
-        ✅ uitval tijdens selectie<br>
-        ✅ advertentiekosten
+        Kleine copy-aanpassingen sturen wie zich wél meldt en wie niet.<br><br>
+        <strong>Dat maakt direct verschil in:</strong><br>
+        • Kwaliteit van reacties<br>
+        • Uitval tijdens selectie<br>
+        • Advertentiekosten
       `;
       
     // Phase 2 CTA section (Demo/Reply)
     const phase2CTA = `
       <p style="margin: 0 0 16px 0; font-size: 16px; line-height: 1.6; color: #634033;">
-        💬 <strong style="color: #1F1B16;">Wil je weten wat dit voor jullie processen kan betekenen?</strong><br>
+        <strong style="color: #1F1B16;">Wil je weten wat dit voor jullie processen kan betekenen?</strong><br>
         Ik laat je live zien hoe je dit toepast op meerdere vacatures en tot welke resultaten dit leidt bij vergelijkbare organisaties.
       </p>
       <table width="100%" cellpadding="0" cellspacing="0">
@@ -93,7 +93,7 @@ export async function sendOptimizedVacancyEmail({
     // Phase 1 CTA section (Analyze another)
     const phase1CTA = `
       <p style="margin: 0 0 16px 0; font-size: 16px; line-height: 1.6; color: #634033;">
-        💬 <strong style="color: #1F1B16;">Benieuwd hoe je met deze aanpak structureel meer passende kandidaten aantrekt?</strong><br>
+        <strong style="color: #1F1B16;">Benieuwd hoe je met deze aanpak structureel meer passende kandidaten aantrekt?</strong><br>
         Ik laat je live zien wat deze aanpak voor jullie organisatie kan betekenen.
       </p>
       <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 16px;">
@@ -152,12 +152,12 @@ export async function sendOptimizedVacancyEmail({
                         </p>
 
                         <p style="margin: 0 0 24px 0; font-size: 16px; line-height: 1.6; color: #634033; background-color: #FFF8F6; padding: 16px; border-radius: 12px; border-left: 4px solid #FF6B35;">
-                          📎 <strong style="color: #1F1B16;">De herschreven vacature zit als PDF in de bijlage.</strong> Je kunt de tekst direct kopiëren en plakken in je ATS of vacaturesite.
+                          <strong style="color: #1F1B16;">De herschreven vacature zit als PDF in de bijlage.</strong> Je kunt de tekst direct kopiëren en plakken in je ATS of vacaturesite.
                         </p>
 
                         <!-- Variable Improvements Section -->
                         <h3 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 700; color: #1F1B16;">
-                          🧾 Een paar concrete verbeteringen:
+                          Een paar concrete verbeteringen
                         </h3>
                         <p style="margin: 0 0 24px 0; font-size: 15px; line-height: 1.6; color: #634033;">
                           ${optimization.changes.summary}
