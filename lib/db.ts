@@ -1,7 +1,7 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { reports, leads } from "./db/schema";
-import { eq, count } from "drizzle-orm";
+import { eq, count, or } from "drizzle-orm";
 
 const connectionString = process.env.DATABASE_URL!;
 
@@ -36,10 +36,12 @@ export const dbClient = {
     return result[0] || null;
   },
 
-  createLead: async (email: string, reportId: string) => {
+  createLead: async (email: string, reportId: string, ipAddress?: string, fingerprint?: string) => {
     await db.insert(leads).values({
       email,
       report_id: reportId,
+      ip_address: ipAddress || null,
+      fingerprint: fingerprint || null,
     });
   },
 
@@ -48,6 +50,21 @@ export const dbClient = {
       .select({ count: count() })
       .from(leads)
       .where(eq(leads.email, email));
+    return result[0]?.count || 0;
+  },
+
+  // Check usage by IP or fingerprint (to prevent incognito bypass)
+  countLeadsByIdentity: async (ipAddress?: string, fingerprint?: string) => {
+    if (!ipAddress && !fingerprint) return 0;
+
+    const conditions = [];
+    if (ipAddress) conditions.push(eq(leads.ip_address, ipAddress));
+    if (fingerprint) conditions.push(eq(leads.fingerprint, fingerprint));
+
+    const result = await db
+      .select({ count: count() })
+      .from(leads)
+      .where(or(...conditions));
     return result[0]?.count || 0;
   },
 };

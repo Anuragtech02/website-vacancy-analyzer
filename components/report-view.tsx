@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { AnalysisResult, OptimizationResult } from "@/lib/gemini";
 import { Button } from "@/components/ui/button";
 import { Loader2, Mail, ArrowRight } from "lucide-react";
+import { generateFingerprint } from "@/lib/fingerprint";
 
 import { OptimizationResultView } from "@/components/report/optimization-result-view";
 
@@ -247,10 +248,13 @@ export function ReportView({
     setSubmittedEmail(email);
 
     try {
+      // Generate browser fingerprint for abuse prevention
+      const fingerprint = generateFingerprint();
+
       const response = await fetch("/api/optimize", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, reportId }),
+        body: JSON.stringify({ email, reportId, fingerprint }),
       });
 
       const data = await response.json();
@@ -272,15 +276,15 @@ export function ReportView({
       setIsUnlocked(true);
       setStatus("success");
       setShowModal(false);
-      
+
       // Update usage count in local storage
       const currentCount = parseInt(localStorage.getItem("vacancy_usage_count") || "0", 10);
       const newCount = currentCount + 1;
       localStorage.setItem("vacancy_usage_count", newCount.toString());
-      
+
       // Update phase based on new count
       if (newCount >= 2) setPhase(2); // If 2nd, set Phase 2
-      
+
     } catch (error) {
       console.error(error);
       setStatus("error");

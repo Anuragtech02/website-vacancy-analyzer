@@ -12,5 +12,7 @@ export const leads = pgTable("leads", {
   report_id: text("report_id")
     .notNull()
     .references(() => reports.id),
+  ip_address: text("ip_address"),
+  fingerprint: text("fingerprint"),
   created_at: timestamp("created_at").notNull().defaultNow(),
 });
