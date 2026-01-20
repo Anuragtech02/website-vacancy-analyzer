@@ -185,7 +185,7 @@ export function ScoreHero({
                 </div>
                 <div className="flex-1 p-4 overflow-y-auto max-h-[350px] space-y-3 custom-scrollbar">
                    {issues.length > 0 ? issues.slice(0, 5).map((issue, idx) => (
-                      <div key={idx} className="bg-white p-4 rounded-xl border border-red-100 shadow-sm hover:shadow-md transition-all">
+                      <div key={idx} className="bg-white p-4 rounded-lg border border-red-100 shadow-sm hover:shadow-md transition-all">
                          <h4 className="font-bold text-sm text-red-900 mb-2 leading-tight flex items-start gap-2">
                             <span className="text-red-400 mt-0.5">•</span> {issue.problem}
                          </h4>
