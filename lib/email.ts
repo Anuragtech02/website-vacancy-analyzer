@@ -61,7 +61,6 @@ export async function sendOptimizedVacancyEmail({
         • Welke profielen afhaken<br><br>
         <strong>Met deze aanpak zie je:</strong><br>
         • Minder tijd kwijt aan mismatch<br>
-        • Sneller shortlist<br>
         • Lagere advertentiekosten<br>
         • Meer consistente kwaliteit
       `
