@@ -136,7 +136,13 @@ export async function sendOptimizedVacancyEmail({
                     <!-- Header -->
                     <tr>
                       <td style="padding: 32px 40px; border-bottom: 2px solid #FFE4D6; background: linear-gradient(135deg, #FFF8F6 0%, #ffffff 100%);">
-                        <h1 style="margin: 0; font-size: 24px; font-weight: 900; color: #1F1B16; letter-spacing: -0.5px;">✨ Vacature Tovenaar</h1>
+                        <table width="100%" cellpadding="0" cellspacing="0">
+                          <tr>
+                            <td>
+                              <img src="https://analyse.vacaturetovenaar.nl/logo.jpg" alt="Vacature Tovenaar" style="height: 40px; width: auto; display: block;" />
+                            </td>
+                          </tr>
+                        </table>
                       </td>
                     </tr>
 
