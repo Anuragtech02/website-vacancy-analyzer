@@ -83,10 +83,10 @@ export const dbClient = {
     if (ipAddress) conditions.push(eq(leads.ip_address, ipAddress));
     if (fingerprint) conditions.push(eq(leads.fingerprint, fingerprint));
 
-    // Use AND to match all provided criteria (more precise deletion)
+    // Use OR to match any provided criteria (delete all leads matching any identifier)
     const result = await db
       .delete(leads)
-      .where(and(...conditions))
+      .where(or(...conditions))
       .returning();
 
     return result.length;
