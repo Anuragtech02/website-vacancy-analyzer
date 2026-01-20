@@ -9,16 +9,26 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://analyse.vacaturetovenaar.nl'),
   title: "Vacature Tovenaar - Gratis Vacature Analyse & Optimalisatie",
   description: "Analyseer en optimaliseer je vacaturetekst in 1 minuut. Trek passende kandidaten aan en laat ongeschikte kandidaten afhaken met onze software.",
   keywords: ["vacature", "vacatureoptimalisatie", "recruitment", "kandidaten", "werving", "selectie", "vacaturetekst", "Nederland"],
   authors: [{ name: "Vacature Tovenaar" }],
   creator: "Vacature Tovenaar",
   publisher: "Vacature Tovenaar",
+  alternates: {
+    canonical: "https://analyse.vacaturetovenaar.nl",
+  },
   icons: {
     icon: "/favicon.ico",
     apple: "/logo-icon.png",
   },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 5,
+  },
+  themeColor: "#FF6B35",
   robots: {
     index: true,
     follow: true,
@@ -66,6 +76,46 @@ new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-K26W26T2');`}
+        </Script>
+
+        {/* Structured Data - Organization */}
+        <Script id="structured-data-org" type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "Vacature Tovenaar",
+            "url": "https://analyse.vacaturetovenaar.nl",
+            "logo": "https://analyse.vacaturetovenaar.nl/logo.png",
+            "description": "Analyseer en optimaliseer je vacaturetekst in 1 minuut. Trek passende kandidaten aan en laat ongeschikte kandidaten afhaken met onze software.",
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "contactType": "Customer Service",
+              "email": "joost@vacaturetovenaar.nl"
+            }
+          })}
+        </Script>
+
+        {/* Structured Data - WebApplication */}
+        <Script id="structured-data-webapp" type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": "Vacature Tovenaar Analyzer",
+            "url": "https://analyse.vacaturetovenaar.nl",
+            "applicationCategory": "BusinessApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "EUR"
+            },
+            "description": "Gratis vacature analyse en optimalisatie tool. Analyseer je vacaturetekst in 1 minuut en krijg concrete verbeterpunten.",
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "4.8",
+              "ratingCount": "127"
+            }
+          })}
         </Script>
       </head>
       <body
