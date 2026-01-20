@@ -136,7 +136,7 @@ export async function sendOptimizedVacancyEmail({
                     <!-- Header -->
                     <tr>
                       <td style="padding: 40px; border-bottom: 2px solid #FFE4D6; background: linear-gradient(135deg, #FFF8F6 0%, #ffffff 100%); text-align: center;">
-                        <img src="https://analyse.vacaturetovenaar.nl/logo.jpg" alt="Vacature Tovenaar" style="height: 80px; width: auto; display: inline-block; margin: 0 auto;" />
+                        <img src="https://analyse.vacaturetovenaar.nl/logo.png" alt="Vacature Tovenaar" style="height: 80px; width: auto; display: inline-block; margin: 0 auto;" />
                       </td>
                     </tr>
 

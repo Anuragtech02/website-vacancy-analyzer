@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     siteName: "Vacature Tovenaar",
     images: [
       {
-        url: "/logo.jpg",
+        url: "/logo.png",
         width: 1200,
         height: 630,
         alt: "Vacature Tovenaar Logo",
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Vacature Tovenaar - Gratis Vacature Analyse",
     description: "Analyseer en optimaliseer je vacaturetekst in 1 minuut.",
-    images: ["/logo.jpg"],
+    images: ["/logo.png"],
   },
 };
 
