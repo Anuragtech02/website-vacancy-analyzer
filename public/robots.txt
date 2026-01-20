@@ -1,6 +1,16 @@
 # https://www.robotstxt.org/robotstxt.html
+# Vacature Tovenaar - AI Vacature Analyse Tool
+
+# Allow all search engines - aggressive crawling welcome for new launch
 User-agent: *
 Allow: /
 
-# Sitemap
+# Block specific paths if needed in future
+# Disallow: /api/
+# Disallow: /admin/
+
+# Sitemap locations
 Sitemap: https://analyse.vacaturetovenaar.nl/sitemap.xml
+
+# Additional sitemaps can be added here
+# Sitemap: https://analyse.vacaturetovenaar.nl/sitemap-reports.xml
