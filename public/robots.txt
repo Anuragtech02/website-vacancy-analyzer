@@ -7,6 +7,7 @@ Allow: /
 
 # Block admin routes from crawlers (temporary for testing)
 Disallow: /api/admin/
+Disallow: /admin/
 
 # Sitemap locations
 Sitemap: https://analyse.vacaturetovenaar.nl/sitemap.xml
