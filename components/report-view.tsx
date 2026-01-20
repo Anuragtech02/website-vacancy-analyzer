@@ -187,7 +187,7 @@ function EmailModal({
                 </>
               ) : (
                 <>
-                  Verstuur Mijn Geoptimaliseerde Vacature <ArrowRight className="w-5 h-5 ml-2" />
+                  Verstuur mijn geoptimaliseerde vacature <ArrowRight className="w-5 h-5 ml-2" />
                 </>
               )}
             </Button>

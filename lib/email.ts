@@ -199,7 +199,7 @@ export async function sendOptimizedVacancyEmail({
     const emailInfo = await mailGenerator.sendMail({
       from: process.env.AWS_FROM_EMAIL || "Vacature Tovenaar <noreply@vacaturetovenaar.nl>",
       to: to,
-      subject: `Jouw Geoptimaliseerde Vacature: ${jobTitle}`,
+      subject: `Jouw geoptimaliseerde vacature: ${jobTitle}`,
       html: htmlContent,
       attachments: [
         {

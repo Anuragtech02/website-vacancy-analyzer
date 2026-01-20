@@ -59,7 +59,7 @@ export function StickyCTABanner({ onUnlockClick, isUnlocked, phase }: StickyCTAB
                   Krijg de geoptimaliseerde versie van deze vacature
                 </h3>
                 <p className="text-sm text-slate-500 hidden sm:block">
-                  Onze software herschrijft hem voor maximale helderheid, inclusiviteit en conversie.
+                  Onze software heeft de pijnpunten uit je tekst gehaald voor direct resultaat.
                 </p>
               </div>
             </div>
