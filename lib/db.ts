@@ -1,7 +1,7 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { reports, leads } from "./db/schema";
-import { eq, count, or } from "drizzle-orm";
+import { eq, count, or, and } from "drizzle-orm";
 
 const connectionString = process.env.DATABASE_URL!;
 
@@ -66,5 +66,29 @@ export const dbClient = {
       .from(leads)
       .where(or(...conditions));
     return result[0]?.count || 0;
+  },
+
+  // Delete leads by identity (for admin reset functionality)
+  deleteLeadsByIdentity: async (params: {
+    email?: string;
+    ipAddress?: string;
+    fingerprint?: string;
+  }) => {
+    const { email, ipAddress, fingerprint } = params;
+
+    if (!email && !ipAddress && !fingerprint) return 0;
+
+    const conditions = [];
+    if (email) conditions.push(eq(leads.email, email));
+    if (ipAddress) conditions.push(eq(leads.ip_address, ipAddress));
+    if (fingerprint) conditions.push(eq(leads.fingerprint, fingerprint));
+
+    // Use AND to match all provided criteria (more precise deletion)
+    const result = await db
+      .delete(leads)
+      .where(and(...conditions))
+      .returning();
+
+    return result.length;
   },
 };
