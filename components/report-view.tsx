@@ -63,7 +63,7 @@ function LimitReachedModal({
 
            <h3 className="text-2xl font-black text-slate-900 mb-2">De smaak te pakken?</h3>
            <p className="text-slate-600 mb-8 leading-relaxed">
-             Je hebt al twee gratis herschrijvingen gebruikt met Vacature Tovenaar. Vraag volledige toegang aan voor onbeperkt gebruik.
+             Je hebt je gratis analyses verbruikt. Wil je onbeperkt toegang tot onze software voor al je vacatures?
            </p>
 
            <div className="space-y-3">
@@ -71,15 +71,15 @@ function LimitReachedModal({
                 className="w-full h-12 text-base font-bold shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 rounded-xl"
                 onClick={() => window.open("https://meetings-eu1.hubspot.com/jknuvers", "_blank")}
              >
-                Plan een Demo
+                Vraag volledige toegang aan
              </Button>
-             
+
              <Button
                 variant="ghost"
                 className="w-full text-slate-500 hover:text-slate-900"
                 onClick={() => window.location.href = "mailto:joost@vacaturetovenaar.nl"}
              >
-                Contacteer Ons
+                Of neem contact op
              </Button>
            </div>
        </div>
@@ -211,6 +211,50 @@ function EmailModal({
   );
 }
 
+
+interface NotificationToastProps {
+  show: boolean;
+  onClose: () => void;
+  message: string;
+  description: string;
+}
+
+function NotificationToast({ show, onClose, message, description }: NotificationToastProps) {
+  useEffect(() => {
+    if (show) {
+      const timer = setTimeout(onClose, 6000);
+      return () => clearTimeout(timer);
+    }
+  }, [show, onClose]);
+
+  if (!show) return null;
+
+  return (
+    <div className="fixed top-24 right-4 sm:right-8 z-50 animate-in slide-in-from-right-full fade-in duration-500 pointer-events-none">
+      <div className="bg-[#0F172A] border border-slate-800/80 shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-lg p-4 pr-12 relative max-w-sm w-full flex items-start gap-4 pointer-events-auto backdrop-blur-xl">
+        {/* Glow effect */}
+        <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-transparent rounded-lg pointer-events-none" />
+        
+        <button 
+          onClick={onClose}
+          className="absolute top-3 right-3 p-1 text-slate-500 hover:text-white transition-colors rounded-lg hover:bg-slate-800"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+
+        <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0 shadow-inner group">
+           <Mail className="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform" />
+        </div>
+        
+        <div className="relative pt-0.5">
+           <h4 className="text-sm font-bold text-white tracking-wide">{message}</h4>
+           <p className="text-xs text-slate-400 mt-1.5 leading-relaxed font-medium">{description}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Main Report View Component
 export function ReportView({
   analysis,
@@ -224,6 +268,7 @@ export function ReportView({
   const [optimizationResult, setOptimizationResult] = useState<OptimizationResult | null>(null);
   const [submittedEmail, setSubmittedEmail] = useState<string>("");
   const [phase, setPhase] = useState<number>(1);
+  const [showNotification, setShowNotification] = useState(false);
 
   const { summary, metadata, pillars } = analysis;
 
@@ -276,6 +321,7 @@ export function ReportView({
       setIsUnlocked(true);
       setStatus("success");
       setShowModal(false);
+      setShowNotification(true);
 
       // Update usage count in local storage
       const currentCount = parseInt(localStorage.getItem("vacancy_usage_count") || "0", 10);
@@ -390,6 +436,14 @@ export function ReportView({
        <LimitReachedModal 
          isOpen={showLimitModal}
          onClose={() => setShowLimitModal(false)}
+       />
+
+       {/* Success Notification */}
+       <NotificationToast
+         show={showNotification}
+         onClose={() => setShowNotification(false)}
+         message="Mail succesvol verzonden!"
+         description="We hebben de geoptimaliseerde versie naar je inbox gestuurd. Check ook je spam folder voor de zekerheid."
        />
     </div>
   );

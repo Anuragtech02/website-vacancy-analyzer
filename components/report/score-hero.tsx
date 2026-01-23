@@ -84,13 +84,13 @@ export function ScoreHero({
   const scoreColors = getScoreColor(score);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-8 gap-6 mb-8">
+    <div className="grid grid-cols-1 lg:grid-cols-8 gap-6 mb-8 items-stretch">
       {/* LEFT COLUMN: Job Title + Summary Explanation */}
-      <Card variant="outlined" className="lg:col-span-5 overflow-hidden relative flex flex-col h-full bg-white shadow-sm border border-slate-200">
+      <Card variant="outlined" className="lg:col-span-5 overflow-hidden relative flex flex-col bg-white shadow-sm border border-slate-200">
         {/* Decorative background gradients */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
         
-        <CardContent className="p-6 sm:p-8 relative flex-1 flex flex-col justify-between gap-6">
+        <CardContent className="p-6 sm:p-8 relative flex flex-col gap-4">
            {/* Header */}
           <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -173,7 +173,7 @@ export function ScoreHero({
       </Card>
 
       {/* RIGHT COLUMN: Critical Issues */}
-      <div className="lg:col-span-3 h-full min-h-[300px]">
+      <div className="lg:col-span-3 flex flex-col h-full">
          {!isUnlocked ? (
              <PeelCTA onUnlock={onUnlockClick} currentScore={score} />
          ) : (

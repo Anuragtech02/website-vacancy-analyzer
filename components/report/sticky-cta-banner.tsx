@@ -69,15 +69,10 @@ export function StickyCTABanner({ onUnlockClick, isUnlocked, phase }: StickyCTAB
               <Button
                 onClick={onUnlockClick}
                 size="lg"
-                className={cn(
-                  "flex-1 sm:flex-none h-12 px-6 font-bold text-white shadow-lg",
-                  phase >= 3
-                    ? "bg-slate-900 hover:bg-slate-800 shadow-slate-900/20"
-                    : "bg-primary hover:bg-primary/90 shadow-primary/20"
-                )}
+                className="flex-1 sm:flex-none h-12 px-6 font-bold text-white shadow-lg bg-primary hover:bg-primary/90 shadow-primary/20"
               >
                 <Lock className="w-4 h-4 mr-2" />
-                {phase >= 3 ? "Ontgrendel met Demo" : "Bekijk verbeterde versie"}
+                Bekijk verbeterde versie
               </Button>
 
               {/* Dismiss button - mobile only */}

@@ -3,6 +3,7 @@ import { dbClient } from "@/lib/db";
 import { ReportView } from "@/components/report-view";
 import { ArrowLeft, Sparkles } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -35,9 +36,13 @@ export default async function ReportPage({ params }: PageProps) {
             </Link>
             <div className="h-5 w-[1px] bg-border hidden sm:block" />
             <div className="flex items-center gap-2 sm:gap-3">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-primary flex items-center justify-center shrink-0">
-                <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary-foreground" />
-              </div>
+              <Image
+                src="/logo-icon.png"
+                alt="Vacature Tovenaar"
+                width={32}
+                height={32}
+                className="w-8 h-8 rounded-lg shrink-0"
+              />
               <div className="min-w-0">
                 <h1 className="font-bold text-sm text-foreground truncate">
                   Vacature Tovenaar
