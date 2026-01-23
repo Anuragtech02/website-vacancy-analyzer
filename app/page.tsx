@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Wand2, ArrowRight, CheckCircle2, Lock, Search, MessageSquare, FileText, Layout, Globe, Loader2, Play, Building2, Sparkles, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 const ANALYSIS_STEPS = [
   { id: 1, label: "Scannen op bias", icon: Search, duration: 2500, isFinal: false },
@@ -99,53 +100,59 @@ export default function Home() {
       {/* Header / Top Bar */}
       <header className="w-full fixed top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-white/20 shadow-sm">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center shadow-sm">
-              <Sparkles className="w-6 h-6 text-on-primary-container" />
-            </div>
-            <div>
-              <h1 className="font-bold text-xl text-on-surface tracking-tight">
-                Vacature Analyse
-              </h1>
-            </div>
-          </div>
-          <div className="flex items-center gap-8">
+          <a href="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
+            <Image
+              src="/logo-icon.png"
+              alt="Vacature Tovenaar"
+              width={40}
+              height={40}
+              className="w-10 h-10"
+            />
+            <span className="font-bold text-lg text-slate-800 tracking-tight hidden sm:block">
+              Vacature Analyse
+            </span>
+          </a>
+          <div className="flex items-center gap-4 sm:gap-6">
             <a
                href="https://vacaturetovenaar.nl"
-               className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors hidden md:block"
+               className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors hidden lg:block"
              >
                Ontdek Vacature Tovenaar
              </a>
-             <Button className="rounded-full shadow-lg hover:shadow-xl transition-all bg-primary hover:bg-primary/90 font-bold px-6">
-                Analyseer vacature
+             <Button
+               className="rounded-full shadow-lg hover:shadow-xl transition-all bg-primary hover:bg-primary/90 font-bold px-4 sm:px-6 text-sm sm:text-base"
+               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+             >
+                <span className="hidden sm:inline">Analyseer vacature</span>
+                <span className="sm:hidden">Analyseer</span>
              </Button>
           </div>
         </div>
       </header>
 
       {/* Main Hero Content */}
-      <div className="flex-1 flex flex-col pt-32 pb-8 px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto w-full justify-center relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center mb-12">
+      <div className="flex-1 flex flex-col pt-28 sm:pt-32 pb-8 px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto w-full justify-center relative z-10">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 lg:gap-12 xl:gap-20 items-center mb-12">
             {/* Left Column: Copy */}
-            <div className="space-y-6 text-left">
+            <div className="space-y-5 sm:space-y-6 text-left">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 text-primary font-bold text-[10px] uppercase tracking-wider border border-primary/20">
                     <Wand2 className="w-3 h-3" />
                     <span>DOOR VACATURE TOVENAAR</span>
                 </div>
 
-                <h2 className="text-5xl sm:text-6xl lg:text-7xl font-normal tracking-tighter text-slate-900 leading-[1.05]">
+                <h2 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-normal tracking-tighter text-slate-900 leading-[1.05]">
                     Betere vacatures <br/>
                     <span className="relative inline-block mt-2">
-                        <span className="relative z-10 text-primary font-serif italic font-normal whitespace-nowrap">Betere kandidaten.</span>
-                        <div className="absolute left-0 right-0 bottom-2 h-3 bg-primary/20 -z-0 rotate-1"></div>
+                        <span className="relative z-10 text-primary font-serif italic font-normal">Betere kandidaten.</span>
+                        <div className="absolute left-0 right-0 bottom-1 sm:bottom-2 h-2 sm:h-3 bg-primary/20 z-0 rotate-1"></div>
                     </span>
                 </h2>
 
-                <p className="text-lg text-slate-500 leading-relaxed max-w-md font-medium">
+                <p className="text-base sm:text-lg text-slate-500 leading-relaxed max-w-md font-medium">
                     Analyseer en herschrijf je vacaturetekst in 1 minuut.
                 </p>
 
-                <div className="flex flex-col gap-4 pt-2">
+                <div className="flex flex-col gap-3 sm:gap-4 pt-2">
                    {[
                      "Trek passende kandidaten aan",
                      "Laat ongeschikte kandidaten afhaken",
@@ -155,73 +162,74 @@ export default function Home() {
                         <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
                             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                         </div>
-                        <span className="text-slate-700 font-semibold text-base">{text}</span>
+                        <span className="text-slate-700 font-semibold text-sm sm:text-base">{text}</span>
                      </div>
                    ))}
                 </div>
             </div>
 
             {/* Right Column: Interactive Card */}
-            <div className="relative">
+            <div className="relative mt-8 xl:mt-0">
                 {/* Decorative blobs */}
-                <div className="absolute -top-12 -right-12 w-64 h-64 bg-primary/20 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
-                <div className="absolute -bottom-12 -left-12 w-64 h-64 bg-primary/10 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
+                <div className="absolute -top-12 -right-12 w-48 lg:w-64 h-48 lg:h-64 bg-primary/20 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
+                <div className="absolute -bottom-12 -left-12 w-48 lg:w-64 h-48 lg:h-64 bg-primary/10 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
 
                 {!isAnalyzing ? (
                   <>
                     {/* Decorative Rotated Background (Dumbbell/Dashed) */}
-                    <div className="absolute inset-0 bg-transparent border-2 border-dashed border-slate-300/50 rounded-[40px] transform rotate-3 scale-105 -z-10 pointer-events-none"></div>
+                    <div className="absolute inset-0 bg-transparent border-2 border-dashed border-slate-300/50 rounded-4xl lg:rounded-[40px] transform rotate-2 lg:rotate-3 scale-[1.02] lg:scale-105 -z-10 pointer-events-none"></div>
 
                     {/* Floating Badge - Top Right */}
-                    <div className="absolute -right-8 -top-4 bg-white py-2.5 px-4 rounded-xl shadow-xl border border-slate-100 flex items-center gap-2 z-20 animate-in fade-in slide-in-from-right-4 duration-1000">
-                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                        <span className="text-sm font-bold text-slate-700">De juiste kandidaten</span>
+                    <div className="absolute right-2 sm:right-4 xl:-right-4 -top-3 sm:-top-4 bg-white py-2 sm:py-2.5 px-3 sm:px-4 rounded-xl shadow-xl border border-slate-100 flex items-center gap-2 z-20 animate-in fade-in slide-in-from-right-4 duration-1000">
+                        <div className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                        <span className="text-xs sm:text-sm font-bold text-slate-700">De juiste kandidaten</span>
                     </div>
 
                     {/* Input Card - App Window Aesthetic */}
-                    <div className="relative bg-white rounded-[32px] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.08)] border border-slate-100 transform transition-all hover:scale-[1.005] duration-500">
+                    <div className="relative bg-white rounded-3xl sm:rounded-4xl shadow-[0_32px_64px_-12px_rgba(0,0,0,0.08)] border border-slate-100 transform transition-all hover:scale-[1.005] duration-500">
                         
                         {/* Browser Header */}
-                        <div className="px-6 py-4 bg-slate-50/50 border-b border-slate-100 flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                                <div className="w-3 h-3 rounded-full bg-amber-400"></div>
-                                <div className="w-3 h-3 rounded-full bg-emerald-400"></div>
+                        <div className="px-4 sm:px-6 py-3 sm:py-4 bg-slate-50/50 border-b border-slate-100 flex items-center justify-between">
+                            <div className="flex items-center gap-1.5 sm:gap-2">
+                                <div className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-red-400"></div>
+                                <div className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-amber-400"></div>
+                                <div className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-emerald-400"></div>
                             </div>
-                            <div className="flex items-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                               <Lock className="w-3 h-3" />
-                               Analyse Vacature
+                            <div className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                               <Lock className="w-2.5 sm:w-3 h-2.5 sm:h-3" />
+                               <span className="hidden xs:inline">Analyse Vacature</span>
+                               <span className="xs:hidden">Analyse</span>
                             </div>
-                            <div className="w-12"></div>
+                            <div className="w-8 sm:w-12"></div>
                         </div>
 
-                        <div className="p-6 space-y-6 relative">
+                        <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 relative">
                             <div className="relative">
                                 <textarea
                                     value={vacancyText}
                                     onChange={(e) => setVacancyText(e.target.value)}
                                     placeholder="Plak hier je vacaturetekst inclusief vacaturetitel"
-                                    className="peer w-full h-64 p-5 bg-slate-50/30 focus:bg-white rounded-2xl border-2 border-slate-100/50 resize-none focus:ring-4 focus:ring-primary/5 focus:border-primary/20 transition-all text-base leading-relaxed placeholder:text-slate-300 font-medium"
+                                    className="peer w-full h-48 sm:h-56 lg:h-64 p-4 sm:p-5 bg-slate-50/30 focus:bg-white rounded-xl sm:rounded-2xl border-2 border-slate-100/50 resize-none focus:ring-4 focus:ring-primary/5 focus:border-primary/20 transition-all text-sm sm:text-base leading-relaxed placeholder:text-slate-300 font-medium"
                                     style={{ whiteSpace: "pre-wrap" }}
                                 />
 
                                 {/* Floating Badge - Bottom Left (Inside/Overlapping Textarea) */}
-                                <div className="absolute left-4 lg:-left-6 xl:-left-12 bottom-8 bg-white py-2.5 px-4 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-3 z-20 transition-all duration-300 peer-focus:opacity-0 peer-focus:-translate-x-4 peer-hover:opacity-0 peer-hover:-translate-x-4 pointer-events-none">
-                                   <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
-                                       <span className="text-primary font-serif italic font-bold text-lg">A+</span>
+                                <div className="absolute left-2 sm:left-4 xl:-left-8 bottom-6 sm:bottom-8 bg-white py-2 sm:py-2.5 px-3 sm:px-4 rounded-xl sm:rounded-2xl shadow-xl border border-slate-100 flex items-center gap-2 sm:gap-3 z-20 transition-all duration-300 peer-focus:opacity-0 peer-focus:-translate-x-4 peer-hover:opacity-0 peer-hover:-translate-x-4 pointer-events-none">
+                                   <div className="w-7 sm:w-9 h-7 sm:h-9 rounded-lg sm:rounded-xl bg-primary/10 flex items-center justify-center">
+                                       <span className="text-primary font-serif italic font-bold text-base sm:text-lg">A+</span>
                                    </div>
-                                   <span className="text-sm font-bold text-slate-700">Vacaturekwaliteit</span>
+                                   <span className="text-xs sm:text-sm font-bold text-slate-700">Vacaturekwaliteit</span>
                                 </div>
                             </div>
 
-                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 relative z-10 pt-2">
+                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 relative z-10 pt-2">
                                 <div className="w-full sm:w-auto">
                                    <div className="relative group/cat">
                                        <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-hover/cat:text-primary transition-colors pointer-events-none" />
-                                       <select 
+                                       <select
                                          value={category}
                                          onChange={(e) => setCategory(e.target.value)}
-                                         className="appearance-none w-full sm:w-auto pl-9 pr-8 py-3.5 sm:py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/30 hover:border-slate-300 transition-all shadow-sm cursor-pointer"
+                                         className="appearance-none w-full sm:w-auto pl-9 pr-8 py-3 sm:py-2.5 bg-white border border-slate-200 rounded-xl text-xs sm:text-sm font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/30 hover:border-slate-300 transition-all shadow-sm cursor-pointer"
                                          style={{ backgroundImage: "none" }}
                                        >
                                            <option value="General">Algemeen (Standaard)</option>
@@ -241,10 +249,10 @@ export default function Home() {
                                     <Button
                                         onClick={handleAnalyze}
                                         disabled={!vacancyText.trim()}
-                                        className="w-full sm:w-auto px-6 py-6 rounded-2xl text-base font-bold shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98] transition-all group cursor-pointer"
+                                        className="w-full sm:w-auto px-4 sm:px-6 py-5 sm:py-6 rounded-xl sm:rounded-2xl text-sm sm:text-base font-bold shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98] transition-all group cursor-pointer"
                                     >
                                         Analyseer vacature
-                                        <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                                        <ArrowRight className="w-4 sm:w-5 h-4 sm:h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                                     </Button>
                                 </div>
                             </div>
@@ -253,38 +261,38 @@ export default function Home() {
                   </>
                 ) : (
                   /* Analysis Progress Card - App Window Aesthetic */
-                  <div className="relative bg-white rounded-[32px] shadow-2xl shadow-blue-900/10 border border-white/40 ring-1 ring-slate-200/50 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 min-h-[440px] flex flex-col">
+                  <div className="relative bg-white rounded-3xl sm:rounded-4xl shadow-2xl shadow-blue-900/10 border border-white/40 ring-1 ring-slate-200/50 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 min-h-[380px] sm:min-h-[440px] flex flex-col">
                       {/* Browser Header */}
-                      <div className="px-5 py-4 bg-slate-50/80 border-b border-slate-100 flex items-center justify-between gap-4">
-                          <div className="flex items-center gap-2">
-                              <div className="w-3 h-3 rounded-full bg-red-400/90 shadow-sm"></div>
-                              <div className="w-3 h-3 rounded-full bg-amber-400/90 shadow-sm"></div>
-                              <div className="w-3 h-3 rounded-full bg-emerald-400/90 shadow-sm"></div>
+                      <div className="px-4 sm:px-5 py-3 sm:py-4 bg-slate-50/80 border-b border-slate-100 flex items-center justify-between gap-4">
+                          <div className="flex items-center gap-1.5 sm:gap-2">
+                              <div className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-red-400/90 shadow-sm"></div>
+                              <div className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-amber-400/90 shadow-sm"></div>
+                              <div className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-emerald-400/90 shadow-sm"></div>
                           </div>
-                          
+
                           {/* Fake URL Bar - Processing state */}
                           <div className="flex-1 max-w-[200px] hidden sm:flex items-center justify-center gap-2 px-3 py-1.5 bg-white rounded-lg border border-slate-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
                               <Loader2 className="w-2.5 h-2.5 text-primary animate-spin" />
                               <span className="text-[10px] font-semibold text-slate-400 tracking-wide">vacature verwerken...</span>
                           </div>
 
-                          <div className="w-12"></div>
+                          <div className="w-8 sm:w-12"></div>
                       </div>
 
                       {/* Main Loading Content */}
-                      <div className="flex-1 p-10 flex flex-col items-center justify-center relative bg-white/50">
+                      <div className="flex-1 p-6 sm:p-10 flex flex-col items-center justify-center relative bg-white/50">
                           
                           {/* Animated Focal Point */}
-                          <div className="relative mb-10 group">
+                          <div className="relative mb-8 sm:mb-10 group">
                              <div className="absolute inset-0 bg-primary/10 rounded-full animate-[ping_3s_cubic-bezier(0,0,0.2,1)_infinite] opacity-50"></div>
                              <div className="absolute inset-0 bg-primary/5 rounded-full animate-pulse opacity-30 delay-150"></div>
-                             
+
                              {/* Central Circle */}
-                             <div className="relative w-28 h-28 bg-gradient-to-br from-white to-slate-50 rounded-full border border-primary/20 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-center ring-4 ring-white">
+                             <div className="relative w-20 sm:w-28 h-20 sm:h-28 bg-linear-to-br from-white to-slate-50 rounded-full border border-primary/20 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-center ring-4 ring-white">
                                 {(() => {
                                    const activeStep = ANALYSIS_STEPS.find(s => s.id === currentStep) || ANALYSIS_STEPS[ANALYSIS_STEPS.length - 1]; // Fallback to last if finishing
                                    const StepIcon = activeStep?.icon || Sparkles;
-                                   return <StepIcon className="w-12 h-12 text-primary transition-all duration-500 animate-[bounce_2s_infinite]" />;
+                                   return <StepIcon className="w-8 sm:w-12 h-8 sm:h-12 text-primary transition-all duration-500 animate-[bounce_2s_infinite]" />;
                                 })()}
                              </div>
 
@@ -295,11 +303,11 @@ export default function Home() {
                           </div>
 
                           {/* Dynamic Text */}
-                          <div className="space-y-3 text-center max-w-lg mx-auto mb-16 px-4">
-                             <h3 className="text-3xl font-black text-slate-800 tracking-tight leading-tight">
+                          <div className="space-y-2 sm:space-y-3 text-center max-w-lg mx-auto mb-10 sm:mb-16 px-4">
+                             <h3 className="text-xl sm:text-3xl font-black text-slate-800 tracking-tight leading-tight">
                                 {ANALYSIS_STEPS.find(s => s.id === currentStep)?.label || "Analyse afronden..."}
                              </h3>
-                             <p className="text-sm text-slate-400 font-bold uppercase tracking-widest opacity-80">
+                             <p className="text-xs sm:text-sm text-slate-400 font-bold uppercase tracking-widest opacity-80">
                                 Onze software is aan het werk...
                              </p>
                           </div>
@@ -469,36 +477,36 @@ export default function Home() {
                  {/* Visual decoration - Satellite Cards */}
                  <div className="relative flex justify-center lg:justify-end">
                       {/* Decorative wireframe background */}
-                      <div className="absolute inset-0 border border-dashed border-slate-300 rounded-[40px] transform rotate-6 z-0 lg:left-20"></div>
+                      <div className="absolute inset-0 border border-dashed border-slate-300 rounded-3xl lg:rounded-[40px] transform rotate-3 lg:rotate-6 z-0 lg:left-20 hidden sm:block"></div>
 
                       {/* The "Perfect Score" Card */}
-                      <div className="relative bg-white rounded-[40px] border border-slate-200 p-10 aspect-square flex flex-col items-center justify-center text-center shadow-none z-10 w-full max-w-md">
-                           <div className="mb-6 p-4 bg-red-50 rounded-2xl">
-                               <XCircle className="w-10 h-10 text-red-500" />
+                      <div className="relative bg-white rounded-3xl lg:rounded-[40px] border border-slate-200 p-6 sm:p-10 aspect-square flex flex-col items-center justify-center text-center shadow-none z-10 w-full max-w-sm sm:max-w-md">
+                           <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-red-50 rounded-xl sm:rounded-2xl">
+                               <XCircle className="w-8 sm:w-10 h-8 sm:h-10 text-red-500" />
                            </div>
-                           <h3 className="text-2xl font-bold text-slate-900 mb-3">Mismatch & ruis</h3>
-                           <p className="text-slate-500 font-medium leading-relaxed">
+                           <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2 sm:mb-3">Mismatch & ruis</h3>
+                           <p className="text-sm sm:text-base text-slate-500 font-medium leading-relaxed">
                                Generieke teksten trekken generieke kandidaten aan. Je mist het <span className="text-primary font-semibold">toptalent</span>.
                            </p>
-                           
-                           {/* SATELLITES */}
-                           <div className="absolute -left-12 top-12 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3 animate-bounce duration-[3000ms]">
-                               <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                                   <CheckCircle2 className="w-4 h-4 text-green-600" />
+
+                           {/* SATELLITES - Hidden on mobile */}
+                           <div className="absolute -left-8 lg:-left-12 top-8 lg:top-12 bg-white p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200 shadow-sm items-center gap-2 sm:gap-3 animate-bounce duration-3000 hidden sm:flex">
+                               <div className="w-6 sm:w-8 h-6 sm:h-8 rounded-full bg-green-100 flex items-center justify-center">
+                                   <CheckCircle2 className="w-3 sm:w-4 h-3 sm:h-4 text-green-600" />
                                </div>
                                <div>
-                                   <div className="text-xs font-bold text-slate-500 uppercase">Bias</div>
-                                   <div className="text-sm font-black text-slate-900">None</div>
+                                   <div className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase">Bias</div>
+                                   <div className="text-xs sm:text-sm font-black text-slate-900">None</div>
                                </div>
                            </div>
 
-                           <div className="absolute -right-8 bottom-24 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3 animate-bounce duration-[4000ms]">
-                               <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                                   <Search className="w-4 h-4 text-primary" />
+                           <div className="absolute -right-4 lg:-right-8 bottom-16 lg:bottom-24 bg-white p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200 shadow-sm items-center gap-2 sm:gap-3 animate-bounce duration-4000 hidden sm:flex">
+                               <div className="w-6 sm:w-8 h-6 sm:h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                                   <Search className="w-3 sm:w-4 h-3 sm:h-4 text-primary" />
                                </div>
                                <div>
-                                   <div className="text-xs font-bold text-slate-500 uppercase">SEO</div>
-                                   <div className="text-sm font-black text-slate-900">Top 10</div>
+                                   <div className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase">SEO</div>
+                                   <div className="text-xs sm:text-sm font-black text-slate-900">Top 10</div>
                                </div>
                            </div>
                       </div>
@@ -508,34 +516,42 @@ export default function Home() {
       </section>
 
       {/* SECTION 4: PROFESSIONAL FOOTER (Compact) */}
-      <footer className="w-full bg-slate-950 py-12 border-t border-slate-900 relative z-10">
+      <footer className="w-full bg-slate-950 py-10 sm:py-12 border-t border-slate-900 relative z-10">
           <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 sm:gap-8 mb-10 sm:mb-12">
                   {/* Brand & Mission */}
                   <div className="max-w-md">
-                      <div className="flex items-center gap-2 mb-4">
-                          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                              <Sparkles className="w-5 h-5 text-white" />
-                          </div>
-                          <span className="text-xl font-bold text-white tracking-tight">Vacature Tovenaar</span>
+                      <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                          <Image
+                            src="/logo-icon.png"
+                            alt="Vacature Tovenaar"
+                            width={32}
+                            height={32}
+                            className="w-8 h-8 brightness-0 invert"
+                          />
+                          <span className="text-lg sm:text-xl font-bold text-white tracking-tight">Vacature Tovenaar</span>
                       </div>
-                      <p className="text-slate-400 leading-relaxed">
+                      <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
                           Transformeer generieke vacatureteksten in wervende assets.
                       </p>
                   </div>
 
-                  {/* Socials */}
-                  <div className="flex gap-4">
-                      {[1, 2, 3].map((_, i) => (
-                          <div key={i} className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center border border-slate-800 hover:bg-slate-800 hover:border-slate-700 transition-all cursor-pointer group">
-                              <div className="w-4 h-4 bg-slate-600 rounded-sm group-hover:bg-slate-400 transition-colors"></div>
-                          </div>
-                      ))}
+                  {/* Links */}
+                  <div className="flex gap-6 text-sm">
+                      <a href="https://vacaturetovenaar.nl" className="text-slate-400 hover:text-white transition-colors">
+                          Website
+                      </a>
+                      <a href="/privacy" className="text-slate-400 hover:text-white transition-colors">
+                          Privacy
+                      </a>
+                      <a href="/terms" className="text-slate-400 hover:text-white transition-colors">
+                          Voorwaarden
+                      </a>
                   </div>
               </div>
 
               {/* Bottom Bar */}
-              <div className="pt-8 border-t border-slate-900 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500">
+              <div className="pt-6 sm:pt-8 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4 text-xs sm:text-sm text-slate-500">
                   <p>© {new Date().getFullYear()} Vacature Tovenaar. All rights reserved.</p>
               </div>
           </div>

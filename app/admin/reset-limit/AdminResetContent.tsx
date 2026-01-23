@@ -8,14 +8,16 @@ import { CheckCircle, XCircle, Loader2, RefreshCw } from "lucide-react";
 export default function AdminResetContent() {
   const searchParams = useSearchParams();
   const secret = searchParams.get("secret");
+  const emailParam = searchParams.get("email");
 
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
   const [deletedCount, setDeletedCount] = useState(0);
   const [identifiers, setIdentifiers] = useState("");
   const [localStorageCleared, setLocalStorageCleared] = useState(false);
+  const [email, setEmail] = useState(emailParam || "");
 
-  const handleReset = async () => {
+  const handleReset = async (resetEmail?: string) => {
     if (!secret) {
       setStatus("error");
       setMessage("Missing secret key in URL");
@@ -26,8 +28,14 @@ export default function AdminResetContent() {
     setMessage("");
 
     try {
+      // Build URL with email parameter if provided
+      let url = `/api/admin/reset-limit?secret=${encodeURIComponent(secret)}`;
+      if (resetEmail) {
+        url += `&email=${encodeURIComponent(resetEmail)}`;
+      }
+
       // Call the API endpoint
-      const response = await fetch(`/api/admin/reset-limit?secret=${encodeURIComponent(secret)}`);
+      const response = await fetch(url);
       const data = await response.json();
 
       if (!response.ok) {
@@ -41,6 +49,10 @@ export default function AdminResetContent() {
       setMessage(data.message || "Successfully reset usage limit");
       setDeletedCount(data.deletedLeads || 0);
       setIdentifiers(data.identifiers || "");
+
+      // Auto-clear localStorage on successful database reset
+      localStorage.removeItem("vacancy_usage_count");
+      setLocalStorageCleared(true);
 
     } catch (error) {
       setStatus("error");
@@ -59,12 +71,12 @@ export default function AdminResetContent() {
     }
   };
 
-  // Auto-run reset on page load if secret is present
+  // Auto-run reset on page load if secret and email are present
   useEffect(() => {
-    if (secret && status === "idle") {
-      handleReset();
+    if (secret && emailParam && status === "idle") {
+      handleReset(emailParam);
     }
-  }, [secret]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [secret, emailParam]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <main className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -75,6 +87,23 @@ export default function AdminResetContent() {
           </h1>
           <p className="text-muted-foreground">
             Reset database records and clear browser storage
+          </p>
+        </div>
+
+        {/* Email Input */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-foreground mb-2">
+            Email Address to Reset
+          </label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="user@example.com"
+            className="w-full px-4 py-3 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+          <p className="text-xs text-muted-foreground mt-2">
+            Enter the email address to delete all usage records for that user
           </p>
         </div>
 
@@ -96,6 +125,7 @@ export default function AdminResetContent() {
                   <div className="text-sm text-green-800 space-y-1">
                     <p>✓ Database records deleted: <strong>{deletedCount}</strong></p>
                     {identifiers && <p>✓ Identifiers: <strong>{identifiers}</strong></p>}
+                    <p>✓ Browser localStorage cleared automatically</p>
                   </div>
                 </div>
               </div>
@@ -133,8 +163,8 @@ export default function AdminResetContent() {
         <div className="space-y-4">
           <div>
             <Button
-              onClick={handleReset}
-              disabled={status === "loading" || !secret}
+              onClick={() => handleReset(email)}
+              disabled={status === "loading" || !secret || !email}
               className="w-full"
               size="lg"
             >
@@ -151,7 +181,7 @@ export default function AdminResetContent() {
               )}
             </Button>
             <p className="text-xs text-muted-foreground mt-2 text-center">
-              Deletes all leads matching your IP address from the database
+              Deletes all leads matching the email address from the database
             </p>
           </div>
 
@@ -175,7 +205,7 @@ export default function AdminResetContent() {
               Clear Browser Storage
             </Button>
             <p className="text-xs text-muted-foreground mt-2 text-center">
-              Removes usage count from your browser's localStorage
+              Removes usage count from your browser&apos;s localStorage
             </p>
 
             {localStorageCleared && (
@@ -192,18 +222,19 @@ export default function AdminResetContent() {
         <div className="mt-8 p-4 bg-muted rounded-lg">
           <h3 className="text-sm font-semibold text-foreground mb-2">How to use:</h3>
           <ol className="text-xs text-muted-foreground space-y-1 list-decimal list-inside">
-            <li>First, click "Reset Database Records" to clear server-side usage tracking</li>
-            <li>Then, click "Clear Browser Storage" to reset client-side usage count</li>
+            <li>Enter the email address you want to reset</li>
+            <li>Click &quot;Reset Database Records&quot; to clear server-side usage tracking</li>
+            <li>Click &quot;Clear Browser Storage&quot; if needed to reset client-side count</li>
             <li>Refresh the homepage to verify your usage limit has been reset</li>
           </ol>
         </div>
 
-        {/* Usage Info */}
-        <div className="mt-6 p-4 bg-accent/10 border border-accent rounded-lg">
+        {/* Quick Link */}
+        <div className="mt-4 p-4 bg-accent/10 border border-accent rounded-lg">
           <p className="text-xs text-muted-foreground">
-            <strong>Current localStorage value:</strong>{" "}
-            <code className="bg-muted px-1.5 py-0.5 rounded text-foreground">
-              vacancy_usage_count = {typeof window !== 'undefined' ? localStorage.getItem("vacancy_usage_count") || "0" : "0"}
+            <strong>Quick reset URL format:</strong><br />
+            <code className="bg-muted px-1.5 py-0.5 rounded text-foreground text-[10px] break-all">
+              /admin/reset-limit?secret=KEY&email=user@example.com
             </code>
           </p>
         </div>
