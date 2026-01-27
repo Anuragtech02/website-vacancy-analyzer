@@ -1,0 +1,179 @@
+{
+  "landing": {
+    "hero": {
+      "badge": "Stop wasting budget",
+      "title": "Better job postings",
+      "subtitle": "Better candidates",
+      "description": "Get immediate insights into why your vacancy isn't working. Our AI analyzes 8 crucial aspects and provides concrete improvement points.",
+      "cta": "Analyze vacancy",
+      "analyzing": "Analyzing...",
+      "placeholder": "Paste your complete vacancy text here..."
+    },
+    "steps": {
+      "scanBias": "Scanning for bias",
+      "checkTone": "Checking tone of voice",
+      "analyzeReadability": "Analyzing readability",
+      "evaluateStructure": "Evaluating structure",
+      "checkSEO": "Checking SEO discoverability",
+      "finalize": "Finalizing analysis"
+    },
+    "category": {
+      "label": "Job Category",
+      "general": "General",
+      "tech": "Tech / IT",
+      "healthcare": "Healthcare",
+      "education": "Education",
+      "sales": "Sales / Marketing",
+      "finance": "Finance",
+      "logistics": "Logistics",
+      "hospitality": "Hospitality"
+    },
+    "problem": {
+      "title": "The Problem",
+      "subtitle": "Why many vacancies don't attract suitable candidates",
+      "mismatch": {
+        "title": "Mismatch & noise",
+        "description": "Unclear job requirements lead to wrong applicants and wasted time"
+      },
+      "structure": {
+        "title": "Unclear structure",
+        "description": "Poorly structured vacancies are not read or understood"
+      },
+      "persuasion": {
+        "title": "Lack of persuasion",
+        "description": "Generic texts without EVP don't attract good candidates"
+      }
+    },
+    "features": {
+      "title": "What does the AI analyze?",
+      "subtitle": "8 crucial aspects that determine if your vacancy is successful",
+      "attract": "Attract suitable candidates",
+      "filter": "Filter out unsuitable candidates",
+      "clarity": "Create crystal clear job picture",
+      "competitive": "Stand out from competitors"
+    },
+    "trust": {
+      "analyzed": "vacancies analyzed",
+      "improvement": "average improvement",
+      "free": "Free to use"
+    }
+  },
+  "report": {
+    "navigation": {
+      "newAnalysis": "New Analysis",
+      "logo": "Vacancy Wizard"
+    },
+    "hero": {
+      "title": "Analysis Report",
+      "reportId": "Report ID",
+      "overallScore": "Overall Score",
+      "verdict": {
+        "excellent": "Excellent",
+        "excellentDesc": "This vacancy scores excellent on all aspects",
+        "good": "Good",
+        "goodDesc": "Good vacancy with room for improvement",
+        "needsImprovement": "Needs improvement",
+        "needsImprovementDesc": "Points of attention that improve effectiveness",
+        "weak": "Weak",
+        "weakDesc": "Significant improvements needed"
+      },
+      "summary": "Summary"
+    },
+    "pillars": {
+      "title": "Score Distribution",
+      "subtitle": "Detailed analysis of 8 important components",
+      "structure": {
+        "title": "Structure & Layout",
+        "description": "Clear structure and visual hierarchy"
+      },
+      "targetAudience": {
+        "title": "Target Audience Match",
+        "description": "Connection with the right candidates"
+      },
+      "evp": {
+        "title": "EVP & Brand",
+        "description": "Employer branding and value proposition"
+      },
+      "tone": {
+        "title": "Tone of Voice",
+        "description": "Tone and writing style of the vacancy"
+      },
+      "inclusion": {
+        "title": "Inclusion & Bias",
+        "description": "Inclusive language and accessibility"
+      },
+      "mobile": {
+        "title": "Mobile Experience",
+        "description": "Readability on mobile devices"
+      },
+      "seo": {
+        "title": "SEO Discoverability",
+        "description": "Findability in search engines"
+      },
+      "neuromarketing": {
+        "title": "Neuromarketing",
+        "description": "Psychological triggers and persuasiveness"
+      }
+    },
+    "cta": {
+      "unlock": "Unlock",
+      "maxPotential": "maximum potential",
+      "getOptimized": "Get the optimized version.",
+      "unlockNow": "Unlock now",
+      "currentScore": "Current Score",
+      "potentialScore": "Potential Score",
+      "optimized": "Optimized",
+      "hoverHint": "Hover for result"
+    },
+    "modal": {
+      "limitReached": {
+        "title": "Got a taste for it?",
+        "description": "You've used your free analyses. Want unlimited access to our software for all your vacancies?",
+        "requestAccess": "Request full access",
+        "contact": "Or contact us",
+        "emailCopied": "📋 Email address copied: joost@vacaturetovenaar.nl"
+      },
+      "email": {
+        "title": "Request optimization",
+        "description": "Enter your email address to receive the optimized version.",
+        "placeholder": "name@company.com",
+        "submit": "Send optimization",
+        "sending": "Sending...",
+        "success": "Sent! Check your inbox.",
+        "error": "Something went wrong. Please try again."
+      }
+    },
+    "optimization": {
+      "messages": {
+        "removingBureaucratic": "Removing bureaucratic terms...",
+        "addingSafety": "Adding psychological safety...",
+        "optimizingConversion": "Optimizing for conversion...",
+        "rewritingTone": "Rewriting in warm tone...",
+        "strengtheningEVP": "Strengthening EVP elements...",
+        "applyingProtocol": "Applying Human AI Protocol...",
+        "generatingPDF": "Generating PDF document...",
+        "sendingEmail": "Sending to your inbox..."
+      }
+    },
+    "original": {
+      "title": "Original Vacancy Text",
+      "show": "Show original text",
+      "hide": "Hide original text"
+    },
+    "footer": {
+      "privacy": "Privacy Policy",
+      "terms": "Terms & Conditions",
+      "copyright": "© 2025 Vacancy Wizard. All rights reserved."
+    }
+  },
+  "metadata": {
+    "title": "Free AI Vacancy Analysis | Vacancy Wizard",
+    "description": "Analyze your vacancy text with AI. Get immediate insights into 8 crucial aspects that determine if you attract the right candidates. 100% free.",
+    "keywords": "vacancy analysis, AI recruitment, optimize vacancy, recruitment tool, HR software, job posting"
+  },
+  "errors": {
+    "analysisFailed": "Something went wrong. Please try again.",
+    "emptyVacancy": "Please enter a vacancy text.",
+    "networkError": "Network error. Check your internet connection."
+  }
+}

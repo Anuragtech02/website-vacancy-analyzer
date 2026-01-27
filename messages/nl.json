@@ -1,0 +1,179 @@
+{
+  "landing": {
+    "hero": {
+      "badge": "Stop met verspillen van budget",
+      "title": "Betere vacatures",
+      "subtitle": "Betere kandidaten",
+      "description": "Krijg direct inzicht in waarom jouw vacature niet werkt. Onze AI analyseert 8 cruciale aspecten en geeft concrete verbeterpunten.",
+      "cta": "Analyseer vacature",
+      "analyzing": "Analyseren...",
+      "placeholder": "Plak hier jouw volledige vacaturetekst..."
+    },
+    "steps": {
+      "scanBias": "Scannen op bias",
+      "checkTone": "Tone of voice controleren",
+      "analyzeReadability": "Leesbaarheid analyseren",
+      "evaluateStructure": "Structuur evalueren",
+      "checkSEO": "SEO vindbaarheid checken",
+      "finalize": "Analyse afronden"
+    },
+    "category": {
+      "label": "Functiecategorie",
+      "general": "Algemeen",
+      "tech": "Tech / IT",
+      "healthcare": "Zorg",
+      "education": "Onderwijs",
+      "sales": "Sales / Marketing",
+      "finance": "Finance",
+      "logistics": "Logistiek",
+      "hospitality": "Horeca"
+    },
+    "problem": {
+      "title": "Het Probleem",
+      "subtitle": "Waarom veel vacatures geen geschikte kandidaten trekken",
+      "mismatch": {
+        "title": "Mismatch & ruis",
+        "description": "Onduidelijke functie-eisen leiden tot verkeerde sollicitanten en verspilde tijd"
+      },
+      "structure": {
+        "title": "Onduidelijke structuur",
+        "description": "Slecht gestructureerde vacatures worden niet gelezen of begrepen"
+      },
+      "persuasion": {
+        "title": "Gebrek aan overtuigingskracht",
+        "description": "Generieke teksten zonder EVP trekken geen goede kandidaten"
+      }
+    },
+    "features": {
+      "title": "Wat analyseert de AI?",
+      "subtitle": "8 cruciale aspecten die bepalen of jouw vacature succesvol is",
+      "attract": "Trek passende kandidaten aan",
+      "filter": "Laat ongeschikte kandidaten afhaken",
+      "clarity": "Creëer glashelder functiebeeld",
+      "competitive": "Onderscheid je van concurrenten"
+    },
+    "trust": {
+      "analyzed": "vacatures geanalyseerd",
+      "improvement": "gemiddelde verbetering",
+      "free": "Gratis te gebruiken"
+    }
+  },
+  "report": {
+    "navigation": {
+      "newAnalysis": "Nieuwe Analyse",
+      "logo": "Vacature Tovenaar"
+    },
+    "hero": {
+      "title": "Analyse Rapport",
+      "reportId": "Rapport ID",
+      "overallScore": "Overall Score",
+      "verdict": {
+        "excellent": "Uitstekend",
+        "excellentDesc": "Deze vacature scoort uitstekend op alle aspecten",
+        "good": "Goed",
+        "goodDesc": "Goede vacature met ruimte voor verbetering",
+        "needsImprovement": "Verbetering nodig",
+        "needsImprovementDesc": "Aandachtspunten die de effectiviteit verbeteren",
+        "weak": "Zwak",
+        "weakDesc": "Significante verbeteringen nodig"
+      },
+      "summary": "Samenvatting"
+    },
+    "pillars": {
+      "title": "Score Verdeling",
+      "subtitle": "Gedetailleerde analyse van 8 belangrijke onderdelen",
+      "structure": {
+        "title": "Structuur & Opmaak",
+        "description": "Heldere opbouw en visuele hiërarchie"
+      },
+      "targetAudience": {
+        "title": "Doelgroep Match",
+        "description": "Aansluiting bij de juiste kandidaten"
+      },
+      "evp": {
+        "title": "EVP & Merk",
+        "description": "Employer branding en waardepropositie"
+      },
+      "tone": {
+        "title": "Tone of Voice",
+        "description": "Toon en schrijfstijl van de vacature"
+      },
+      "inclusion": {
+        "title": "Inclusie & Bias",
+        "description": "Inclusieve taal en toegankelijkheid"
+      },
+      "mobile": {
+        "title": "Mobiele Ervaring",
+        "description": "Leesbaarheid op mobiele apparaten"
+      },
+      "seo": {
+        "title": "SEO Vindbaarheid",
+        "description": "Vindbaarheid in zoekmachines"
+      },
+      "neuromarketing": {
+        "title": "Neuromarketing",
+        "description": "Psychologische triggers en overtuigingskracht"
+      }
+    },
+    "cta": {
+      "unlock": "Ontgrendel",
+      "maxPotential": "maximum potentieel",
+      "getOptimized": "Krijg de geoptimaliseerde versie.",
+      "unlockNow": "Nu ontgrendelen",
+      "currentScore": "Huidige Score",
+      "potentialScore": "Potentiële Score",
+      "optimized": "Geoptimaliseerd",
+      "hoverHint": "Hover voor resultaat"
+    },
+    "modal": {
+      "limitReached": {
+        "title": "De smaak te pakken?",
+        "description": "Je hebt je gratis analyses verbruikt. Wil je onbeperkt toegang tot onze software voor al je vacatures?",
+        "requestAccess": "Vraag volledige toegang aan",
+        "contact": "Of neem contact op",
+        "emailCopied": "📋 E-mailadres gekopieerd: joost@vacaturetovenaar.nl"
+      },
+      "email": {
+        "title": "Optimalisatie aanvragen",
+        "description": "Vul je e-mailadres in om de geoptimaliseerde versie te ontvangen.",
+        "placeholder": "naam@bedrijf.nl",
+        "submit": "Verstuur optimalisatie",
+        "sending": "Versturen...",
+        "success": "Verstuurd! Check je inbox.",
+        "error": "Er ging iets mis. Probeer opnieuw."
+      }
+    },
+    "optimization": {
+      "messages": {
+        "removingBureaucratic": "Verwijderen bureaucratische termen...",
+        "addingSafety": "Toevoegen psychologische veiligheid...",
+        "optimizingConversion": "Optimaliseren voor conversie...",
+        "rewritingTone": "Herschrijven in warme toon...",
+        "strengtheningEVP": "Versterken van EVP elementen...",
+        "applyingProtocol": "Toepassen Human AI Protocol...",
+        "generatingPDF": "Genereren PDF document...",
+        "sendingEmail": "Versturen naar je inbox..."
+      }
+    },
+    "original": {
+      "title": "Originele Vacaturetekst",
+      "show": "Toon originele tekst",
+      "hide": "Verberg originele tekst"
+    },
+    "footer": {
+      "privacy": "Privacybeleid",
+      "terms": "Algemene Voorwaarden",
+      "copyright": "© 2025 Vacature Tovenaar. Alle rechten voorbehouden."
+    }
+  },
+  "metadata": {
+    "title": "Gratis AI Vacature Analyse | Vacature Tovenaar",
+    "description": "Analyseer je vacaturetekst met AI. Krijg direct inzicht in 8 cruciale aspecten die bepalen of je de juiste kandidaten aantrekt. 100% gratis.",
+    "keywords": "vacature analyse, AI recruitment, vacature optimaliseren, recruitment tool, HR software, vacature schrijven"
+  },
+  "errors": {
+    "analysisFailed": "Er ging iets mis. Probeer het opnieuw.",
+    "emptyVacancy": "Voer een vacaturetekst in.",
+    "networkError": "Netwerkfout. Controleer je internetverbinding."
+  }
+}
