@@ -35,21 +35,42 @@
       "legalCorporate": "Zakelijk / Corporate",
       "blueCollar": "Bouw / Techniek"
     },
+    "analyzing": {
+      "processing": "vacature verwerken...",
+      "working": "Onze software is aan het werk..."
+    },
     "problem": {
       "title": "Het Probleem",
       "subtitle": "Waarom veel vacatures geen geschikte kandidaten trekken",
+      "description": "Onbewuste bewoordingen, zwakke structuur en vaag taalgebruik jagen gekwalificeerde kandidaten weg.",
       "mismatch": {
         "title": "Mismatch & ruis",
-        "description": "Onduidelijke functie-eisen leiden tot verkeerde sollicitanten en verspilde tijd"
+        "description": "Vage bewoordingen trekken ongeschikte kandidaten aan."
       },
       "structure": {
         "title": "Onduidelijke structuur",
-        "description": "Slecht gestructureerde vacatures worden niet gelezen of begrepen"
+        "description": "Grote lappen tekst zonder witruimte zorgen dat kandidaten direct afhaken."
       },
       "persuasion": {
         "title": "Gebrek aan overtuigingskracht",
-        "description": "Generieke teksten zonder EVP trekken geen goede kandidaten"
+        "description": "Een droge eisenlijst inspireert niet. Je mist de emotionele klik om talent te winnen."
       }
+    },
+    "solution": {
+      "badge": "De Oplossing",
+      "title": "Structurele vacature",
+      "titleHighlight": "verbetering",
+      "description": "Onze software analyseert je tekst op belangrijke dimensies die bewezen zorgen voor hogere conversie en kwaliteit.",
+      "checks": [
+        "Kandidaat fit check",
+        "Tone of voice & veiligheid",
+        "Inclusieve taal",
+        "Mobiele scanbaarheid",
+        "Trefwoorden & vindbaarheid",
+        "Structuur & volgorde",
+        "Duidelijkheid arbeidsvoorwaarden",
+        "Ruis & mismatch reductie"
+      ]
     },
     "features": {
       "title": "Wat analyseert de AI?",

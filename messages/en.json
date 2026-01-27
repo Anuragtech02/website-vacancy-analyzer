@@ -35,21 +35,42 @@
       "legalCorporate": "Legal / Corporate",
       "blueCollar": "Blue Collar / Manual"
     },
+    "analyzing": {
+      "processing": "processing vacancy...",
+      "working": "Our software is at work..."
+    },
     "problem": {
       "title": "The Problem",
       "subtitle": "Why many vacancies don't attract suitable candidates",
+      "description": "Unconscious wording, weak structure and vague language drive away qualified candidates.",
       "mismatch": {
         "title": "Mismatch & noise",
-        "description": "Unclear job requirements lead to wrong applicants and wasted time"
+        "description": "Vague wording attracts unsuitable candidates."
       },
       "structure": {
         "title": "Unclear structure",
-        "description": "Poorly structured vacancies are not read or understood"
+        "description": "Large blocks of text without white space cause candidates to drop off immediately."
       },
       "persuasion": {
         "title": "Lack of persuasion",
-        "description": "Generic texts without EVP don't attract good candidates"
+        "description": "A dry requirements list doesn't inspire. You miss the emotional connection to win talent."
       }
+    },
+    "solution": {
+      "badge": "The Solution",
+      "title": "Structural vacancy",
+      "titleHighlight": "improvement",
+      "description": "Our software analyzes your text on important dimensions that are proven to ensure higher conversion and quality.",
+      "checks": [
+        "Candidate fit check",
+        "Tone of voice & safety",
+        "Inclusive language",
+        "Mobile scannability",
+        "Keywords & discoverability",
+        "Structure & order",
+        "Clarity of employment conditions",
+        "Noise & mismatch reduction"
+      ]
     },
     "features": {
       "title": "What does the AI analyze?",

@@ -278,7 +278,7 @@ export default function Home() {
                           {/* Fake URL Bar - Processing state */}
                           <div className="flex-1 max-w-[200px] hidden sm:flex items-center justify-center gap-2 px-3 py-1.5 bg-white rounded-lg border border-slate-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
                               <Loader2 className="w-2.5 h-2.5 text-primary animate-spin" />
-                              <span className="text-[10px] font-semibold text-slate-400 tracking-wide">vacature verwerken...</span>
+                              <span className="text-[10px] font-semibold text-slate-400 tracking-wide">{t('analyzing.processing')}</span>
                           </div>
 
                           <div className="w-8 sm:w-12"></div>
@@ -313,7 +313,7 @@ export default function Home() {
                                 {ANALYSIS_STEPS.find(s => s.id === currentStep)?.label || "Analyse afronden..."}
                              </h3>
                              <p className="text-xs sm:text-sm text-slate-400 font-bold uppercase tracking-widest opacity-80">
-                                Onze software is aan het werk...
+                                {t('analyzing.working')}
                              </p>
                           </div>
 
@@ -365,12 +365,11 @@ export default function Home() {
         <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-4xl mx-auto mb-16 relative">
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white text-slate-600 text-xs font-bold uppercase tracking-wider mb-6 border border-slate-200 shadow-none relative z-10">
-                    Het Probleem
+                    {t('problem.title')}
                 </div>
 
                 <h2 className="text-4xl sm:text-5xl font-normal text-slate-900 tracking-tight mb-6 leading-[1.05] relative z-10">
-                    Waarom veel vacatures <br/> <span className="text-primary relative inline-block md:whitespace-nowrap">
-                        geen geschikte kandidaten trekken.
+                    {t('problem.subtitle')} <br/> <span className="text-primary relative inline-block md:whitespace-nowrap">
                         {/* Underline decor */}
                         <svg className="absolute w-full h-3 -bottom-1 left-0 text-primary/20 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
                             <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="8" fill="none" />
@@ -378,7 +377,7 @@ export default function Home() {
                     </span>
                 </h2>
                 <p className="text-xl text-slate-600 font-medium leading-relaxed bg-slate-50/80 inline-block px-4 rounded-lg backdrop-blur-sm">
-                    Onbewuste bewoordingen, zwakke structuur en vaag taalgebruik jagen gekwalificeerde kandidaten weg.
+                    {t('problem.description')}
                 </p>
             </div>
 
@@ -391,8 +390,8 @@ export default function Home() {
                     <div className="w-14 h-14 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center mb-8 relative z-10">
                          <MessageSquare className="w-6 h-6 text-red-600" />
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight relative z-10">Mismatch & ruis</h3>
-                    <p className="text-slate-500 font-medium leading-relaxed relative z-10">Vage bewoordingen trekken ongeschikte kandidaten aan.</p>
+                    <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight relative z-10">{t('problem.mismatch.title')}</h3>
+                    <p className="text-slate-500 font-medium leading-relaxed relative z-10">{t('problem.mismatch.description')}</p>
                 </div>
 
                 {/* Card 2 */}
@@ -403,8 +402,8 @@ export default function Home() {
                     <div className="w-14 h-14 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center mb-8 relative z-10">
                          <Layout className="w-6 h-6 text-orange-600" />
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight relative z-10">Onduidelijke structuur</h3>
-                    <p className="text-slate-500 font-medium leading-relaxed relative z-10">Grote lappen tekst zonder witruimte zorgen dat kandidaten direct afhaken.</p>
+                    <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight relative z-10">{t('problem.structure.title')}</h3>
+                    <p className="text-slate-500 font-medium leading-relaxed relative z-10">{t('problem.structure.description')}</p>
                 </div>
 
                 {/* Card 3 */}
@@ -415,8 +414,8 @@ export default function Home() {
                     <div className="w-14 h-14 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-8 relative z-10">
                          <Sparkles className="w-6 h-6 text-amber-600" />
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight relative z-10">Gebrek aan overtuigingskracht</h3>
-                    <p className="text-slate-500 font-medium leading-relaxed relative z-10">Een droge eisenlijst inspireert niet. Je mist de emotionele klik om talent te winnen.</p>
+                    <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight relative z-10">{t('problem.persuasion.title')}</h3>
+                    <p className="text-slate-500 font-medium leading-relaxed relative z-10">{t('problem.persuasion.description')}</p>
                 </div>
             </div>
         </div>
@@ -439,13 +438,13 @@ export default function Home() {
              <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
                  <div>
                      <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white text-slate-600 text-xs font-bold uppercase tracking-wider mb-6 border border-slate-200 shadow-none">
-                        De Oplossing
+                        {t('solution.badge')}
                      </div>
                      <h2 className="text-4xl sm:text-5xl font-normal text-slate-900 tracking-tight mb-8 leading-[1.05]">
-                        Structurele vacature <br/> <span className="text-primary">verbetering</span>
+                        {t('solution.title')} <br/> <span className="text-primary">{t('solution.titleHighlight')}</span>
                      </h2>
                      <p className="text-xl text-slate-600 font-medium leading-relaxed mb-10">
-                        Onze software analyseert je tekst op belangrijke dimensies die bewezen zorgen voor hogere conversie en kwaliteit.
+                        {t('solution.description')}
                      </p>
                      
                      {/* MARQUEE SECTION */}
@@ -458,10 +457,7 @@ export default function Home() {
                          <div className="flex gap-4 w-max animate-marquee">
                              {[...Array(2)].map((_, i) => (
                                  <div key={i} className="flex gap-4">
-                                    {[
-                                        "Kandidaat fit check", "Tone of voice & veiligheid", "Inclusieve taal", "Mobiele scanbaarheid",
-                                        "Trefwoorden & vindbaarheid", "Structuur & volgorde", "Duidelijkheid arbeidsvoorwaarden", "Ruis & mismatch reductie"
-                                    ].map((feature, j) => (
+                                    {t.raw('solution.checks').map((feature: string, j: number) => (
                                         <div key={j} className="flex items-center gap-2 px-6 py-3 rounded-full bg-white border border-slate-200 shadow-sm text-slate-700 font-bold whitespace-nowrap">
                                             <CheckCircle2 className="w-4 h-4 text-green-500" />
                                             {feature}
