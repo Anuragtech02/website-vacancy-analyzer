@@ -46,7 +46,8 @@
       "description": "Unconscious wording, weak structure and vague language drive away qualified candidates.",
       "mismatch": {
         "title": "Mismatch & noise",
-        "description": "Vague wording attracts unsuitable candidates."
+        "description": "Generic texts attract generic candidates. You miss the",
+        "highlight": "top talent"
       },
       "structure": {
         "title": "Unclear structure",
@@ -85,6 +86,12 @@
       "analyzed": "vacancies analyzed",
       "improvement": "average improvement",
       "free": "Free to use"
+    },
+    "footer": {
+      "brandName": "Vacancy Wizard",
+      "tagline": "Transform generic job postings into compelling assets.",
+      "website": "Website",
+      "copyright": "© 2025 Vacancy Wizard. All rights reserved."
     }
   },
   "report": {

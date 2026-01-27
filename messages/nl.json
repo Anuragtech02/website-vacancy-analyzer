@@ -46,7 +46,8 @@
       "description": "Onbewuste bewoordingen, zwakke structuur en vaag taalgebruik jagen gekwalificeerde kandidaten weg.",
       "mismatch": {
         "title": "Mismatch & ruis",
-        "description": "Vage bewoordingen trekken ongeschikte kandidaten aan."
+        "description": "Generieke teksten trekken generieke kandidaten aan. Je mist het",
+        "highlight": "toptalent"
       },
       "structure": {
         "title": "Onduidelijke structuur",
@@ -85,6 +86,12 @@
       "analyzed": "vacatures geanalyseerd",
       "improvement": "gemiddelde verbetering",
       "free": "Gratis te gebruiken"
+    },
+    "footer": {
+      "brandName": "Vacature Tovenaar",
+      "tagline": "Transformeer generieke vacatureteksten in wervende assets.",
+      "website": "Website",
+      "copyright": "© 2025 Vacature Tovenaar. Alle rechten voorbehouden."
     }
   },
   "report": {

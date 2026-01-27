@@ -107,7 +107,7 @@ export default function Home() {
           <a href="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
             <Image
               src="/logo-icon.png"
-              alt="Vacature Tovenaar"
+              alt={t('footer.brandName')}
               width={40}
               height={40}
               className="w-10 h-10"
@@ -486,9 +486,9 @@ export default function Home() {
                            <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-red-50 rounded-xl sm:rounded-2xl">
                                <XCircle className="w-8 sm:w-10 h-8 sm:h-10 text-red-500" />
                            </div>
-                           <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2 sm:mb-3">Mismatch & ruis</h3>
+                           <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2 sm:mb-3">{t('problem.mismatch.title')}</h3>
                            <p className="text-sm sm:text-base text-slate-500 font-medium leading-relaxed">
-                               Generieke teksten trekken generieke kandidaten aan. Je mist het <span className="text-primary font-semibold">toptalent</span>.
+                               {t('problem.mismatch.description')} <span className="text-primary font-semibold">{t('problem.mismatch.highlight')}</span>.
                            </p>
 
                            {/* SATELLITES - Hidden on mobile */}
@@ -526,35 +526,35 @@ export default function Home() {
                       <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                           <Image
                             src="/logo-icon.png"
-                            alt="Vacature Tovenaar"
+                            alt={t('footer.brandName')}
                             width={32}
                             height={32}
                             className="w-8 h-8 brightness-0 invert"
                           />
-                          <span className="text-lg sm:text-xl font-bold text-white tracking-tight">Vacature Tovenaar</span>
+                          <span className="text-lg sm:text-xl font-bold text-white tracking-tight">{t('footer.brandName')}</span>
                       </div>
                       <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
-                          Transformeer generieke vacatureteksten in wervende assets.
+                          {t('footer.tagline')}
                       </p>
                   </div>
 
                   {/* Links */}
                   <div className="flex gap-6 text-sm">
                       <a href="https://vacaturetovenaar.nl" className="text-slate-400 hover:text-white transition-colors">
-                          Website
+                          {t('footer.website')}
                       </a>
-                      <a href="/privacy" className="text-slate-400 hover:text-white transition-colors">
-                          Privacy
+                      <a href={`/${locale}/privacy`} className="text-slate-400 hover:text-white transition-colors">
+                          {t('report.footer.privacy')}
                       </a>
-                      <a href="/terms" className="text-slate-400 hover:text-white transition-colors">
-                          Voorwaarden
+                      <a href={`/${locale}/terms`} className="text-slate-400 hover:text-white transition-colors">
+                          {t('report.footer.terms')}
                       </a>
                   </div>
               </div>
 
               {/* Bottom Bar */}
               <div className="pt-6 sm:pt-8 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4 text-xs sm:text-sm text-slate-500">
-                  <p>© {new Date().getFullYear()} Vacature Tovenaar. All rights reserved.</p>
+                  <p>{t('footer.copyright')}</p>
               </div>
           </div>
       </footer>
