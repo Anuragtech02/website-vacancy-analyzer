@@ -70,7 +70,7 @@ export default function Home() {
       const response = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ vacancyText, category }),
+        body: JSON.stringify({ vacancyText, category, locale }),
       });
 
       if (!response.ok) {

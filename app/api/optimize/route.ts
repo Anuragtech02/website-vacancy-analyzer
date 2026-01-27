@@ -7,7 +7,7 @@ import { getClientIP } from "@/lib/fingerprint";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, reportId, fingerprint } = await req.json() as { email: string; reportId: string; fingerprint?: string };
+    const { email, reportId, fingerprint, locale } = await req.json() as { email: string; reportId: string; fingerprint?: string; locale?: string };
 
     if (!email || !reportId) {
       return NextResponse.json(
@@ -61,9 +61,9 @@ export async function POST(req: NextRequest) {
     // If usageCount was 1, we pass 2. (Phase 2)
     // If usageCount was 2, we mocked above.
     
-    // Generate optimization
+    // Generate optimization (pass locale for localized responses)
     const analysis = JSON.parse(report.analysis_json);
-    const optimizationResult = await optimizeVacancy(report.vacancy_text, analysis);
+    const optimizationResult = await optimizeVacancy(report.vacancy_text, analysis, locale || 'nl');
 
     // Sync to HubSpot (with proper error handling)
     const hubspotResult = await syncHubSpotContact(email, {

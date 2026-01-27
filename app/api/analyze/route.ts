@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { vacancyText, category } = await req.json() as { vacancyText: string, category?: string };
+    const { vacancyText, category, locale } = await req.json() as { vacancyText: string, category?: string, locale?: string };
 
     if (!vacancyText || typeof vacancyText !== "string") {
       return NextResponse.json(
@@ -24,8 +24,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Analyze with Gemini
-    const analysis = await analyzeVacancy(vacancyText, category || "General");
+    // Analyze with Gemini (pass locale for localized analysis)
+    const analysis = await analyzeVacancy(vacancyText, category || "General", locale || "nl");
     
     // Generate Report ID
     const reportId = nanoid(10);
