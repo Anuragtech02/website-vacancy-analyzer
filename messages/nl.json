@@ -68,7 +68,9 @@
   "report": {
     "navigation": {
       "newAnalysis": "Nieuwe Analyse",
-      "logo": "Vacature Tovenaar"
+      "logo": "Vacature Tovenaar",
+      "tagline": "De #1 Recruitment Software",
+      "reportLabel": "Rapport"
     },
     "hero": {
       "title": "Analyse Rapport",

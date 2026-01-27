@@ -5,19 +5,9 @@ import { AnalysisResult, OptimizationResult } from "@/lib/gemini";
 import { Button } from "@/components/ui/button";
 import { Loader2, Mail, ArrowRight } from "lucide-react";
 import { generateFingerprint } from "@/lib/fingerprint";
+import { useTranslations } from 'next-intl';
 
 import { OptimizationResultView } from "@/components/report/optimization-result-view";
-
-const OPTIMIZATION_MESSAGES = [
-  "Verwijderen bureaucratische termen...",
-  "Toevoegen psychologische veiligheid...",
-  "Optimaliseren voor conversie...",
-  "Herschrijven in warme toon...",
-  "Versterken van EVP elementen...",
-  "Toepassen Human AI Protocol...",
-  "Genereren PDF document...",
-  "Versturen naar je inbox...",
-];
 
 import { ScoreHero } from "@/components/report/score-hero";
 import { PillarGrid } from "@/components/report/pillar-grid";
@@ -29,6 +19,7 @@ interface ReportViewProps {
   analysis: AnalysisResult;
   vacancyText: string;
   reportId: string;
+  locale: string;
 }
 
 // Limit Reached Modal
@@ -279,7 +270,9 @@ export function ReportView({
   analysis,
   vacancyText,
   reportId,
+  locale,
 }: ReportViewProps) {
+  const t = useTranslations('report');
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showLimitModal, setShowLimitModal] = useState(false);
@@ -290,6 +283,18 @@ export function ReportView({
   const [showNotification, setShowNotification] = useState(false);
 
   const { summary, metadata, pillars } = analysis;
+
+  // Optimization messages from translations
+  const OPTIMIZATION_MESSAGES = [
+    t('optimization.messages.removingBureaucratic'),
+    t('optimization.messages.addingSafety'),
+    t('optimization.messages.optimizingConversion'),
+    t('optimization.messages.rewritingTone'),
+    t('optimization.messages.strengtheningEVP'),
+    t('optimization.messages.applyingProtocol'),
+    t('optimization.messages.generatingPDF'),
+    t('optimization.messages.sendingEmail'),
+  ];
 
   useEffect(() => {
      // Determine User Phase from LocalStorage
@@ -318,7 +323,7 @@ export function ReportView({
       const response = await fetch("/api/optimize", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, reportId, fingerprint }),
+        body: JSON.stringify({ email, reportId, fingerprint, locale }),
       });
 
       const data = await response.json();

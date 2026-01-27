@@ -68,7 +68,9 @@
   "report": {
     "navigation": {
       "newAnalysis": "New Analysis",
-      "logo": "Vacancy Wizard"
+      "logo": "Vacancy Wizard",
+      "tagline": "The #1 Recruitment Software",
+      "reportLabel": "Report"
     },
     "hero": {
       "title": "Analysis Report",
