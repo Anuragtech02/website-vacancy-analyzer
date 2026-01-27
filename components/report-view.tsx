@@ -39,6 +39,18 @@ function LimitReachedModal({
   isOpen: boolean;
   onClose: () => void;
 }) {
+  const [showCopiedToast, setShowCopiedToast] = useState(false);
+
+  const handleCopyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText("joost@vacaturetovenaar.nl");
+      setShowCopiedToast(true);
+      setTimeout(() => setShowCopiedToast(false), 3000);
+    } catch (err) {
+      console.error("Failed to copy email:", err);
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -77,11 +89,18 @@ function LimitReachedModal({
              <Button
                 variant="ghost"
                 className="w-full text-slate-500 hover:text-slate-900"
-                onClick={() => window.location.href = "mailto:joost@vacaturetovenaar.nl"}
+                onClick={handleCopyEmail}
              >
                 Of neem contact op
              </Button>
            </div>
+
+           {/* Toast notification */}
+           {showCopiedToast && (
+             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-4 py-2 rounded-lg shadow-lg animate-in fade-in slide-in-from-bottom-2 duration-200 text-sm font-medium">
+               📋 E-mailadres gekopieerd: joost@vacaturetovenaar.nl
+             </div>
+           )}
        </div>
     </div>
   );
