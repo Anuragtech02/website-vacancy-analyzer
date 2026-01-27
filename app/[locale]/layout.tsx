@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
@@ -15,6 +15,14 @@ const inter = Inter({
 type Props = {
   params: Promise<{ locale: string }>;
   children: React.ReactNode;
+};
+
+// Separate viewport export (Next.js 15 requirement)
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: "#FF6B35",
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -44,12 +52,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       icon: "/favicon.ico",
       apple: "/logo-icon.png",
     },
-    viewport: {
-      width: "device-width",
-      initialScale: 1,
-      maximumScale: 5,
-    },
-    themeColor: "#FF6B35",
     robots: {
       index: true,
       follow: true,
