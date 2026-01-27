@@ -41,7 +41,8 @@
     },
     "problem": {
       "title": "Het Probleem",
-      "subtitle": "Waarom veel vacatures geen geschikte kandidaten trekken",
+      "subtitle1": "Waarom veel vacatures",
+      "subtitle2": "geen geschikte kandidaten trekken.",
       "description": "Onbewuste bewoordingen, zwakke structuur en vaag taalgebruik jagen gekwalificeerde kandidaten weg.",
       "mismatch": {
         "title": "Mismatch & ruis",

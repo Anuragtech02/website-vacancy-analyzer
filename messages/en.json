@@ -41,7 +41,8 @@
     },
     "problem": {
       "title": "The Problem",
-      "subtitle": "Why many vacancies don't attract suitable candidates",
+      "subtitle1": "Why many vacancies",
+      "subtitle2": "don't attract suitable candidates",
       "description": "Unconscious wording, weak structure and vague language drive away qualified candidates.",
       "mismatch": {
         "title": "Mismatch & noise",

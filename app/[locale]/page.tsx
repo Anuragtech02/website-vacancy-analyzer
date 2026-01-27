@@ -369,7 +369,8 @@ export default function Home() {
                 </div>
 
                 <h2 className="text-4xl sm:text-5xl font-normal text-slate-900 tracking-tight mb-6 leading-[1.05] relative z-10">
-                    {t('problem.subtitle')} <br/> <span className="text-primary relative inline-block md:whitespace-nowrap">
+                    {t('problem.subtitle1')} <br/> <span className="text-primary relative inline-block md:whitespace-nowrap">
+                        {t('problem.subtitle2')}
                         {/* Underline decor */}
                         <svg className="absolute w-full h-3 -bottom-1 left-0 text-primary/20 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
                             <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="8" fill="none" />
