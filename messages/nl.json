@@ -4,10 +4,19 @@
       "badge": "Stop met verspillen van budget",
       "title": "Betere vacatures",
       "subtitle": "Betere kandidaten",
-      "description": "Krijg direct inzicht in waarom jouw vacature niet werkt. Onze AI analyseert 8 cruciale aspecten en geeft concrete verbeterpunten.",
+      "description": "Analyseer en herschrijf je vacaturetekst in 1 minuut.",
       "cta": "Analyseer vacature",
       "analyzing": "Analyseren...",
-      "placeholder": "Plak hier jouw volledige vacaturetekst..."
+      "placeholder": "Plak hier je vacaturetekst inclusief vacaturetitel",
+      "error": "Er ging iets mis. Probeer het opnieuw.",
+      "navTitle": "Vacature Analyse",
+      "discoverLink": "Ontdek Vacature Tovenaar",
+      "benefit1": "Trek passende kandidaten aan",
+      "benefit2": "Laat ongeschikte kandidaten afhaken",
+      "benefit3": "Overtuig schaarse profielen om te reageren",
+      "rightCandidates": "De juiste kandidaten",
+      "analyzeTitle": "Analyse Vacature",
+      "vacancyQuality": "Vacaturekwaliteit"
     },
     "steps": {
       "scanBias": "Scannen op bias",
@@ -19,14 +28,12 @@
     },
     "category": {
       "label": "Functiecategorie",
-      "general": "Algemeen",
+      "general": "Algemeen (Standaard)",
+      "government": "Overheid / Publiek",
       "tech": "Tech / IT",
-      "healthcare": "Zorg",
-      "education": "Onderwijs",
-      "sales": "Sales / Marketing",
-      "finance": "Finance",
-      "logistics": "Logistiek",
-      "hospitality": "Horeca"
+      "healthcareEducation": "Zorg / Onderwijs",
+      "legalCorporate": "Zakelijk / Corporate",
+      "blueCollar": "Bouw / Techniek"
     },
     "problem": {
       "title": "Het Probleem",

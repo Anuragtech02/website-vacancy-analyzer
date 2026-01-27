@@ -2,21 +2,25 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations, useLocale } from "next-intl";
 import { Wand2, ArrowRight, CheckCircle2, Lock, Search, MessageSquare, FileText, Layout, Globe, Loader2, Play, Building2, Sparkles, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import Image from "next/image";
 
-const ANALYSIS_STEPS = [
-  { id: 1, label: "Scannen op bias", icon: Search, duration: 2500, isFinal: false },
-  { id: 2, label: "Tone of voice controleren", icon: MessageSquare, duration: 2500, isFinal: false },
-  { id: 3, label: "Leesbaarheid analyseren", icon: FileText, duration: 2500, isFinal: false },
-  { id: 4, label: "Structuur evalueren", icon: Layout, duration: 2500, isFinal: false },
-  { id: 5, label: "SEO vindbaarheid checken", icon: Globe, duration: 2500, isFinal: false },
-  { id: 6, label: "Analyse afronden", icon: Sparkles, duration: 0, isFinal: true },
-];
-
 export default function Home() {
+  const t = useTranslations('landing');
+  const locale = useLocale();
+
+  const ANALYSIS_STEPS = [
+    { id: 1, label: t('steps.scanBias'), icon: Search, duration: 2500, isFinal: false },
+    { id: 2, label: t('steps.checkTone'), icon: MessageSquare, duration: 2500, isFinal: false },
+    { id: 3, label: t('steps.analyzeReadability'), icon: FileText, duration: 2500, isFinal: false },
+    { id: 4, label: t('steps.evaluateStructure'), icon: Layout, duration: 2500, isFinal: false },
+    { id: 5, label: t('steps.checkSEO'), icon: Globe, duration: 2500, isFinal: false },
+    { id: 6, label: t('steps.finalize'), icon: Sparkles, duration: 0, isFinal: true },
+  ];
   const [vacancyText, setVacancyText] = useState("");
   const [category, setCategory] = useState("General");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -78,10 +82,10 @@ export default function Home() {
       localStorage.setItem("vacancy_usage_count", (currentCount + 1).toString());
 
       const data = (await response.json()) as { reportId: string };
-      router.push(`/report/${data.reportId}`);
+      router.push(`/${locale}/report/${data.reportId}`);
     } catch (error) {
       console.error("Error:", error);
-      alert("Er ging iets mis. Probeer het opnieuw.");
+      alert(t('hero.error'));
       setIsAnalyzing(false);
     }
   };
@@ -109,7 +113,7 @@ export default function Home() {
               className="w-10 h-10"
             />
             <span className="font-bold text-lg text-slate-800 tracking-tight hidden sm:block">
-              Vacature Analyse
+              {t('hero.navTitle')}
             </span>
           </a>
           <div className="flex items-center gap-4 sm:gap-6">
@@ -117,14 +121,15 @@ export default function Home() {
                href="https://vacaturetovenaar.nl"
                className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors hidden lg:block"
              >
-               Ontdek Vacature Tovenaar
+               {t('hero.discoverLink')}
              </a>
+             <LanguageSwitcher />
              <Button
                className="rounded-full shadow-lg hover:shadow-xl transition-all bg-primary hover:bg-primary/90 font-bold px-4 sm:px-6 text-sm sm:text-base"
                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
              >
-                <span className="hidden sm:inline">Analyseer vacature</span>
-                <span className="sm:hidden">Analyseer</span>
+                <span className="hidden sm:inline">{t('hero.cta')}</span>
+                <span className="sm:hidden">{t('hero.cta')}</span>
              </Button>
           </div>
         </div>
@@ -137,26 +142,26 @@ export default function Home() {
             <div className="space-y-5 sm:space-y-6 text-left">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 text-primary font-bold text-[10px] uppercase tracking-wider border border-primary/20">
                     <Wand2 className="w-3 h-3" />
-                    <span>DOOR VACATURE TOVENAAR</span>
+                    <span>{t('hero.badge').toUpperCase()}</span>
                 </div>
 
                 <h2 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-normal tracking-tighter text-slate-900 leading-[1.05]">
-                    Betere vacatures <br/>
+                    {t('hero.title')} <br/>
                     <span className="relative inline-block mt-2">
-                        <span className="relative z-10 text-primary font-serif italic font-normal">Betere kandidaten.</span>
+                        <span className="relative z-10 text-primary font-serif italic font-normal">{t('hero.subtitle')}</span>
                         <div className="absolute left-0 right-0 bottom-1 sm:bottom-2 h-2 sm:h-3 bg-primary/20 z-0 rotate-1"></div>
                     </span>
                 </h2>
 
                 <p className="text-base sm:text-lg text-slate-500 leading-relaxed max-w-md font-medium">
-                    Analyseer en herschrijf je vacaturetekst in 1 minuut.
+                    {t('hero.description')}
                 </p>
 
                 <div className="flex flex-col gap-3 sm:gap-4 pt-2">
                    {[
-                     "Trek passende kandidaten aan",
-                     "Laat ongeschikte kandidaten afhaken",
-                     "Overtuig schaarse profielen om te reageren"
+                     t('hero.benefit1'),
+                     t('hero.benefit2'),
+                     t('hero.benefit3')
                    ].map((text, idx) => (
                       <div key={idx} className="flex items-center gap-3">
                         <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
@@ -182,7 +187,7 @@ export default function Home() {
                     {/* Floating Badge - Top Right */}
                     <div className="absolute right-2 sm:right-4 xl:-right-4 -top-3 sm:-top-4 bg-white py-2 sm:py-2.5 px-3 sm:px-4 rounded-xl shadow-xl border border-slate-100 flex items-center gap-2 z-20 animate-in fade-in slide-in-from-right-4 duration-1000">
                         <div className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                        <span className="text-xs sm:text-sm font-bold text-slate-700">De juiste kandidaten</span>
+                        <span className="text-xs sm:text-sm font-bold text-slate-700">{t('hero.rightCandidates')}</span>
                     </div>
 
                     {/* Input Card - App Window Aesthetic */}
@@ -197,8 +202,8 @@ export default function Home() {
                             </div>
                             <div className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-widest">
                                <Lock className="w-2.5 sm:w-3 h-2.5 sm:h-3" />
-                               <span className="hidden xs:inline">Analyse Vacature</span>
-                               <span className="xs:hidden">Analyse</span>
+                               <span className="hidden xs:inline">{t('hero.analyzeTitle')}</span>
+                               <span className="xs:hidden">{t('hero.cta')}</span>
                             </div>
                             <div className="w-8 sm:w-12"></div>
                         </div>
@@ -208,7 +213,7 @@ export default function Home() {
                                 <textarea
                                     value={vacancyText}
                                     onChange={(e) => setVacancyText(e.target.value)}
-                                    placeholder="Plak hier je vacaturetekst inclusief vacaturetitel"
+                                    placeholder={t('hero.placeholder')}
                                     className="peer w-full h-48 sm:h-56 lg:h-64 p-4 sm:p-5 bg-slate-50/30 focus:bg-white rounded-xl sm:rounded-2xl border-2 border-slate-100/50 resize-none focus:ring-4 focus:ring-primary/5 focus:border-primary/20 transition-all text-sm sm:text-base leading-relaxed placeholder:text-slate-300 font-medium"
                                     style={{ whiteSpace: "pre-wrap" }}
                                 />
@@ -218,7 +223,7 @@ export default function Home() {
                                    <div className="w-7 sm:w-9 h-7 sm:h-9 rounded-lg sm:rounded-xl bg-primary/10 flex items-center justify-center">
                                        <span className="text-primary font-serif italic font-bold text-base sm:text-lg">A+</span>
                                    </div>
-                                   <span className="text-xs sm:text-sm font-bold text-slate-700">Vacaturekwaliteit</span>
+                                   <span className="text-xs sm:text-sm font-bold text-slate-700">{t('hero.vacancyQuality')}</span>
                                 </div>
                             </div>
 
@@ -232,12 +237,12 @@ export default function Home() {
                                          className="appearance-none w-full sm:w-auto pl-9 pr-8 py-3 sm:py-2.5 bg-white border border-slate-200 rounded-xl text-xs sm:text-sm font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/30 hover:border-slate-300 transition-all shadow-sm cursor-pointer"
                                          style={{ backgroundImage: "none" }}
                                        >
-                                           <option value="General">Algemeen (Standaard)</option>
-                                           <option value="Government / Public Sector">Overheid / Publiek</option>
-                                           <option value="Technology / Startups">Tech / IT</option>
-                                           <option value="Healthcare / Education">Zorg / Onderwijs</option>
-                                           <option value="Legal / Corporate">Zakelijk / Corporate</option>
-                                           <option value="Blue Collar / Manual">Bouw / Techniek</option>
+                                           <option value="General">{t('category.general')}</option>
+                                           <option value="Government / Public Sector">{t('category.government')}</option>
+                                           <option value="Technology / Startups">{t('category.tech')}</option>
+                                           <option value="Healthcare / Education">{t('category.healthcareEducation')}</option>
+                                           <option value="Legal / Corporate">{t('category.legalCorporate')}</option>
+                                           <option value="Blue Collar / Manual">{t('category.blueCollar')}</option>
                                        </select>
                                         <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
                                             <svg className="h-3 w-3 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
@@ -251,7 +256,7 @@ export default function Home() {
                                         disabled={!vacancyText.trim()}
                                         className="w-full sm:w-auto px-4 sm:px-6 py-5 sm:py-6 rounded-xl sm:rounded-2xl text-sm sm:text-base font-bold shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98] transition-all group cursor-pointer"
                                     >
-                                        Analyseer vacature
+                                        {t('hero.cta')}
                                         <ArrowRight className="w-4 sm:w-5 h-4 sm:h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                                     </Button>
                                 </div>

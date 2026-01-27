@@ -4,10 +4,19 @@
       "badge": "Stop wasting budget",
       "title": "Better job postings",
       "subtitle": "Better candidates",
-      "description": "Get immediate insights into why your vacancy isn't working. Our AI analyzes 8 crucial aspects and provides concrete improvement points.",
+      "description": "Analyze and rewrite your vacancy text in 1 minute.",
       "cta": "Analyze vacancy",
       "analyzing": "Analyzing...",
-      "placeholder": "Paste your complete vacancy text here..."
+      "placeholder": "Paste your vacancy text including job title here",
+      "error": "Something went wrong. Please try again.",
+      "navTitle": "Vacancy Analysis",
+      "discoverLink": "Discover Vacature Tovenaar",
+      "benefit1": "Attract suitable candidates",
+      "benefit2": "Filter out unsuitable candidates",
+      "benefit3": "Convince scarce profiles to apply",
+      "rightCandidates": "The right candidates",
+      "analyzeTitle": "Analyze Vacancy",
+      "vacancyQuality": "Vacancy Quality"
     },
     "steps": {
       "scanBias": "Scanning for bias",
@@ -19,14 +28,12 @@
     },
     "category": {
       "label": "Job Category",
-      "general": "General",
-      "tech": "Tech / IT",
-      "healthcare": "Healthcare",
-      "education": "Education",
-      "sales": "Sales / Marketing",
-      "finance": "Finance",
-      "logistics": "Logistics",
-      "hospitality": "Hospitality"
+      "general": "General (Default)",
+      "government": "Government / Public Sector",
+      "tech": "Technology / Startups",
+      "healthcareEducation": "Healthcare / Education",
+      "legalCorporate": "Legal / Corporate",
+      "blueCollar": "Blue Collar / Manual"
     },
     "problem": {
       "title": "The Problem",
