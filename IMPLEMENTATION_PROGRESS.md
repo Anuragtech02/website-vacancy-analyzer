@@ -1,15 +1,15 @@
 # Implementation Progress Report
 **Project:** Vacature Tovenaar - UX Improvements & Bug Fixes
 **Date:** January 28, 2026
-**Sprint Status:** Sprint 1 Complete (100%) | Sprint 2 Complete (100%)
+**Sprint Status:** Sprint 1 Complete (100%) | Sprint 2 Complete (100%) | Sprint 3 Complete (100%)
 
 ---
 
 ## 📊 Executive Summary
 
-**Completed:** 11 critical tasks addressing major user pain points
+**Completed:** 19 critical tasks addressing major user pain points
 **In Progress:** 0 tasks
-**Remaining:** 11 UX polish tasks
+**Remaining:** 0 implementation tasks (testing pending)
 
 **Impact So Far:**
 - ✅ Fixed AI copying literal examples (quality issue)
@@ -18,6 +18,11 @@
 - ✅ Background job infrastructure (100% complete)
 - ✅ Email capture for long-running analyses
 - ✅ Time indication with elapsed time tracking
+- ✅ Copy/download functionality (clipboard, Word, PDF)
+- ✅ Visual step-by-step plan above input
+- ✅ Statistics section with animated counters
+- ✅ Warm-up modal for conversion optimization
+- ✅ All UX polish completed
 
 ---
 
@@ -184,72 +189,250 @@ POST /api/analyze
 
 ---
 
-## 📋 Remaining Tasks
+## ✅ Sprint 3: Polish & Conversion (100% Complete)
 
-### Sprint 2: High-Value UX (Complete! Moving to next priority)
+### 6. Make Text Copyable ✅
+**Problem:** Optimized text only sent via email, no copy/download functionality on page
+**Solution:** Complete rewrite of optimization-result-view component
 
-**6. Make Text Copyable** (1.5 days) - HIGH PRIORITY
-- [ ] Rewrite `optimization-result-view.tsx` (currently returns null)
-- [ ] Display optimized text on page (not just email)
-- [ ] Copy to clipboard button (Priority 1)
-- [ ] Download as Word/DOCX (Priority 2)
-- [ ] Keep PDF download (Priority 3)
-- [ ] Install: `docx`, `file-saver`, `@types/file-saver`
+**Changes:**
+- ✅ Rewrote `optimization-result-view.tsx` (358 lines vs 16 before)
+- ✅ Display full optimized text on page with proper formatting
+- ✅ Copy to clipboard button with success feedback (Priority 1)
+- ✅ Download as Word/DOCX with formatting preserved (Priority 2)
+- ✅ Keep PDF download functionality (Priority 3)
+- ✅ Installed: `docx@8.5.0`, `file-saver@2.0.5`, `@types/file-saver@2.0.7`
 
-### Sprint 3: Polish & Conversion (5 days)
+**Key Features:**
+- Navigator.clipboard API for copy functionality
+- docx library for Word generation with headings, bullets, formatting
+- file-saver for client-side downloads
+- Success/error feedback with toast notifications
+- Changes summary section shows what was optimized
 
-**7. Add Visual Step-by-Step Plan** (0.5 day)
-- [ ] Create "How it Works" section above input
-- [ ] 3-step visual: Paste → AI Analyzes → Receive Result
-- [ ] Responsive design (stack on mobile)
+**Files Modified:**
+- `components/report/optimization-result-view.tsx` - Complete rewrite
+- `package.json` - Added dependencies
 
-**8. Clarify Input Field** (0.5 day)
-- [ ] Update placeholder: "Plak hier je bestaande vacaturetekst (inclusief functietitel)"
-- [ ] Add helper text: "Tip: Kopieer de volledige tekst van je huidige vacature"
+**Commit:** `[commit hash]` - "feat: Rewrite optimization result view with copy/download functionality"
 
-**9. Add Statistics Section** (1 day)
-- [ ] Create component with animated counters
-- [ ] Real data: +20% quality, +25% time saved, -14% costs
-- [ ] Position between hero and problem section
-- [ ] Count-up animation on scroll
+---
 
-**10. Add Warm-up Modal** (1 day)
-- [ ] Create intermediate modal before calendar link
-- [ ] Explain value proposition
-- [ ] Feature list with icons
-- [ ] "Plan demo" button → HubSpot calendar
+### 7. Add Visual Step-by-Step Plan ✅
+**Problem:** Users unclear about how the analysis process works
+**Solution:** Added visual "How It Works" section above input field
 
-**11. Fix Text Truncation** (0.5 day)
-- [ ] Add expand/collapse for executive summary
-- [ ] "Show more" / "Show less" buttons
-- [ ] Currently limited to 4 lines
+**Changes:**
+- ✅ Created 3-step visual with icons (FileText, Sparkles, Download)
+- ✅ Steps: Paste vacancy → AI analyzes → Receive result
+- ✅ Responsive design (horizontal on desktop, stacks on mobile)
+- ✅ Arrows between steps using ArrowRight icon
+- ✅ Proper spacing and mobile-friendly font sizes
 
-**12. Remove Hover from Peel CTA** (0.5 day)
-- [ ] Replace hover trigger with scroll trigger
-- [ ] Use IntersectionObserver
-- [ ] Animate when 50% visible
+**Files Modified:**
+- `app/[locale]/page.tsx` - Added steps section before textarea
+- `messages/nl.json` - Added hero.howItWorks translations
+- `messages/en.json` - Added hero.howItWorks translations
 
-**13. Update Button Text** (0.5 day)
-- [ ] Change "Unlock maximum potential" to "Bekijk verbeterde versie"
-- [ ] Update peel CTA button text
-- [ ] Ensure translation consistency
+---
 
-**14. Add Translation Keys** (ongoing)
-- [ ] Add 15+ new keys for new features
-- [ ] Maintain nl.json + en.json parity
+### 8. Clarify Input Field ✅
+**Problem:** Input placeholder too generic, users unsure what to paste
+**Solution:** Updated placeholder and added helper text
 
-**15. Testing** (1 day)
+**Changes:**
+- ✅ Updated placeholder: "Plak hier je bestaande vacaturetekst (inclusief functietitel)"
+- ✅ Added helper text: "💡 Tip: Kopieer de volledige tekst van je huidige vacature"
+- ✅ Helper text positioned below textarea
+- ✅ Responsive font sizing
+
+**Files Modified:**
+- `messages/nl.json` - Updated hero.placeholder + added hero.helperText
+- `messages/en.json` - Same in English
+
+---
+
+### 9. Add Statistics Section ✅
+**Problem:** No social proof showing real results from clients
+**Solution:** Created animated statistics section with real client data
+
+**Changes:**
+- ✅ StatCard component with IntersectionObserver for scroll-triggered animations
+- ✅ Count-up animation (0 → target value over 2 seconds)
+- ✅ Real data: +20% candidate quality, +25% time saved, -14% campaign costs
+- ✅ Positioned between hero and problem sections
+- ✅ Icons: TrendingUp, Clock, DollarSign
+- ✅ Color-coded cards (emerald, blue, orange)
+- ✅ Responsive grid (stacks on mobile)
+
+**Implementation Details:**
+```typescript
+// StatCard with visibility detection
+useEffect(() => {
+  const observer = new IntersectionObserver(
+    (entries) => { if (entries[0].isIntersecting) setIsVisible(true); },
+    { threshold: 0.3 }
+  );
+  // Observe element
+}, []);
+
+// Count-up animation
+useEffect(() => {
+  if (!isVisible) return;
+  const targetValue = parseInt(value.replace(/[^0-9-]/g, ''));
+  const steps = 60;
+  const increment = targetValue / steps;
+  // Animate with setInterval
+}, [isVisible, value]);
+```
+
+**Files Modified:**
+- `app/[locale]/page.tsx` - Added statistics section + StatCard component
+- `messages/nl.json` - Added statistics translations
+- `messages/en.json` - Added statistics translations
+
+---
+
+### 10. Add Warm-up Modal ✅
+**Problem:** Users redirected to calendar too quickly without understanding value proposition
+**Solution:** Created intermediate modal explaining full software features
+
+**Changes:**
+- ✅ Created AccessRequestModal component
+- ✅ 4 feature highlights with gradient cards:
+  - Recruitment Strategies (blue)
+  - Persona Matching (purple)
+  - ATS Integrations (green)
+  - Unlimited Optimizations (orange)
+- ✅ Icons for each feature
+- ✅ "Plan demo" button → Opens HubSpot calendar
+- ✅ "No, thanks" option to close modal
+- ✅ Social proof: "Geen spam" + "Gratis proefperiode"
+- ✅ Integrated into LimitReachedModal flow
+
+**User Flow:**
+1. User clicks "Vraag volledige toegang aan"
+2. LimitReachedModal closes
+3. AccessRequestModal opens (warm-up)
+4. User sees 4 key features
+5. User clicks "Plan demo"
+6. HubSpot calendar opens in new tab
+
+**Files Created:**
+- `components/report/access-request-modal.tsx` - New modal component
+
+**Files Modified:**
+- `components/report-view.tsx` - Added modal state and integration
+- `messages/nl.json` - Added accessModal translations
+- `messages/en.json` - Added accessModal translations
+
+**Commit:** `2522fe0` - "feat: Add warm-up modal for full access requests"
+
+---
+
+### 11. Fix Text Truncation ✅
+**Problem:** Executive summary truncated to 4 lines with no way to expand
+**Solution:** Added expand/collapse functionality with "Show more" button
+
+**Changes:**
+- ✅ Added useState for isExpanded state
+- ✅ Conditionally apply line-clamp-4 (only when !isExpanded)
+- ✅ "Lees meer" / "Toon minder" button with ChevronDown/ChevronUp icons
+- ✅ Button only shows if summary is longer than 200 characters
+- ✅ Smooth transition on expand/collapse
+- ✅ Button type="button" to fix accessibility warning
+
+**Files Modified:**
+- `components/report/score-hero.tsx` - Added expand/collapse logic
+
+**Commit:** `42a4c87` - "feat: Add expand/collapse functionality for executive summary"
+
+---
+
+### 12. Remove Hover from Peel CTA ✅
+**Problem:** Peel animation required hover, users didn't understand
+**Solution:** Replaced hover with automatic scroll-triggered animation
+
+**Changes:**
+- ✅ Replaced `isHovered` state with `isVisible` state
+- ✅ Implemented IntersectionObserver with 50% threshold
+- ✅ Animation triggers automatically when element becomes visible
+- ✅ Continuous loop animation (2.5s duration, infinite repeat)
+- ✅ Removed "Hover voor resultaat" hint text
+
+**Implementation:**
+```typescript
+const [isVisible, setIsVisible] = useState(false);
+const containerRef = useRef<HTMLDivElement>(null);
+
+useEffect(() => {
+  const observer = new IntersectionObserver(
+    (entries) => { if (entries[0].isIntersecting) setIsVisible(true); },
+    { threshold: 0.5 }
+  );
+  if (containerRef.current) observer.observe(containerRef.current);
+  return () => { /* cleanup */ };
+}, []);
+```
+
+**Files Modified:**
+- `components/report/peel-cta.tsx` - Replaced hover with scroll trigger
+
+**Commit:** `0d7b5fe` - "feat: Remove hover requirement from peel CTA and update button text"
+
+---
+
+### 13. Update Button Text ✅
+**Problem:** Button text "maximum potentieel" too vague
+**Solution:** Changed to "verbeterde versie" (improved version)
+
+**Changes:**
+- ✅ Changed peel CTA text from "maximum potentieel" to "verbeterde versie"
+- ✅ Verified sticky CTA banner already had correct text ("Bekijk verbeterde versie")
+- ✅ Ensured translation consistency across all CTAs
+
+**Files Modified:**
+- `components/report/peel-cta.tsx` - Updated h3 text
+
+**Commit:** `0d7b5fe` - "feat: Remove hover requirement from peel CTA and update button text"
+
+---
+
+### 14. Add Translation Keys ✅
+**Problem:** All new features needed Dutch and English translations
+**Solution:** Systematically added 30+ translation keys
+
+**Changes:**
+- ✅ Added hero.howItWorks (title + 3 steps)
+- ✅ Added hero.helperText
+- ✅ Added statistics section (title, subtitle, 3 metrics)
+- ✅ Added accessModal (title, subtitle, 4 features, CTAs, trust indicators)
+- ✅ Maintained complete parity between nl.json and en.json
+
+**Files Modified:**
+- `messages/nl.json` - Added 30+ new translation keys
+- `messages/en.json` - Added 30+ new translation keys
+
+---
+
+## 📋 Testing Phase (Pending)
+
+**15. Comprehensive Testing** (1 day)
 - [ ] Run through testing checklist
-- [ ] Cross-browser testing
-- [ ] Mobile testing
-- [ ] Language switching testing
-- [ ] AI output quality verification
+- [ ] Cross-browser testing (Chrome, Safari, Firefox)
+- [ ] Mobile testing (iOS Safari, Android Chrome)
+- [ ] Language switching testing (nl ↔ en)
+- [ ] AI output quality verification (no literal examples)
+- [ ] Copy/download functionality testing
+- [ ] Animation testing (statistics, peel CTA)
+- [ ] Modal flow testing (email capture, warm-up modal)
+- [ ] Background job processing testing
 
 ---
 
 ## 🔧 Technical Debt & Notes
 
-### Dependencies Added
+### Dependencies Added (Sprint 2)
 ```json
 {
   "dependencies": {
@@ -262,7 +445,7 @@ POST /api/analyze
 }
 ```
 
-### Dependencies Needed (Next Sprint)
+### Dependencies Added (Sprint 3)
 ```json
 {
   "dependencies": {
@@ -274,6 +457,7 @@ POST /api/analyze
   }
 }
 ```
+
 
 ### Environment Variables Required
 ```bash
@@ -320,8 +504,12 @@ pm2 start lib/workers/analysis-worker.ts --name vacancy-worker
 ### User Experience
 - ✅ Better error messages (localized, actionable)
 - ✅ AI quality improved (no more literal copies)
-- 🔄 Loading experience improvements (in progress)
-- 🔄 Copy/download functionality (pending)
+- ✅ Loading experience improvements (time indication, email capture)
+- ✅ Copy/download functionality (clipboard, Word, PDF)
+- ✅ Visual clarity (step-by-step plan, statistics, input helpers)
+- ✅ Scroll-triggered animations (no hover required)
+- ✅ Conversion optimization (warm-up modal)
+- ✅ Text readability (expand/collapse summaries)
 
 ---
 
@@ -396,36 +584,38 @@ The queue-based system allows horizontal scaling:
 - ✅ Timeout errors fixed (proper handling + retry)
 - ✅ AI prompt fixed (no more literal copies)
 
-### UX Improvements (Priority 2) - 30% Complete 🔄
+### UX Improvements (Priority 2) - 100% Complete ✅
 - ✅ Timeout handling (2 min analysis, 1.5 min optimization)
-- 🔄 Background processing (infrastructure 70% complete)
-- 🔄 Time indication (pending)
-- 🔄 Text copyable (pending - HIGH PRIORITY)
+- ✅ Background processing (complete infrastructure + worker)
+- ✅ Time indication (30-60s estimate with elapsed time)
+- ✅ Text copyable (copy, Word, PDF downloads)
 
-### Polish & Conversion (Priority 3) - 0% Complete 📋
-- 📋 Visual step-by-step plan
-- 📋 Input field clarification
-- 📋 Statistics section
-- 📋 Warm-up modal
-- 📋 Text truncation fix
-- 📋 Hover removal
-- 📋 Button text updates
+### Polish & Conversion (Priority 3) - 100% Complete ✅
+- ✅ Visual step-by-step plan
+- ✅ Input field clarification
+- ✅ Statistics section
+- ✅ Warm-up modal
+- ✅ Text truncation fix
+- ✅ Hover removal
+- ✅ Button text updates
+- ✅ All translation keys added
 
 ---
 
 ## 📊 Estimated Timeline
 
-### Completed: 6.5 days
+### Completed: 11.5 days ✅
 - Sprint 1 (Critical Fixes): 3 days ✅
 - Sprint 2 (High-Value UX): 3.5 days ✅
+- Sprint 3 (Polish & Conversion): 5 days ✅
 
 ### In Progress: 0 days
-- No current sprint in progress
+- All implementation work complete
 
-### Remaining: 5 days
-- Sprint 3 (Polish & Conversion): 5 days 📋
+### Remaining: 1 day
+- Testing Phase: 1 day 📋
 
-**Total:** 11.5 days (6.5 complete, 0 in progress, 5 remaining)
+**Total:** 12.5 days (11.5 implementation complete, 1 testing remaining)
 
 ---
 
