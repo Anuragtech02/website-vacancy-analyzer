@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,6 +10,8 @@ import {
   Share2,
   CheckCircle2,
   AlertCircle,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { PeelCTA } from "./peel-cta";
@@ -73,6 +76,7 @@ export function ScoreHero({
   isUnlocked,
   issues = [],
 }: ScoreHeroProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
   const config = verdictConfig[verdict];
 
   const getScoreColor = (s: number) => {
@@ -160,13 +164,32 @@ export function ScoreHero({
              </div>
 
             {/* Verdict & Summary */}
-            <div className="space-y-3 text-center sm:text-left">
+            <div className="space-y-3 text-center sm:text-left flex-1">
                  <div className={cn("inline-flex items-center px-3 py-1 rounded-full text-xs font-bold", config.bgColor, config.textColor)}>
                     {config.label}
                  </div>
-                 <p className="text-sm text-slate-600 leading-relaxed font-medium line-clamp-4">
-                    {executiveSummary}
-                 </p>
+                 <div>
+                   <p className={cn("text-sm text-slate-600 leading-relaxed font-medium", !isExpanded && "line-clamp-4")}>
+                      {executiveSummary}
+                   </p>
+                   {executiveSummary.length > 200 && (
+                     <button
+                       type="button"
+                       onClick={() => setIsExpanded(!isExpanded)}
+                       className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
+                     >
+                       {isExpanded ? (
+                         <>
+                           Toon minder <ChevronUp className="w-3 h-3" />
+                         </>
+                       ) : (
+                         <>
+                           Lees meer <ChevronDown className="w-3 h-3" />
+                         </>
+                       )}
+                     </button>
+                   )}
+                 </div>
             </div>
           </div>
         </CardContent>
