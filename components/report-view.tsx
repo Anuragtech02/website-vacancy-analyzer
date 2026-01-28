@@ -15,6 +15,7 @@ import { PillarGrid } from "@/components/report/pillar-grid";
 import { OriginalTextCollapsible } from "@/components/report/original-text-collapsible";
 import { TrustBar } from "@/components/report/trust-bar";
 import { StickyCTABanner } from "@/components/report/sticky-cta-banner";
+import { AccessRequestModal } from "@/components/report/access-request-modal";
 
 interface ReportViewProps {
   analysis: AnalysisResult;
@@ -27,9 +28,11 @@ interface ReportViewProps {
 function LimitReachedModal({
   isOpen,
   onClose,
+  onOpenAccessModal,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  onOpenAccessModal: () => void;
 }) {
   const [showCopiedToast, setShowCopiedToast] = useState(false);
 
@@ -41,6 +44,11 @@ function LimitReachedModal({
     } catch (err) {
       console.error("Failed to copy email:", err);
     }
+  };
+
+  const handleRequestAccess = () => {
+    onClose(); // Close current modal
+    onOpenAccessModal(); // Open warm-up modal
   };
 
   if (!isOpen) return null;
@@ -55,6 +63,7 @@ function LimitReachedModal({
        {/* Modal */}
        <div className="relative bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full mx-4 animate-in fade-in zoom-in-95 slide-in-from-bottom-5 duration-300 text-center">
            <button
+             type="button"
              onClick={onClose}
              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors"
            >
@@ -73,7 +82,7 @@ function LimitReachedModal({
            <div className="space-y-3">
              <Button
                 className="w-full h-12 text-base font-bold shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 rounded-xl"
-                onClick={() => window.open("https://meetings-eu1.hubspot.com/jknuvers", "_blank")}
+                onClick={handleRequestAccess}
              >
                 Vraag volledige toegang aan
              </Button>
@@ -277,6 +286,7 @@ export function ReportView({
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showLimitModal, setShowLimitModal] = useState(false);
+  const [showAccessModal, setShowAccessModal] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [optimizationResult, setOptimizationResult] = useState<OptimizationResult | null>(null);
   const [submittedEmail, setSubmittedEmail] = useState<string>("");
@@ -468,9 +478,20 @@ export function ReportView({
       />
 
        {/* Limit Reached Modal */}
-       <LimitReachedModal 
+       <LimitReachedModal
          isOpen={showLimitModal}
          onClose={() => setShowLimitModal(false)}
+         onOpenAccessModal={() => setShowAccessModal(true)}
+       />
+
+       {/* Access Request Modal (Warm-up) */}
+       <AccessRequestModal
+         isOpen={showAccessModal}
+         onClose={() => setShowAccessModal(false)}
+         onPlanDemo={() => {
+           setShowAccessModal(false);
+           window.open("https://meetings-eu1.hubspot.com/jknuvers", "_blank");
+         }}
        />
 
        {/* Success Notification */}

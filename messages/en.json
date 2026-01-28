@@ -239,5 +239,36 @@
     "analysisFailed": "Something went wrong. Please try again.",
     "emptyVacancy": "Please enter a vacancy text.",
     "networkError": "Network error. Check your internet connection."
+  },
+  "accessModal": {
+    "title": "This was just a preview...",
+    "subtitle": "You've used the free version. Our full software offers much more.",
+    "features": {
+      "recruitment": {
+        "title": "Recruitment Strategies",
+        "description": "Get personalized recruitment strategies based on your target audience and sector"
+      },
+      "persona": {
+        "title": "Persona Matching",
+        "description": "Automatically match your vacancy with the right candidate profiles"
+      },
+      "ats": {
+        "title": "ATS Integrations",
+        "description": "Direct integration with your existing recruitment system"
+      },
+      "unlimited": {
+        "title": "Unlimited Optimizations",
+        "description": "Analyze and optimize as many vacancies as you want"
+      }
+    },
+    "cta": {
+      "question": "Want to see how it works?",
+      "planDemo": "Schedule a quick demo",
+      "noThanks": "No, thanks"
+    },
+    "trust": {
+      "noSpam": "No spam",
+      "freeTrial": "Free trial"
+    }
   }
 }

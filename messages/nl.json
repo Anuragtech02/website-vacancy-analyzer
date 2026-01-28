@@ -239,5 +239,36 @@
     "analysisFailed": "Er ging iets mis. Probeer het opnieuw.",
     "emptyVacancy": "Voer een vacaturetekst in.",
     "networkError": "Netwerkfout. Controleer je internetverbinding."
+  },
+  "accessModal": {
+    "title": "Dit was maar een voorproefje...",
+    "subtitle": "Je hebt de gratis versie gebruikt. Onze volledige software biedt veel meer.",
+    "features": {
+      "recruitment": {
+        "title": "Recruitment Strategieën",
+        "description": "Krijg gepersonaliseerde wervingsstrategieën op basis van je doelgroep en sector"
+      },
+      "persona": {
+        "title": "Persona-Matching",
+        "description": "Match je vacature automatisch met de juiste kandidaatprofielen"
+      },
+      "ats": {
+        "title": "ATS Integraties",
+        "description": "Directe koppeling met je bestaande recruitment systeem"
+      },
+      "unlimited": {
+        "title": "Onbeperkte Optimalisaties",
+        "description": "Analyseer en optimaliseer zoveel vacatures als je wilt"
+      }
+    },
+    "cta": {
+      "question": "Wil je zien hoe dat werkt?",
+      "planDemo": "Plan een korte demo",
+      "noThanks": "Nee, bedankt"
+    },
+    "trust": {
+      "noSpam": "Geen spam",
+      "freeTrial": "Gratis proefperiode"
+    }
   }
 }
