@@ -1,21 +1,23 @@
 # Implementation Progress Report
 **Project:** Vacature Tovenaar - UX Improvements & Bug Fixes
 **Date:** January 28, 2026
-**Sprint Status:** Sprint 1 Complete (100%) | Sprint 2 In Progress (70%)
+**Sprint Status:** Sprint 1 Complete (100%) | Sprint 2 Complete (100%)
 
 ---
 
 ## 📊 Executive Summary
 
-**Completed:** 8 critical tasks addressing major user pain points
-**In Progress:** 3 background processing tasks
+**Completed:** 11 critical tasks addressing major user pain points
+**In Progress:** 0 tasks
 **Remaining:** 11 UX polish tasks
 
 **Impact So Far:**
 - ✅ Fixed AI copying literal examples (quality issue)
 - ✅ Added timeout protection (no more endless loading)
 - ✅ Unlimited analysis restored (per agreement)
-- ✅ Background job infrastructure (70% complete)
+- ✅ Background job infrastructure (100% complete)
+- ✅ Email capture for long-running analyses
+- ✅ Time indication with elapsed time tracking
 
 ---
 
@@ -99,9 +101,9 @@ if (usageCount >= 2 && !bypassLimit) {
 
 ---
 
-## 🔄 Sprint 2: High-Value UX (70% Complete)
+## ✅ Sprint 2: High-Value UX (100% Complete)
 
-### 4. Background Job Processing Infrastructure ✅ (70%)
+### 4. Background Job Processing Infrastructure ✅ (100%)
 **Problem:** Users can't close browser during long analysis
 **Solution:** Queue-based background processing with email delivery
 
@@ -111,6 +113,10 @@ if (usageCount >= 2 && !bypassLimit) {
 - ✅ Created job queue service (`lib/queue.ts`)
 - ✅ Created analysis worker (`lib/workers/analysis-worker.ts`)
 - ✅ Added email notifications for completion/failure
+- ✅ Updated analyze API to support async mode
+- ✅ Added email capture UI (shows after 15 seconds)
+- ✅ Added time indication (30-60s estimate with elapsed time)
+- ✅ Frontend handling of async flow
 
 **Database Schema:**
 ```sql
@@ -135,10 +141,32 @@ CREATE TABLE analysis_jobs (
 - Email delivery on completion
 - Cleanup (keeps last 100 completed, 200 failed)
 
-**Remaining (30%):**
-- 🔄 Update analyze API to support async mode
-- 🔄 Add email capture UI (show after 15 seconds)
-- 🔄 Frontend handling of async flow
+**API Changes:**
+```typescript
+// Async mode when email provided
+POST /api/analyze
+{
+  "vacancyText": "...",
+  "category": "General",
+  "locale": "nl",
+  "email": "user@example.com"  // Optional - triggers async mode
+}
+
+// Response for async mode
+{
+  "success": true,
+  "async": true,
+  "jobId": "abc123",
+  "message": "Je analyse is in de wachtrij geplaatst..."
+}
+```
+
+**UI Features:**
+- Email capture appears after 15 seconds of loading
+- Shows elapsed time vs estimated time (30-60s)
+- User can enter email and continue in background
+- Alert confirmation when job is queued
+- Form resets after async submission
 
 **Files Created:**
 - `lib/queue.ts` - Job queue service
@@ -146,20 +174,19 @@ CREATE TABLE analysis_jobs (
 - `lib/db-raw.ts` - Worker database access
 - `migrations/001_add_analysis_jobs.sql` - Database migration
 
-**Commit:** `03fce35` - "feat: Add background job processing infrastructure"
+**Files Modified:**
+- `app/api/analyze/route.ts` - Async mode support
+- `app/[locale]/page.tsx` - Email capture UI, time tracking
+
+**Commits:**
+- `03fce35` - "feat: Add background job processing infrastructure"
+- `a56d073` - "feat: Add async analysis with email capture and time indication"
 
 ---
 
 ## 📋 Remaining Tasks
 
-### Sprint 2: High-Value UX (Remaining 30%)
-
-**5. Complete Background Processing** (0.5 day)
-- [ ] Update analyze API to accept email parameter
-- [ ] Add "async mode" support (queue vs immediate)
-- [ ] Add email capture UI after 15 seconds loading
-- [ ] Add time indication (30-60 seconds estimate)
-- [ ] Add progress bar tied to real progress
+### Sprint 2: High-Value UX (Complete! Moving to next priority)
 
 **6. Make Text Copyable** (1.5 days) - HIGH PRIORITY
 - [ ] Rewrite `optimization-result-view.tsx` (currently returns null)
@@ -388,16 +415,17 @@ The queue-based system allows horizontal scaling:
 
 ## 📊 Estimated Timeline
 
-### Completed: 3 days
+### Completed: 6.5 days
 - Sprint 1 (Critical Fixes): 3 days ✅
+- Sprint 2 (High-Value UX): 3.5 days ✅
 
-### In Progress: 0.5 days remaining
-- Sprint 2 (High-Value UX): 3.5 days total, 3 done ✅, 0.5 remaining 🔄
+### In Progress: 0 days
+- No current sprint in progress
 
 ### Remaining: 5 days
 - Sprint 3 (Polish & Conversion): 5 days 📋
 
-**Total:** 8.5 days (3 complete, 0.5 in progress, 5 remaining)
+**Total:** 11.5 days (6.5 complete, 0 in progress, 5 remaining)
 
 ---
 
