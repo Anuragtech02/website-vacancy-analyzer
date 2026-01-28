@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Mail, ArrowRight } from "lucide-react";
 import { generateFingerprint } from "@/lib/fingerprint";
 import { useTranslations } from 'next-intl';
+import { fetchWithTimeout, getErrorMessage } from "@/lib/fetch-with-timeout";
 
 import { OptimizationResultView } from "@/components/report/optimization-result-view";
 
@@ -320,10 +321,15 @@ export function ReportView({
       // Generate browser fingerprint for abuse prevention
       const fingerprint = generateFingerprint();
 
-      const response = await fetch("/api/optimize", {
+      const response = await fetchWithTimeout("/api/optimize", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, reportId, fingerprint, locale }),
+        timeout: 90000, // 1.5 minutes
+        retries: 1, // Retry once on failure
+        onRetry: (attempt, error) => {
+          console.log(`Retry attempt ${attempt} after error:`, error.message);
+        }
       });
 
       const data = await response.json();
@@ -357,6 +363,11 @@ export function ReportView({
 
     } catch (error) {
       console.error(error);
+      // Show user-friendly error message
+      const errorMessage = error instanceof Error
+        ? getErrorMessage(error, locale)
+        : 'An error occurred';
+      alert(errorMessage);
       setStatus("error");
     }
   };

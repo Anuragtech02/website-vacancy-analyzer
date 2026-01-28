@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import Image from "next/image";
+import { fetchWithTimeout, getErrorMessage } from "@/lib/fetch-with-timeout";
 
 export default function Home() {
   const t = useTranslations('landing');
@@ -67,10 +68,15 @@ export default function Home() {
     setIsAnalyzing(true);
 
     try {
-      const response = await fetch("/api/analyze", {
+      const response = await fetchWithTimeout("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ vacancyText, category, locale }),
+        timeout: 120000, // 2 minutes
+        retries: 1, // Retry once on failure
+        onRetry: (attempt, error) => {
+          console.log(`Retry attempt ${attempt} after error:`, error.message);
+        }
       });
 
       if (!response.ok) {
@@ -85,7 +91,10 @@ export default function Home() {
       router.push(`/${locale}/report/${data.reportId}`);
     } catch (error) {
       console.error("Error:", error);
-      alert(t('hero.error'));
+      const errorMessage = error instanceof Error
+        ? getErrorMessage(error, locale)
+        : t('hero.error');
+      alert(errorMessage);
       setIsAnalyzing(false);
     }
   };
