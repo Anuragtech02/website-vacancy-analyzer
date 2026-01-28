@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
-import { Wand2, ArrowRight, CheckCircle2, Lock, Search, MessageSquare, FileText, Layout, Globe, Loader2, Play, Building2, Sparkles, XCircle } from "lucide-react";
+import { Wand2, ArrowRight, CheckCircle2, Lock, Search, MessageSquare, FileText, Layout, Globe, Loader2, Play, Building2, Sparkles, XCircle, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/language-switcher";
@@ -27,6 +27,9 @@ export default function Home() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+  const [showEmailCapture, setShowEmailCapture] = useState(false);
+  const [email, setEmail] = useState("");
+  const [loadingTime, setLoadingTime] = useState(0);
   const router = useRouter();
 
   // Animate through steps when analyzing
@@ -34,6 +37,8 @@ export default function Home() {
     if (!isAnalyzing) {
       setCurrentStep(0);
       setCompletedSteps([]);
+      setShowEmailCapture(false);
+      setLoadingTime(0);
       return;
     }
 
@@ -62,7 +67,25 @@ export default function Home() {
     return () => { if (timeoutId) clearTimeout(timeoutId); };
   }, [isAnalyzing]);
 
-  const handleAnalyze = async () => {
+  // Timer to show email capture after 15 seconds
+  useEffect(() => {
+    if (!isAnalyzing) return;
+
+    const emailCaptureTimer = setTimeout(() => {
+      setShowEmailCapture(true);
+    }, 15000); // Show after 15 seconds
+
+    const loadingTimer = setInterval(() => {
+      setLoadingTime(prev => prev + 1);
+    }, 1000);
+
+    return () => {
+      clearTimeout(emailCaptureTimer);
+      clearInterval(loadingTimer);
+    };
+  }, [isAnalyzing]);
+
+  const handleAnalyze = async (emailForAsync?: string) => {
     if (!vacancyText.trim()) return;
 
     setIsAnalyzing(true);
@@ -71,7 +94,12 @@ export default function Home() {
       const response = await fetchWithTimeout("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ vacancyText, category, locale }),
+        body: JSON.stringify({
+          vacancyText,
+          category,
+          locale,
+          email: emailForAsync
+        }),
         timeout: 120000, // 2 minutes
         retries: 1, // Retry once on failure
         onRetry: (attempt, error) => {
@@ -83,12 +111,29 @@ export default function Home() {
         throw new Error("Analysis failed");
       }
 
+      const data = await response.json() as {
+        success: boolean;
+        async: boolean;
+        reportId?: string;
+        jobId?: string;
+        message?: string;
+      };
+
       // Increment usage count locally
       const currentCount = parseInt(localStorage.getItem("vacancy_usage_count") || "0", 10);
       localStorage.setItem("vacancy_usage_count", (currentCount + 1).toString());
 
-      const data = (await response.json()) as { reportId: string };
-      router.push(`/${locale}/report/${data.reportId}`);
+      if (data.async && data.jobId) {
+        // Async mode - show success message and stop loading
+        alert(data.message || (locale === 'en'
+          ? 'Your analysis has been queued. You will receive an email when it\'s ready.'
+          : 'Je analyse is in de wachtrij geplaatst. Je ontvangt een email wanneer deze klaar is.'));
+        setIsAnalyzing(false);
+        setVacancyText("");
+      } else if (data.reportId) {
+        // Sync mode - redirect to report
+        router.push(`/${locale}/report/${data.reportId}`);
+      }
     } catch (error) {
       console.error("Error:", error);
       const errorMessage = error instanceof Error
@@ -97,6 +142,14 @@ export default function Home() {
       alert(errorMessage);
       setIsAnalyzing(false);
     }
+  };
+
+  const handleContinueInBackground = () => {
+    if (!email.trim()) {
+      alert(locale === 'en' ? 'Please enter your email address' : 'Voer je e-mailadres in');
+      return;
+    }
+    handleAnalyze(email);
   };
 
   return (
@@ -261,7 +314,7 @@ export default function Home() {
 
                                 <div className="flex items-center gap-4 w-full sm:w-auto">
                                     <Button
-                                        onClick={handleAnalyze}
+                                        onClick={() => handleAnalyze()}
                                         disabled={!vacancyText.trim()}
                                         className="w-full sm:w-auto px-4 sm:px-6 py-5 sm:py-6 rounded-xl sm:rounded-2xl text-sm sm:text-base font-bold shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98] transition-all group cursor-pointer"
                                     >
@@ -317,28 +370,75 @@ export default function Home() {
                           </div>
 
                           {/* Dynamic Text */}
-                          <div className="space-y-2 sm:space-y-3 text-center max-w-lg mx-auto mb-10 sm:mb-16 px-4">
+                          <div className="space-y-2 sm:space-y-3 text-center max-w-lg mx-auto mb-6 sm:mb-8 px-4">
                              <h3 className="text-xl sm:text-3xl font-black text-slate-800 tracking-tight leading-tight">
                                 {ANALYSIS_STEPS.find(s => s.id === currentStep)?.label || "Analyse afronden..."}
                              </h3>
                              <p className="text-xs sm:text-sm text-slate-400 font-bold uppercase tracking-widest opacity-80">
                                 {t('analyzing.working')}
                              </p>
+
+                             {/* Time Indication */}
+                             <p className="text-xs text-slate-500 mt-2">
+                                {locale === 'en'
+                                  ? `Estimated time: 30-60 seconds (${loadingTime}s elapsed)`
+                                  : `Geschatte tijd: 30-60 seconden (${loadingTime}s verstreken)`}
+                             </p>
                           </div>
+
+                          {/* Email Capture (show after 15 seconds) */}
+                          {showEmailCapture && (
+                            <div className="w-full max-w-md mx-auto mb-6 px-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 space-y-3">
+                                <div className="flex items-start gap-3">
+                                  <div className="flex-shrink-0 w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center">
+                                    <span className="text-white text-sm font-bold">!</span>
+                                  </div>
+                                  <div className="flex-1">
+                                    <h4 className="font-bold text-slate-800 text-sm mb-1">
+                                      {locale === 'en'
+                                        ? 'Taking longer than expected?'
+                                        : 'Duurt het langer dan verwacht?'}
+                                    </h4>
+                                    <p className="text-xs text-slate-600">
+                                      {locale === 'en'
+                                        ? 'Enter your email to receive results when ready. You can close this tab.'
+                                        : 'Vul je e-mailadres in om de resultaten te ontvangen zodra ze klaar zijn. Je kunt dit tabblad sluiten.'}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="flex gap-2">
+                                  <input
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder={locale === 'en' ? 'your@email.com' : 'jouw@email.nl'}
+                                    className="flex-1 px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                  />
+                                  <Button
+                                    onClick={handleContinueInBackground}
+                                    className="px-4 py-2 text-sm font-semibold bg-primary hover:bg-primary/90"
+                                  >
+                                    {locale === 'en' ? 'Continue' : 'Doorgaan'}
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          )}
 
                           {/* Timeline / Progress Dots */}
                           <div className="flex items-center gap-3">
                              {ANALYSIS_STEPS.map((step) => {
                                 const isCompleted = completedSteps.includes(step.id);
                                 const isCurrent = currentStep === step.id;
-                                
+
                                 return (
-                                  <div 
-                                    key={step.id} 
+                                  <div
+                                    key={step.id}
                                     className={cn(
                                       "h-1.5 rounded-full transition-all duration-700 ease-out",
                                       isCompleted ? "w-4 bg-green-500 shadow-sm" :
-                                      isCurrent ? "w-12 bg-primary shadow-md shadow-primary/20" : 
+                                      isCurrent ? "w-12 bg-primary shadow-md shadow-primary/20" :
                                       "w-1.5 bg-slate-200"
                                     )}
                                   />
