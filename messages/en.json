@@ -49,6 +49,22 @@
       "processing": "processing vacancy...",
       "working": "Our software is at work..."
     },
+    "statistics": {
+      "title": "Proven Results",
+      "subtitle": "Based on real client data",
+      "quality": {
+        "value": "+20%",
+        "label": "Candidate quality"
+      },
+      "time": {
+        "value": "+25%",
+        "label": "Time saved in process"
+      },
+      "cost": {
+        "value": "-14%",
+        "label": "Campaign costs"
+      }
+    },
     "problem": {
       "title": "The Problem",
       "subtitle1": "Why many vacancies",

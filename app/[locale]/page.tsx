@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
-import { Wand2, ArrowRight, CheckCircle2, Lock, Search, MessageSquare, FileText, Layout, Globe, Loader2, Play, Building2, Sparkles, XCircle, Mail } from "lucide-react";
+import { Wand2, ArrowRight, CheckCircle2, Lock, Search, MessageSquare, FileText, Layout, Globe, Loader2, Play, Building2, Sparkles, XCircle, Mail, TrendingUp, Clock, DollarSign } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/language-switcher";
@@ -515,6 +515,48 @@ export default function Home() {
 
       </div>
 
+      {/* STATISTICS SECTION - Proven Results */}
+      <section className="relative z-10 w-full bg-white py-12 sm:py-16 border-y border-slate-200">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header */}
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-2">
+              {t('statistics.title')}
+            </h2>
+            <p className="text-sm sm:text-base text-slate-600">
+              {t('statistics.subtitle')}
+            </p>
+          </div>
+
+          {/* Statistics Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
+            {/* Stat 1: Quality */}
+            <StatCard
+              icon={<TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-emerald-600" />}
+              value={t('statistics.quality.value')}
+              label={t('statistics.quality.label')}
+              color="emerald"
+            />
+
+            {/* Stat 2: Time */}
+            <StatCard
+              icon={<Clock className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />}
+              value={t('statistics.time.value')}
+              label={t('statistics.time.label')}
+              color="blue"
+            />
+
+            {/* Stat 3: Cost */}
+            <StatCard
+              icon={<DollarSign className="w-6 h-6 sm:w-8 sm:h-8 text-orange-600" />}
+              value={t('statistics.cost.value')}
+              label={t('statistics.cost.label')}
+              color="orange"
+            />
+          </div>
+        </div>
+      </section>
+
       {/* SECTION 2: THE REALITY (Blueprint Mode) */}
       <section className="relative z-10 w-full bg-slate-50 py-16 border-t border-slate-200 overflow-hidden">
         {/* 1. Technical Grid Background */}
@@ -731,5 +773,101 @@ export default function Home() {
       </footer>
 
     </main>
+  );
+}
+
+// StatCard Component with Animated Counter
+interface StatCardProps {
+  icon: React.ReactNode;
+  value: string;
+  label: string;
+  color: 'emerald' | 'blue' | 'orange';
+}
+
+function StatCard({ icon, value, label, color }: StatCardProps) {
+  const [isVisible, setIsVisible] = useState(false);
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    const element = document.getElementById(`stat-${label}`);
+    if (element) {
+      observer.observe(element);
+    }
+
+    return () => {
+      if (element) {
+        observer.unobserve(element);
+      }
+    };
+  }, [label]);
+
+  useEffect(() => {
+    if (!isVisible) return;
+
+    // Extract number from value string (e.g., "+20%" -> 20)
+    const targetValue = parseInt(value.replace(/[^0-9-]/g, ''));
+    const duration = 2000; // 2 seconds
+    const steps = 60;
+    const increment = targetValue / steps;
+    let current = 0;
+
+    const timer = setInterval(() => {
+      current += increment;
+      if (
+        (increment > 0 && current >= targetValue) ||
+        (increment < 0 && current <= targetValue)
+      ) {
+        setDisplayValue(targetValue);
+        clearInterval(timer);
+      } else {
+        setDisplayValue(Math.round(current));
+      }
+    }, duration / steps);
+
+    return () => clearInterval(timer);
+  }, [isVisible, value]);
+
+  const colorClasses = {
+    emerald: 'bg-emerald-50 border-emerald-200',
+    blue: 'bg-blue-50 border-blue-200',
+    orange: 'bg-orange-50 border-orange-200',
+  };
+
+  // Format display value with sign
+  const formattedValue = value.startsWith('-')
+    ? `-${Math.abs(displayValue)}%`
+    : `+${displayValue}%`;
+
+  return (
+    <div
+      id={`stat-${label}`}
+      className={cn(
+        'flex flex-col items-center text-center p-6 sm:p-8 rounded-2xl border-2 transition-all duration-500',
+        colorClasses[color],
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+      )}
+    >
+      {/* Icon */}
+      <div className="mb-4">{icon}</div>
+
+      {/* Animated Value */}
+      <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-2">
+        {formattedValue}
+      </div>
+
+      {/* Label */}
+      <div className="text-sm sm:text-base font-semibold text-slate-700">
+        {label}
+      </div>
+    </div>
   );
 }

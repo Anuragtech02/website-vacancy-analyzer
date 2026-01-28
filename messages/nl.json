@@ -49,6 +49,22 @@
       "processing": "vacature verwerken...",
       "working": "Onze software is aan het werk..."
     },
+    "statistics": {
+      "title": "Bewezen Resultaten",
+      "subtitle": "Gebaseerd op echte klantdata",
+      "quality": {
+        "value": "+20%",
+        "label": "Kwaliteit kandidaten"
+      },
+      "time": {
+        "value": "+25%",
+        "label": "Tijdswinst in proces"
+      },
+      "cost": {
+        "value": "-14%",
+        "label": "Campagnekosten"
+      }
+    },
     "problem": {
       "title": "Het Probleem",
       "subtitle1": "Waarom veel vacatures",
