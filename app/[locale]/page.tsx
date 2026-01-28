@@ -271,6 +271,63 @@ export default function Home() {
                         </div>
 
                         <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 relative">
+                            {/* How It Works - Visual Step-by-Step */}
+                            <div className="pb-4 border-b border-slate-100">
+                              <h3 className="text-sm font-bold text-slate-900 mb-4 text-center">
+                                {t('hero.howItWorks.title')}
+                              </h3>
+                              <div className="grid grid-cols-3 gap-2 sm:gap-4">
+                                {/* Step 1 */}
+                                <div className="flex flex-col items-center text-center">
+                                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
+                                    <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                                  </div>
+                                  <div className="font-bold text-xs sm:text-sm text-slate-900 mb-1">
+                                    {t('hero.howItWorks.step1Title')}
+                                  </div>
+                                  <div className="text-[10px] sm:text-xs text-slate-500 leading-tight">
+                                    {t('hero.howItWorks.step1Desc')}
+                                  </div>
+                                </div>
+
+                                {/* Arrow */}
+                                <div className="flex items-center justify-center pt-6">
+                                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-slate-300" />
+                                </div>
+
+                                {/* Step 2 */}
+                                <div className="flex flex-col items-center text-center">
+                                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
+                                    <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                                  </div>
+                                  <div className="font-bold text-xs sm:text-sm text-slate-900 mb-1">
+                                    {t('hero.howItWorks.step2Title')}
+                                  </div>
+                                  <div className="text-[10px] sm:text-xs text-slate-500 leading-tight">
+                                    {t('hero.howItWorks.step2Desc')}
+                                  </div>
+                                </div>
+
+                                {/* Arrow */}
+                                <div className="flex items-center justify-center pt-6">
+                                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-slate-300" />
+                                </div>
+
+                                {/* Step 3 */}
+                                <div className="flex flex-col items-center text-center">
+                                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-emerald-100 flex items-center justify-center mb-2">
+                                    <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
+                                  </div>
+                                  <div className="font-bold text-xs sm:text-sm text-slate-900 mb-1">
+                                    {t('hero.howItWorks.step3Title')}
+                                  </div>
+                                  <div className="text-[10px] sm:text-xs text-slate-500 leading-tight">
+                                    {t('hero.howItWorks.step3Desc')}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
                             <div className="relative">
                                 <textarea
                                     value={vacancyText}
@@ -279,6 +336,11 @@ export default function Home() {
                                     className="peer w-full h-48 sm:h-56 lg:h-64 p-4 sm:p-5 bg-slate-50/30 focus:bg-white rounded-xl sm:rounded-2xl border-2 border-slate-100/50 resize-none focus:ring-4 focus:ring-primary/5 focus:border-primary/20 transition-all text-sm sm:text-base leading-relaxed placeholder:text-slate-300 font-medium"
                                     style={{ whiteSpace: "pre-wrap" }}
                                 />
+
+                                {/* Helper Text */}
+                                <p className="mt-2 text-xs text-slate-500 px-1">
+                                  {t('hero.helperText')}
+                                </p>
 
                                 {/* Floating Badge - Bottom Left (Inside/Overlapping Textarea) */}
                                 <div className="absolute left-2 sm:left-4 xl:-left-8 bottom-6 sm:bottom-8 bg-white py-2 sm:py-2.5 px-3 sm:px-4 rounded-xl sm:rounded-2xl shadow-xl border border-slate-100 flex items-center gap-2 sm:gap-3 z-20 transition-all duration-300 peer-focus:opacity-0 peer-focus:-translate-x-4 peer-hover:opacity-0 peer-hover:-translate-x-4 pointer-events-none">
