@@ -2,6 +2,7 @@
 
 import { OptimizationResult } from "@/lib/gemini";
 import { Button } from "@/components/ui/button";
+import { InlineBanner, type BannerVariant } from "@/components/ui/inline-banner";
 import { Copy, Download, FileText, Check } from "lucide-react";
 import { useState } from "react";
 import { saveAs } from "file-saver";
@@ -19,6 +20,7 @@ export function OptimizationResultView({ result, email, phase }: OptimizationRes
   const [copied, setCopied] = useState(false);
   const [downloadingWord, setDownloadingWord] = useState(false);
   const [downloadingPdf, setDownloadingPdf] = useState(false);
+  const [banner, setBanner] = useState<{ message: string; variant: BannerVariant } | null>(null);
 
   // Copy to clipboard
   const handleCopy = async () => {
@@ -28,7 +30,10 @@ export function OptimizationResultView({ result, email, phase }: OptimizationRes
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
       console.error("Failed to copy:", error);
-      alert(locale === 'en' ? 'Failed to copy text' : 'Kopiëren mislukt');
+      setBanner({
+        message: locale === 'en' ? 'Failed to copy text' : 'Kopiëren mislukt',
+        variant: "error"
+      });
     }
   };
 
@@ -160,7 +165,10 @@ export function OptimizationResultView({ result, email, phase }: OptimizationRes
       saveAs(blob, fileName);
     } catch (error) {
       console.error("Failed to generate Word document:", error);
-      alert(locale === 'en' ? 'Failed to generate Word document' : 'Word-document genereren mislukt');
+      setBanner({
+        message: locale === 'en' ? 'Failed to generate Word document' : 'Word-document genereren mislukt',
+        variant: "error"
+      });
     } finally {
       setDownloadingWord(false);
     }
@@ -171,14 +179,16 @@ export function OptimizationResultView({ result, email, phase }: OptimizationRes
     setDownloadingPdf(true);
     try {
       // This triggers the existing PDF email flow
-      alert(
-        locale === 'en'
-          ? 'PDF has been sent to your email'
-          : 'PDF is naar je e-mail verzonden'
-      );
+      setBanner({
+        message: locale === 'en' ? 'PDF has been sent to your email' : 'PDF is naar je e-mail verzonden',
+        variant: "success"
+      });
     } catch (error) {
       console.error("Failed to send PDF:", error);
-      alert(locale === 'en' ? 'Failed to send PDF' : 'PDF verzenden mislukt');
+      setBanner({
+        message: locale === 'en' ? 'Failed to send PDF' : 'PDF verzenden mislukt',
+        variant: "error"
+      });
     } finally {
       setDownloadingPdf(false);
     }
@@ -186,6 +196,17 @@ export function OptimizationResultView({ result, email, phase }: OptimizationRes
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      {/* Inline Banner */}
+      {banner && (
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 max-w-md w-full mx-4 animate-in fade-in slide-in-from-top-4 duration-300">
+          <InlineBanner
+            message={banner.message}
+            variant={banner.variant}
+            onDismiss={() => setBanner(null)}
+          />
+        </div>
+      )}
+
       {/* Header */}
       <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 sm:p-8">
         <div className="flex items-start gap-4 mb-6">

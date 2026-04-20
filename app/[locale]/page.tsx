@@ -6,6 +6,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { Wand2, ArrowRight, CheckCircle2, Lock, Search, MessageSquare, FileText, Layout, Globe, Loader2, Play, Building2, Sparkles, XCircle, Mail, TrendingUp, Clock, DollarSign } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { InlineBanner, type BannerVariant } from "@/components/ui/inline-banner";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import Image from "next/image";
 import { fetchWithTimeout, getErrorMessage } from "@/lib/fetch-with-timeout";
@@ -30,6 +31,7 @@ export default function Home() {
   const [showEmailCapture, setShowEmailCapture] = useState(false);
   const [email, setEmail] = useState("");
   const [loadingTime, setLoadingTime] = useState(0);
+  const [banner, setBanner] = useState<{ message: string; variant: BannerVariant } | null>(null);
   const router = useRouter();
 
   // Animate through steps when analyzing
@@ -125,9 +127,10 @@ export default function Home() {
 
       if (data.async && data.jobId) {
         // Async mode - show success message and stop loading
-        alert(data.message || (locale === 'en'
+        const successMsg = data.message || (locale === 'en'
           ? 'Your analysis has been queued. You will receive an email when it\'s ready.'
-          : 'Je analyse is in de wachtrij geplaatst. Je ontvangt een email wanneer deze klaar is.'));
+          : 'Je analyse is in de wachtrij geplaatst. Je ontvangt een email wanneer deze klaar is.');
+        setBanner({ message: successMsg, variant: "success" });
         setIsAnalyzing(false);
         setVacancyText("");
       } else if (data.reportId) {
@@ -136,17 +139,20 @@ export default function Home() {
       }
     } catch (error) {
       console.error("Error:", error);
-      const errorMessage = error instanceof Error
+      const errMsg = error instanceof Error
         ? getErrorMessage(error, locale)
         : t('hero.error');
-      alert(errorMessage);
+      setBanner({ message: errMsg, variant: "error" });
       setIsAnalyzing(false);
     }
   };
 
   const handleContinueInBackground = () => {
     if (!email.trim()) {
-      alert(locale === 'en' ? 'Please enter your email address' : 'Voer je e-mailadres in');
+      setBanner({
+        message: locale === 'en' ? 'Please enter your email address' : 'Voer je e-mailadres in',
+        variant: "error"
+      });
       return;
     }
     handleAnalyze(email);
@@ -162,6 +168,17 @@ export default function Home() {
         {/* Ambient Bloom */}
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[800px] bg-gradient-to-b from-primary/10 to-transparent blur-[120px] opacity-60" />
       </div>
+
+      {/* Inline Banner */}
+      {banner && (
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 max-w-md w-full mx-4 animate-in fade-in slide-in-from-top-4 duration-300">
+          <InlineBanner
+            message={banner.message}
+            variant={banner.variant}
+            onDismiss={() => setBanner(null)}
+          />
+        </div>
+      )}
 
       {/* Header / Top Bar */}
       <header className="w-full fixed top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-white/20 shadow-sm">

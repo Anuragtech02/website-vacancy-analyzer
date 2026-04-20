@@ -1,4 +1,7 @@
 {
+  "common": {
+    "dismiss": "Sluiten"
+  },
   "landing": {
     "hero": {
       "badge": "Stop met verspillen van budget",

@@ -1,4 +1,7 @@
 {
+  "common": {
+    "dismiss": "Dismiss"
+  },
   "landing": {
     "hero": {
       "badge": "Stop wasting budget",

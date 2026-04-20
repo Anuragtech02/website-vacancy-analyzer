@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { AnalysisResult, OptimizationResult } from "@/lib/gemini";
 import { Button } from "@/components/ui/button";
+import { InlineBanner, type BannerVariant } from "@/components/ui/inline-banner";
 import { Loader2, Mail, ArrowRight } from "lucide-react";
 import { generateFingerprint } from "@/lib/fingerprint";
 import { useTranslations } from 'next-intl';
@@ -295,6 +296,7 @@ export function ReportView({
   const [submittedEmail, setSubmittedEmail] = useState<string>("");
   const [phase, setPhase] = useState<number>(1);
   const [showNotification, setShowNotification] = useState(false);
+  const [banner, setBanner] = useState<{ message: string; variant: BannerVariant } | null>(null);
 
   const { summary, metadata, pillars } = analysis;
 
@@ -377,16 +379,27 @@ export function ReportView({
     } catch (error) {
       console.error(error);
       // Show user-friendly error message
-      const errorMessage = error instanceof Error
+      const errMsg = error instanceof Error
         ? getErrorMessage(error, locale)
-        : 'An error occurred';
-      alert(errorMessage);
+        : (locale === 'en' ? 'An error occurred' : 'Er is een fout opgetreden');
+      setBanner({ message: errMsg, variant: "error" });
       setStatus("error");
     }
   };
 
   return (
     <div className="font-sans text-slate-900 bg-slate-50 min-h-screen pb-20 relative overflow-hidden selection:bg-primary/20">
+      {/* Inline Banner */}
+      {banner && (
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 max-w-md w-full mx-4 animate-in fade-in slide-in-from-top-4 duration-300">
+          <InlineBanner
+            message={banner.message}
+            variant={banner.variant}
+            onDismiss={() => setBanner(null)}
+          />
+        </div>
+      )}
+
       {/* Background Decorators */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         {/* Dot Pattern */}
