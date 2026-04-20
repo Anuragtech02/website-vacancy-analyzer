@@ -9,6 +9,7 @@ import { useLocale } from "next-intl";
 import type { Tokens } from "./theme";
 import { Button } from "./primitives";
 import { useMotion } from "./motion";
+import { useV2T } from "./i18n-context";
 
 // ---------------------------------------------------------------------------
 // Wordmark (internal)
@@ -104,6 +105,7 @@ export interface NavbarProps {
 
 export function Navbar({ tokens, onHome, usesLeft, screen }: NavbarProps) {
   const m = useMotion(tokens);
+  const t = useV2T();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -156,7 +158,7 @@ export function Navbar({ tokens, onHome, usesLeft, screen }: NavbarProps) {
             background: tokens.bgRaised,
           }}>
             <span style={{ width: 6, height: 6, borderRadius: 999, background: tokens.primaryColor }} />
-            {usesLeft} free left
+            {t.nav.freeLeft.replace('{count}', String(usesLeft))}
           </div>
 
           {/* Language toggle */}
@@ -169,7 +171,7 @@ export function Navbar({ tokens, onHome, usesLeft, screen }: NavbarProps) {
             onClick={handleScrollToAnalyzer}
             style={{ padding: "10px 16px", fontSize: 14, display: "inline-flex", alignItems: "center", gap: 6 }}
           >
-            Analyze vacancy
+            {t.nav.analyzeVacancy}
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>

@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { type Tokens } from "../theme";
 import { PILLAR_DATA } from "./pillar-data";
+import { useV2T } from "../i18n-context";
 import { ReportHeader } from "./report-header";
 import { ScoreCard } from "./score-card";
 import { GateCard } from "./gate-card";
@@ -22,16 +23,18 @@ export interface ReportProps {
 }
 
 export function Report({ tokens, unlocked, usesLeft, onOpenEmail, onOpenLimit: _onOpenLimit, onOpenDemo: _onOpenDemo }: ReportProps) {
+  const t = useV2T();
+
   const overall = useMemo(() => {
     const avg = PILLAR_DATA.reduce((s, p) => s + p.score, 0) / PILLAR_DATA.length;
     return Math.round(avg * 10) / 10;
   }, []);
 
   const verdict =
-    overall >= 8    ? { label: "Excellent",         tone: "ok" } :
-    overall >= 6.5  ? { label: "Good",               tone: "primary" } :
-    overall >= 5    ? { label: "Needs improvement",  tone: "warn" } :
-                      { label: "Weak",               tone: "bad" };
+    overall >= 8    ? { label: t.report.scoreCard.verdict.excellent,        tone: "ok" } :
+    overall >= 6.5  ? { label: t.report.scoreCard.verdict.good,             tone: "primary" } :
+    overall >= 5    ? { label: t.report.scoreCard.verdict.needsImprovement, tone: "warn" } :
+                      { label: t.report.scoreCard.verdict.weak,             tone: "bad" };
 
   return (
     <div style={{ width: "100%" }}>
@@ -63,9 +66,7 @@ export function Report({ tokens, unlocked, usesLeft, onOpenEmail, onOpenLimit: _
           fontFamily: tokens.bodyFont, fontSize: 13, color: tokens.inkMute,
           maxWidth: 720, lineHeight: 1.5,
         }}>
-          Scores are produced by a large language model tuned on 14,000 anonymized postings and
-          applicant outcomes. Treat them as a second opinion, not a verdict. Your domain knowledge
-          wins every tie.
+          {t.report.disclaimer}
         </div>
       </section>
 

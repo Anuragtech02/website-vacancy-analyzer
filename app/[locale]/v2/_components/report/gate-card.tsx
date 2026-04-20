@@ -2,6 +2,7 @@
 
 import { type Tokens } from "../theme";
 import { Card, Button, Eyebrow } from "../primitives";
+import { useV2T } from "../i18n-context";
 
 interface GateCardProps {
   tokens: Tokens;
@@ -10,6 +11,7 @@ interface GateCardProps {
 }
 
 export function GateCard({ tokens, currentScore, onUnlock }: GateCardProps) {
+  const t = useV2T();
   return (
     <Card
       tokens={tokens}
@@ -24,17 +26,18 @@ export function GateCard({ tokens, currentScore, onUnlock }: GateCardProps) {
       }} />
       <div style={{ padding: "28px 28px 20px", position: "relative" }}>
         <Eyebrow tokens={{ ...tokens, inkSoft: "rgba(255,255,255,0.6)", primaryColor: tokens.primaryColor }}>
-          Unlock the rewrite
+          {t.report.gate.eyebrow}
         </Eyebrow>
         <div style={{
           fontFamily: tokens.displayFont, fontSize: 30, lineHeight: 1.1,
           fontWeight: tokens.displayWeight, letterSpacing: "-0.02em",
           marginTop: 10, color: tokens.bgRaised,
         }}>
-          Your posting can go from{" "}
+          {t.report.gate.headline.prefix}
           <span style={{ color: tokens.primaryColor }}>{currentScore.toFixed(1)}</span>
-          {" "}to{" "}
-          <span style={{ color: tokens.ok }}>8.2</span>.
+          {t.report.gate.headline.to}
+          <span style={{ color: tokens.ok }}>8.2</span>
+          {t.report.gate.headline.suffix}
         </div>
       </div>
 
@@ -48,13 +51,13 @@ export function GateCard({ tokens, currentScore, onUnlock }: GateCardProps) {
       }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
           <div>
-            <div style={{ fontFamily: tokens.monoFont, fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)" }}>Current</div>
+            <div style={{ fontFamily: tokens.monoFont, fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)" }}>{t.report.gate.currentLabel}</div>
             <div style={{ fontFamily: tokens.displayFont, fontSize: 44, fontWeight: tokens.displayWeight, color: tokens.bgRaised, letterSpacing: "-0.03em", lineHeight: 1, marginTop: 4 }}>
               {currentScore.toFixed(1)}
             </div>
           </div>
           <div style={{ position: "relative" }}>
-            <div style={{ fontFamily: tokens.monoFont, fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)" }}>Potential</div>
+            <div style={{ fontFamily: tokens.monoFont, fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)" }}>{t.report.gate.potentialLabel}</div>
             <div style={{
               fontFamily: tokens.displayFont, fontSize: 44, fontWeight: tokens.displayWeight,
               color: tokens.ok, letterSpacing: "-0.03em", lineHeight: 1, marginTop: 4,
@@ -82,14 +85,14 @@ export function GateCard({ tokens, currentScore, onUnlock }: GateCardProps) {
 
       <div style={{ padding: "20px 28px 28px", position: "relative" }}>
         <Button tokens={tokens} variant="primary" onClick={onUnlock} style={{ width: "100%", padding: "16px" }}>
-          Unlock improved version
+          {t.report.gate.unlockButton}
         </Button>
         <div style={{
           display: "flex", justifyContent: "center", gap: 16, marginTop: 14,
           fontFamily: tokens.monoFont, fontSize: 10, letterSpacing: "0.12em",
           textTransform: "uppercase", color: "rgba(255,255,255,0.55)",
         }}>
-          <span>No spam</span><span>·</span><span>GDPR safe</span><span>·</span><span>Unsubscribe any time</span>
+          <span>{t.report.gate.trust.noSpam}</span><span>·</span><span>{t.report.gate.trust.gdpr}</span><span>·</span><span>{t.report.gate.trust.unsubscribe}</span>
         </div>
       </div>
     </Card>

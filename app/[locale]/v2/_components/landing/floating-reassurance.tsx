@@ -5,6 +5,7 @@
 
 import type { Tokens } from "../theme";
 import { useMotion } from "../motion/use-motion";
+import { useV2T } from "../i18n-context";
 
 interface FloatingReassuranceProps {
   tokens: Tokens;
@@ -13,10 +14,11 @@ interface FloatingReassuranceProps {
 
 export function FloatingReassurance({ tokens, visible }: FloatingReassuranceProps) {
   const m = useMotion(tokens);
+  const t = useV2T();
   const items = [
-    { label: "No spam",  delay: 0.05 },
-    { label: "Private",  delay: 0.15 },
-    { label: "A+ grade", delay: 0.25 },
+    { label: t.floatingReassurance.noSpam,  delay: 0.05 },
+    { label: t.floatingReassurance.private, delay: 0.15 },
+    { label: t.floatingReassurance.aPlus,   delay: 0.25 },
   ];
   return (
     <div style={{

@@ -4,12 +4,14 @@
 // Ported from landing.jsx (React-in-HTML prototype).
 
 import type { Tokens } from "../theme";
+import { useV2T } from "../i18n-context";
 
 interface FooterProps {
   tokens: Tokens;
 }
 
 export function Footer({ tokens }: FooterProps) {
+  const t = useV2T();
   return (
     <footer style={{
       marginTop: 40,
@@ -26,13 +28,13 @@ export function Footer({ tokens }: FooterProps) {
             fontFamily: tokens.displayFont, fontSize: 34, fontWeight: tokens.displayWeight,
             letterSpacing: "-0.02em",
           }}>
-            Vacancy Analyzer
+            {t.footer.brand}
           </div>
           <div style={{
             fontFamily: tokens.bodyFont, fontSize: 14, color: "rgba(255,255,255,0.55)",
             marginTop: 8, maxWidth: 380,
           }}>
-            A diagnostic instrument for recruiters. Part of the Vacancy Wizard suite.
+            {t.footer.tagline}
           </div>
         </div>
         <div style={{
@@ -40,10 +42,10 @@ export function Footer({ tokens }: FooterProps) {
           fontFamily: tokens.monoFont, fontSize: 11, letterSpacing: "0.12em",
           textTransform: "uppercase", color: "rgba(255,255,255,0.55)",
         }}>
-          <span>Privacy</span>
-          <span>Terms</span>
-          <span>Contact</span>
-          <span style={{ color: tokens.primaryColor }}>Book a demo</span>
+          <span>{t.footer.privacy}</span>
+          <span>{t.footer.terms}</span>
+          <span>{t.footer.contact}</span>
+          <span style={{ color: tokens.primaryColor }}>{t.footer.bookDemo}</span>
         </div>
       </div>
     </footer>

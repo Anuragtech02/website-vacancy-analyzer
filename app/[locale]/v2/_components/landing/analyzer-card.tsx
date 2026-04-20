@@ -13,6 +13,7 @@ import { useMotion, Magnetic } from "../motion";
 import { AnalyzerBackdrop } from "./analyzer-backdrop";
 import { FloatingReassurance } from "./floating-reassurance";
 import { SAMPLE_VACANCY } from "./sample-vacancy";
+import { useV2T } from "../i18n-context";
 
 interface AnalyzerCardProps {
   tokens: Tokens;
@@ -20,6 +21,7 @@ interface AnalyzerCardProps {
 }
 
 export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
+  const t = useV2T();
   const [text, setText] = useState("");
   const [focus, setFocus] = useState(false);
   const chars = text.length;
@@ -53,7 +55,7 @@ export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
             color: "#fff", fontFamily: tokens.displayFont, fontWeight: 600, fontSize: 14,
           }}>V</div>
           <div style={{ fontFamily: tokens.bodyFont, fontSize: 14, fontWeight: 600, color: tokens.ink }}>
-            Vacancy input
+            {t.analyzerCard.header.title}
           </div>
         </div>
         <div style={{ display: "flex", gap: 6 }}>
@@ -69,12 +71,8 @@ export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
         padding: "18px 22px",
         borderBottom: `1px solid ${tokens.line}`,
       }}>
-        {([
-          ["Paste", "Your existing posting"],
-          ["Analyze", "8-point diagnostic"],
-          ["Receive", "Score + rewritten version"],
-        ] as [string, string][]).map(([t, s], i) => (
-          <React.Fragment key={t}>
+        {t.analyzerCard.steps.map((step, i) => (
+          <React.Fragment key={i}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <span style={{
                 width: 22, height: 22, borderRadius: 999,
@@ -85,8 +83,8 @@ export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
                 fontFamily: tokens.monoFont, fontSize: 11, fontWeight: 600,
               }}>{i + 1}</span>
               <div>
-                <div style={{ fontFamily: tokens.bodyFont, fontSize: 13, fontWeight: 600, color: tokens.ink }}>{t}</div>
-                <div style={{ fontFamily: tokens.bodyFont, fontSize: 12, color: tokens.inkMute }}>{s}</div>
+                <div style={{ fontFamily: tokens.bodyFont, fontSize: 13, fontWeight: 600, color: tokens.ink }}>{step.title}</div>
+                <div style={{ fontFamily: tokens.bodyFont, fontSize: 12, color: tokens.inkMute }}>{step.desc}</div>
               </div>
             </div>
             {i < 2 && (
@@ -105,7 +103,7 @@ export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
           onChange={(e) => setText(e.target.value)}
           onFocus={() => setFocus(true)}
           onBlur={() => setFocus(false)}
-          placeholder="Paste your vacancy here — plain text is fine. We'll preserve the structure."
+          placeholder={t.analyzerCard.placeholder}
           style={{
             width: "100%", height: 280, resize: "vertical",
             background: "transparent", border: "none", outline: "none",
@@ -128,13 +126,13 @@ export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
               textTransform: "uppercase", padding: 0,
               textDecoration: "underline", textUnderlineOffset: 3,
             }}
-          >Try with a sample posting</button>
+          >{t.analyzerCard.trySample}</button>
           <div style={{
             fontFamily: tokens.monoFont, fontSize: 11,
             color: chars >= minChars ? tokens.ok : tokens.inkMute,
             letterSpacing: "0.08em",
           }}>
-            {chars} / {minChars} chars {chars >= minChars && "✓"}
+            {t.analyzerCard.charsCount.replace('{count}', String(chars)).replace('{min}', String(minChars))} {chars >= minChars && "✓"}
           </div>
         </div>
         <Magnetic tokens={tokens} strength={6}>
@@ -148,7 +146,7 @@ export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
               cursor: canAnalyze ? "pointer" : "not-allowed",
             }}
           >
-            Analyze vacancy
+            {t.analyzerCard.submit}
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>

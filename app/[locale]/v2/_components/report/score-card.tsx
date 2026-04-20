@@ -2,6 +2,7 @@
 
 import { type Tokens } from "../theme";
 import { Card, Eyebrow, ScoreRing } from "../primitives";
+import { useV2T } from "../i18n-context";
 
 interface ScoreCardProps {
   tokens: Tokens;
@@ -10,12 +11,13 @@ interface ScoreCardProps {
 }
 
 export function ScoreCard({ tokens, overall, verdictLabel }: ScoreCardProps) {
+  const t = useV2T();
   return (
     <Card tokens={tokens} pad={36}>
       <div style={{ display: "grid", gridTemplateColumns: "240px 1fr", gap: 36, alignItems: "center" }}>
-        <ScoreRing tokens={tokens} value={overall} size={220} label="Overall score" />
+        <ScoreRing tokens={tokens} value={overall} size={220} label={t.report.scoreCard.scoreRingLabel} />
         <div>
-          <Eyebrow tokens={tokens}>Verdict</Eyebrow>
+          <Eyebrow tokens={tokens}>{t.report.scoreCard.eyebrow}</Eyebrow>
           <div style={{
             fontFamily: tokens.displayFont, fontSize: 48, lineHeight: 1.05,
             fontWeight: tokens.displayWeight, letterSpacing: "-0.03em",
@@ -27,18 +29,15 @@ export function ScoreCard({ tokens, overall, verdictLabel }: ScoreCardProps) {
             fontFamily: tokens.bodyFont, fontSize: 16, lineHeight: 1.55,
             color: tokens.inkSoft, marginTop: 14,
           }}>
-            A capable posting that&apos;s being held back by two critical weaknesses:
-            accidentally exclusive language and a benefits section that reads like an
-            afterthought. The tone and culture signals are genuinely strong — don&apos;t
-            lose those in the rewrite.
+            {t.report.scoreCard.summary}
           </p>
           <div style={{ display: "flex", gap: 20, marginTop: 22, flexWrap: "wrap" }}>
             {(
               [
-                ["Words",           "148"],
-                ["Read time",       "52s"],
-                ["Est. applicants", "+38%"],
-                ["Quality lift",    "+2.4 pts"],
+                [t.report.scoreCard.stats.words,       "148"],
+                [t.report.scoreCard.stats.readTime,     "52s"],
+                [t.report.scoreCard.stats.applicants,   "+38%"],
+                [t.report.scoreCard.stats.qualityLift,  "+2.4 pts"],
               ] as const
             ).map(([k, v]) => (
               <div key={k}>

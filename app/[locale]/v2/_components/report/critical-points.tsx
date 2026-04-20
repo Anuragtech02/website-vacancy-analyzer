@@ -2,13 +2,14 @@
 
 import { type Tokens } from "../theme";
 import { Card, Eyebrow } from "../primitives";
-import { CRITICAL_POINTS } from "./pillar-data";
+import { useV2T } from "../i18n-context";
 
 interface CriticalPointsProps {
   tokens: Tokens;
 }
 
 export function CriticalPoints({ tokens }: CriticalPointsProps) {
+  const t = useV2T();
   return (
     <Card
       tokens={tokens}
@@ -17,16 +18,16 @@ export function CriticalPoints({ tokens }: CriticalPointsProps) {
       style={{ color: tokens.bgRaised, borderColor: tokens.ink }}
     >
       <Eyebrow tokens={{ ...tokens, inkSoft: "rgba(255,255,255,0.6)", primaryColor: tokens.primaryColor }}>
-        Critical points
+        {t.report.critical.eyebrow}
       </Eyebrow>
       <div style={{
         fontFamily: tokens.displayFont, fontSize: 30, fontWeight: tokens.displayWeight,
         color: tokens.bgRaised, marginTop: 10, letterSpacing: "-0.02em",
       }}>
-        Fix these first.
+        {t.report.critical.title}
       </div>
       <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: 14 }}>
-        {CRITICAL_POINTS.map((p, i) => (
+        {t.report.critical.points.map((p, i) => (
           <div key={i} style={{ display: "grid", gridTemplateColumns: "22px 1fr", gap: 12, alignItems: "start" }}>
             <div style={{
               width: 22, height: 22, borderRadius: 999,

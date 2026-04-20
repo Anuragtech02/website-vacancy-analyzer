@@ -9,6 +9,7 @@ import { Highlight } from "../primitives";
 import { useMotion, Reveal } from "../motion";
 import { Icon } from "../icons";
 import type { IconName } from "../icons";
+import { useV2T } from "../i18n-context";
 
 interface HeroSectionProps {
   tokens: Tokens;
@@ -16,7 +17,10 @@ interface HeroSectionProps {
 
 export function HeroSection({ tokens }: HeroSectionProps) {
   const m = useMotion(tokens);
+  const t = useV2T();
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
+
+  const ICON_NAMES: IconName[] = ["target", "document", "publish"];
 
   return (
     <div>
@@ -31,9 +35,9 @@ export function HeroSection({ tokens }: HeroSectionProps) {
           margin: "18px 0 0",
           textWrap: "balance",
         } as React.CSSProperties}>
-          Find out why the{" "}
-          <Highlight tokens={tokens}>right</Highlight>
-          {" "}people aren&apos;t applying.
+          {t.hero.title.part1}
+          <Highlight tokens={tokens}>{t.hero.title.highlight}</Highlight>
+          {t.hero.title.part2}
         </h1>
       </Reveal>
       <Reveal tokens={tokens} delay={220}>
@@ -41,18 +45,12 @@ export function HeroSection({ tokens }: HeroSectionProps) {
           fontFamily: tokens.bodyFont, fontSize: 19, lineHeight: 1.5,
           color: tokens.inkSoft, marginTop: 28, maxWidth: 520,
         }}>
-          Paste your job posting. In under a minute, our model grades it across eight
-          dimensions and tells you exactly what to fix — with a rewritten version ready
-          to publish.
+          {t.hero.subtitle}
         </p>
       </Reveal>
       <div style={{ display: "flex", flexDirection: "column", gap: 14, marginTop: 32 }}>
-        {([
-          ["01", "Eight-point diagnostic", "Clarity, inclusion, tone, benefits, role, growth, culture, CTA.", "target"],
-          ["02", "Plain-English explanations", "Every score comes with the exact sentence that caused it.", "document"],
-          ["03", "A ready-to-publish rewrite", "Not a suggestion — a finished draft you can ship.", "publish"],
-        ] as [string, string, string, IconName][]).map(([n, h, s, iconName], idx) => (
-          <Reveal tokens={tokens} delay={340 + idx * 100} key={n}>
+        {t.hero.bullets.map((bullet, idx) => (
+          <Reveal tokens={tokens} delay={340 + idx * 100} key={idx}>
             <div
               onMouseEnter={() => setHoverIdx(idx)}
               onMouseLeave={() => setHoverIdx(null)}
@@ -70,11 +68,11 @@ export function HeroSection({ tokens }: HeroSectionProps) {
                 color: tokens.primaryInk, letterSpacing: "0.12em",
                 paddingTop: 4,
               }}>
-                <Icon name={iconName} tokens={tokens} size={18} />
+                <Icon name={ICON_NAMES[idx]} tokens={tokens} size={18} />
               </div>
               <div>
-                <div style={{ fontFamily: tokens.bodyFont, fontSize: 16, fontWeight: 600, color: tokens.ink }}>{h}</div>
-                <div style={{ fontFamily: tokens.bodyFont, fontSize: 15, color: tokens.inkSoft, lineHeight: 1.45 }}>{s}</div>
+                <div style={{ fontFamily: tokens.bodyFont, fontSize: 16, fontWeight: 600, color: tokens.ink }}>{bullet.title}</div>
+                <div style={{ fontFamily: tokens.bodyFont, fontSize: 15, color: tokens.inkSoft, lineHeight: 1.45 }}>{bullet.desc}</div>
               </div>
             </div>
           </Reveal>

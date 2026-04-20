@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { type Tokens } from "../theme";
 import { Card } from "../primitives";
+import { useV2T } from "../i18n-context";
 
 interface OriginalTextAccordionProps {
   tokens: Tokens;
@@ -10,6 +11,7 @@ interface OriginalTextAccordionProps {
 
 export function OriginalTextAccordion({ tokens }: OriginalTextAccordionProps) {
   const [textOpen, setTextOpen] = useState(false);
+  const t = useV2T();
 
   return (
     <section style={{ padding: "16px 48px 32px", maxWidth: 1360, margin: "0 auto" }}>
@@ -23,10 +25,10 @@ export function OriginalTextAccordion({ tokens }: OriginalTextAccordionProps) {
             fontFamily: tokens.bodyFont, fontSize: 15, color: tokens.ink, fontWeight: 500,
           }}
         >
-          <span>Show the text you submitted</span>
+          <span>{t.report.accordion.show}</span>
           <span style={{
             fontFamily: tokens.monoFont, fontSize: 11, color: tokens.inkMute, letterSpacing: "0.12em",
-          }}>{textOpen ? "HIDE" : "SHOW"}</span>
+          }}>{textOpen ? t.report.accordion.toggle.hide : t.report.accordion.toggle.show}</span>
         </button>
         {textOpen && (
           <div style={{

@@ -2,6 +2,7 @@
 
 import { type Tokens } from "../theme";
 import { Button, Pill } from "../primitives";
+import { useV2T } from "../i18n-context";
 
 interface ReportHeaderProps {
   tokens: Tokens;
@@ -9,6 +10,7 @@ interface ReportHeaderProps {
 }
 
 export function ReportHeader({ tokens, usesLeft }: ReportHeaderProps) {
+  const t = useV2T();
   return (
     <div style={{
       position: "sticky", top: 0, zIndex: 5,
@@ -27,18 +29,18 @@ export function ReportHeader({ tokens, usesLeft }: ReportHeaderProps) {
         }}>V</div>
         <div style={{
           fontFamily: tokens.bodyFont, fontSize: 14, fontWeight: 600, color: tokens.ink,
-        }}>Report · Senior Full-Stack Engineer</div>
-        <Pill tokens={tokens}>Generated just now</Pill>
+        }}>{t.report.header.title}</div>
+        <Pill tokens={tokens}>{t.report.header.generatedNow}</Pill>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <div style={{
           fontFamily: tokens.monoFont, fontSize: 11, letterSpacing: "0.12em",
           color: tokens.inkMute, textTransform: "uppercase",
         }}>
-          {usesLeft} free rewrites left
+          {t.report.header.rewritesLeft.replace('{count}', String(usesLeft))}
         </div>
         <Button tokens={tokens} variant="ghost" style={{ padding: "8px 14px", fontSize: 13 }}>
-          Download PDF
+          {t.report.header.downloadPdf}
         </Button>
       </div>
     </div>

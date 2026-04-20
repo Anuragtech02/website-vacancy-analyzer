@@ -5,32 +5,43 @@ import { Card, Eyebrow, Pill, ScoreBar } from "../primitives";
 import { useMotion, Reveal } from "../motion";
 import { PILLAR_DATA } from "./pillar-data";
 import { PillarIcon } from "./pillar-icon";
+import { useV2T } from "../i18n-context";
 
 interface PillarGridProps {
   tokens: Tokens;
 }
 
+// Map PILLAR_DATA's English label strings to translation keys
+const PILLAR_LABEL_KEY_MAP: Record<string, "excellent" | "good" | "fair" | "needsWork" | "critical"> = {
+  "Strong":     "excellent",
+  "Good":       "good",
+  "Fair":       "fair",
+  "Needs work": "needsWork",
+  "Critical":   "critical",
+};
+
 export function PillarGrid({ tokens }: PillarGridProps) {
   const m = useMotion(tokens);
+  const t = useV2T();
 
   return (
     <section style={{ padding: "16px 48px 32px", maxWidth: 1360, margin: "0 auto" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "end", marginBottom: 22 }}>
         <div>
-          <Eyebrow tokens={tokens}>Per-dimension diagnosis</Eyebrow>
+          <Eyebrow tokens={tokens}>{t.report.pillars.eyebrow}</Eyebrow>
           <h2 style={{
             fontFamily: tokens.displayFont, fontSize: 34, lineHeight: 1.1,
             fontWeight: tokens.displayWeight, letterSpacing: "-0.02em",
             color: tokens.ink, marginTop: 10,
           }}>
-            The eight-point breakdown
+            {t.report.pillars.title}
           </h2>
         </div>
         <div style={{
           fontFamily: tokens.monoFont, fontSize: 11, letterSpacing: "0.12em",
           textTransform: "uppercase", color: tokens.inkMute,
         }}>
-          Sorted by severity
+          {t.report.pillars.sortedBy}
         </div>
       </div>
       <div style={{
@@ -88,11 +99,13 @@ export function PillarGrid({ tokens }: PillarGridProps) {
                           P{String(PILLAR_DATA.findIndex((x) => x.key === p.key) + 1).padStart(2, "0")}
                         </div>
                         <div style={{ fontFamily: tokens.displayFont, fontSize: 20, fontWeight: tokens.displayWeight, color: tokens.ink, letterSpacing: "-0.01em" }}>
-                          {PILLAR_COLORS[p.key].name}
+                          {t.methodology.pillars[p.key]}
                         </div>
                       </div>
                     </div>
-                    <Pill tokens={tokens} tone={p.tone}>{p.label}</Pill>
+                    <Pill tokens={tokens} tone={p.tone}>
+                      {t.report.pillars.labels[PILLAR_LABEL_KEY_MAP[p.label] ?? "good"]}
+                    </Pill>
                   </div>
                   <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 10 }}>
                     <div style={{

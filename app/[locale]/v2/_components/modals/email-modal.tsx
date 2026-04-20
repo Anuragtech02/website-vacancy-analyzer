@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { type Tokens } from "../theme";
 import { Button, Eyebrow, Highlight } from "../primitives";
 import { ModalShell } from "./modal-shell";
+import { useV2T } from "../i18n-context";
 
 interface EmailModalProps {
   tokens: Tokens;
@@ -11,23 +12,17 @@ interface EmailModalProps {
   onUnlock: () => void;
 }
 
-const MESSAGES = [
-  "Optimizing phrasing for inclusivity…",
-  "Rebalancing benefits vs. requirements…",
-  "Tightening the call to action…",
-  "Polishing tone of voice…",
-];
-
 export function EmailModal({ tokens, onClose, onUnlock }: EmailModalProps) {
+  const t = useV2T();
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [msgIdx, setMsgIdx] = useState(0);
 
   useEffect(() => {
     if (!busy) return;
-    const t = setInterval(() => setMsgIdx((i) => (i + 1) % MESSAGES.length), 900);
-    return () => clearInterval(t);
-  }, [busy]);
+    const timer = setInterval(() => setMsgIdx((i) => (i + 1) % t.modals.email.busy.length), 900);
+    return () => clearInterval(timer);
+  }, [busy, t.modals.email.busy.length]);
 
   const submit = () => {
     if (!email || !email.includes("@")) return;
@@ -38,31 +33,30 @@ export function EmailModal({ tokens, onClose, onUnlock }: EmailModalProps) {
   return (
     <ModalShell tokens={tokens} onClose={busy ? () => {} : onClose}>
       <div style={{ padding: "36px 36px 30px" }}>
-        <Eyebrow tokens={tokens}>Unlock rewrite · Step 2 of 2</Eyebrow>
+        <Eyebrow tokens={tokens}>{t.modals.email.eyebrow}</Eyebrow>
         <h3 style={{
           fontFamily: tokens.displayFont, fontSize: 30, lineHeight: 1.1,
           fontWeight: tokens.displayWeight, letterSpacing: "-0.02em",
           color: tokens.ink, marginTop: 12,
         }}>
-          Where should we <Highlight tokens={tokens}>send</Highlight> it?
+          {t.modals.email.title.part1}<Highlight tokens={tokens}>{t.modals.email.title.highlight}</Highlight>{t.modals.email.title.part2}
         </h3>
         <p style={{
           fontFamily: tokens.bodyFont, fontSize: 15, lineHeight: 1.55,
           color: tokens.inkSoft, marginTop: 10, maxWidth: 440,
         }}>
-          We&apos;ll drop the rewritten posting straight in your inbox and show it on this page too.
-          One-click unsubscribe, always.
+          {t.modals.email.body}
         </p>
 
         {!busy ? (
           <>
             <div style={{ marginTop: 22 }}>
               <label style={{ fontFamily: tokens.monoFont, fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: tokens.inkMute }}>
-                Work email
+                {t.modals.email.fieldLabel}
               </label>
               <input
                 type="email"
-                placeholder="name@company.example"
+                placeholder={t.modals.email.placeholder}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 style={{
@@ -78,14 +72,14 @@ export function EmailModal({ tokens, onClose, onUnlock }: EmailModalProps) {
               />
             </div>
             <Button tokens={tokens} variant="primary" onClick={submit} style={{ width: "100%", marginTop: 16, padding: "16px" }}>
-              Send me the rewrite
+              {t.modals.email.submit}
             </Button>
             <div style={{
               display: "flex", justifyContent: "center", gap: 16, marginTop: 14,
               fontFamily: tokens.monoFont, fontSize: 10, letterSpacing: "0.12em",
               textTransform: "uppercase", color: tokens.inkMute,
             }}>
-              <span>Free to use</span><span>·</span><span>No credit card</span><span>·</span><span>GDPR</span>
+              <span>{t.modals.email.trust.free}</span><span>·</span><span>{t.modals.email.trust.noCard}</span><span>·</span><span>{t.modals.email.trust.gdpr}</span>
             </div>
           </>
         ) : (
@@ -95,13 +89,13 @@ export function EmailModal({ tokens, onClose, onUnlock }: EmailModalProps) {
               <div style={{
                 fontFamily: tokens.bodyFont, fontSize: 15, color: tokens.ink, fontWeight: 500,
                 minHeight: 22,
-              }}>{MESSAGES[msgIdx]}</div>
+              }}>{t.modals.email.busy[msgIdx]}</div>
             </div>
             <div style={{
               marginTop: 14, fontFamily: tokens.monoFont, fontSize: 11,
               color: tokens.inkMute, letterSpacing: "0.08em",
             }}>
-              Takes about 3 seconds — hang tight.
+              {t.modals.email.busyHint}
             </div>
           </div>
         )}

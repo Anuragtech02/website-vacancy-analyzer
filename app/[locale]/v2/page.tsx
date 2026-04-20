@@ -5,6 +5,7 @@
 // Analysis is stubbed — real /api/analyze wiring is a follow-up pass.
 
 import { useState, useEffect, useMemo } from "react";
+import { useLocale } from "next-intl";
 import { buildTokens, DEFAULT_TWEAKS } from "./_components/theme";
 import { PageShaderBackdrop } from "./_components/shader";
 import { Navbar } from "./_components/navbar";
@@ -12,6 +13,8 @@ import { Landing } from "./_components/landing";
 import { Loading } from "./_components/loading";
 import { Report } from "./_components/report";
 import { EmailModal, LimitModal, DemoModal } from "./_components/modals";
+import { V2MessagesProvider } from "./_components/i18n-context";
+import { getV2Messages } from "./_messages";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -96,6 +99,10 @@ export default function V2Page() {
   // Tokens are fixed to the default aesthetic — no Tweaks panel in production.
   const tokens = useMemo(() => buildTokens(DEFAULT_TWEAKS), []);
 
+  // i18n — resolve messages based on URL locale
+  const locale = useLocale();
+  const v2messages = useMemo(() => getV2Messages(locale), [locale]);
+
   // ---- State (hydrated from localStorage via effects below) ----
   const [screen, setScreen]   = useState<Screen>("landing");
   const [unlocked, setUnlocked] = useState<boolean>(false);
@@ -174,73 +181,75 @@ export default function V2Page() {
 
   // ---- Render ----
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: tokens.bgBase,
-        color: tokens.ink,
-        fontFamily: tokens.bodyFont,
-        position: "relative",
-      }}
-    >
-      <PageShaderBackdrop tokens={tokens} />
+    <V2MessagesProvider messages={v2messages}>
+      <div
+        style={{
+          minHeight: "100vh",
+          background: tokens.bgBase,
+          color: tokens.ink,
+          fontFamily: tokens.bodyFont,
+          position: "relative",
+        }}
+      >
+        <PageShaderBackdrop tokens={tokens} />
 
-      <div style={{ position: "relative", zIndex: 1 }}>
-        <Navbar
-          tokens={tokens}
-          onHome={() => jumpTo("landing")}
-          usesLeft={usesLeft}
-          screen={screen}
-        />
-
-        {screen === "landing" && (
-          <Landing tokens={tokens} onAnalyze={startAnalyze} />
-        )}
-
-        {screen === "loading" && (
-          <Loading
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <Navbar
             tokens={tokens}
-            onComplete={analyzeDone}
-            onSkipToEmail={() => setModal("email")}
-          />
-        )}
-
-        {screen === "report" && (
-          <Report
-            tokens={tokens}
-            unlocked={unlocked}
+            onHome={() => jumpTo("landing")}
             usesLeft={usesLeft}
-            onOpenEmail={openEmailOrLimit}
-            onOpenLimit={() => setModal("limit")}
-            onOpenDemo={() => setModal("demo")}
+            screen={screen}
           />
-        )}
 
-        {modal === "email" && (
-          <EmailModal
-            tokens={tokens}
-            onClose={() => setModal(null)}
-            onUnlock={handleUnlock}
-          />
-        )}
+          {screen === "landing" && (
+            <Landing tokens={tokens} onAnalyze={startAnalyze} />
+          )}
 
-        {modal === "limit" && (
-          <LimitModal
-            tokens={tokens}
-            onClose={() => setModal(null)}
-            onSeeDemo={() => setModal("demo")}
-          />
-        )}
+          {screen === "loading" && (
+            <Loading
+              tokens={tokens}
+              onComplete={analyzeDone}
+              onSkipToEmail={() => setModal("email")}
+            />
+          )}
 
-        {modal === "demo" && (
-          <DemoModal
-            tokens={tokens}
-            onClose={() => setModal(null)}
-          />
-        )}
+          {screen === "report" && (
+            <Report
+              tokens={tokens}
+              unlocked={unlocked}
+              usesLeft={usesLeft}
+              onOpenEmail={openEmailOrLimit}
+              onOpenLimit={() => setModal("limit")}
+              onOpenDemo={() => setModal("demo")}
+            />
+          )}
+
+          {modal === "email" && (
+            <EmailModal
+              tokens={tokens}
+              onClose={() => setModal(null)}
+              onUnlock={handleUnlock}
+            />
+          )}
+
+          {modal === "limit" && (
+            <LimitModal
+              tokens={tokens}
+              onClose={() => setModal(null)}
+              onSeeDemo={() => setModal("demo")}
+            />
+          )}
+
+          {modal === "demo" && (
+            <DemoModal
+              tokens={tokens}
+              onClose={() => setModal(null)}
+            />
+          )}
+        </div>
+
+        <ReviewChip screen={screen} unlocked={unlocked} onJump={jumpTo} />
       </div>
-
-      <ReviewChip screen={screen} unlocked={unlocked} onJump={jumpTo} />
-    </div>
+    </V2MessagesProvider>
   );
 }

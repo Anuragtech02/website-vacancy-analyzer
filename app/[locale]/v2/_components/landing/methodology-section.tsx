@@ -8,6 +8,7 @@ import { PILLAR_COLORS, pillarColor } from "../theme";
 import type { PillarKey } from "../theme";
 import { Card, Eyebrow } from "../primitives";
 import { useMotion, Reveal } from "../motion";
+import { useV2T } from "../i18n-context";
 
 interface MethodologySectionProps {
   tokens: Tokens;
@@ -15,6 +16,7 @@ interface MethodologySectionProps {
 
 export function MethodologySection({ tokens }: MethodologySectionProps) {
   const m = useMotion(tokens);
+  const t = useV2T();
 
   return (
     <section style={{
@@ -23,25 +25,25 @@ export function MethodologySection({ tokens }: MethodologySectionProps) {
     }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "end", gap: 40, flexWrap: "wrap" }}>
         <div>
-          <Eyebrow tokens={tokens}>The methodology</Eyebrow>
+          <Eyebrow tokens={tokens}>{t.methodology.eyebrow}</Eyebrow>
           <h2 style={{
             fontFamily: tokens.displayFont, fontSize: 48, lineHeight: 1.05,
             fontWeight: tokens.displayWeight, letterSpacing: "-0.03em",
             color: tokens.ink, marginTop: 16, maxWidth: 720,
           }}>
-            Eight dimensions, graded the way a senior recruiter would.
+            {t.methodology.title}
           </h2>
         </div>
         <div style={{
           fontFamily: tokens.bodyFont, fontSize: 14, color: tokens.inkSoft, maxWidth: 360,
         }}>
-          Built with 18 in-house recruiters and validated against a corpus of 14,000 applications.
+          {t.methodology.sidebar}
         </div>
       </div>
       <div style={{
         display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginTop: 44,
       }}>
-        {(Object.entries(PILLAR_COLORS) as [PillarKey, { hue: number; name: string }][]).map(([key, { name }], i) => {
+        {(Object.keys(PILLAR_COLORS) as PillarKey[]).map((key, i) => {
           const c = pillarColor(key);
           return (
             <Reveal tokens={tokens} delay={i * 70} key={key}>
@@ -66,7 +68,7 @@ export function MethodologySection({ tokens }: MethodologySectionProps) {
                   fontFamily: tokens.displayFont, fontSize: 22,
                   fontWeight: tokens.displayWeight, color: tokens.ink,
                   marginTop: 22, letterSpacing: "-0.01em", lineHeight: 1.15,
-                }}>{name}</div>
+                }}>{t.methodology.pillars[key]}</div>
               </Card>
             </Reveal>
           );

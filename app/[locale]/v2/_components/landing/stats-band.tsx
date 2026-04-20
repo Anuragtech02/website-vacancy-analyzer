@@ -7,6 +7,7 @@ import type { Tokens } from "../theme";
 import { useMotion, Reveal, CountUp } from "../motion";
 import { Icon } from "../icons";
 import type { IconName } from "../icons";
+import { useV2T } from "../i18n-context";
 
 interface StatsBandProps {
   tokens: Tokens;
@@ -14,12 +15,10 @@ interface StatsBandProps {
 
 export function StatsBand({ tokens }: StatsBandProps) {
   const m = useMotion(tokens);
+  const t = useV2T();
 
-  const stats: Array<[string, string, string, number, string, number, IconName]> = [
-    ["+20%", "candidate quality",   "Measured across 1,240 rewritten postings.", 20,  "%", 0, "chart"],
-    ["+25%", "recruiter time saved","Average, per posting, in the first month.",  25,  "%", 0, "timer"],
-    ["−14%", "campaign costs",      "Lower spend from better-targeted applicants.", -14, "%", 0, "coin"],
-  ];
+  const ICON_NAMES: IconName[] = ["chart", "timer", "coin"];
+  const COUNT_NUMS = [20, 25, -14];
 
   return (
     <section style={{
@@ -32,8 +31,8 @@ export function StatsBand({ tokens }: StatsBandProps) {
         overflow: "hidden",
         background: tokens.bgRaised,
       }}>
-        {stats.map(([big, mid, sub, num, suf, dec, ic], i) => (
-          <Reveal tokens={tokens} delay={i * 120} key={big}>
+        {t.statsBand.map((stat, i) => (
+          <Reveal tokens={tokens} delay={i * 120} key={i}>
             <div
               style={{
                 padding: "44px 36px",
@@ -44,22 +43,22 @@ export function StatsBand({ tokens }: StatsBandProps) {
               onMouseEnter={(e) => m.on && ((e.currentTarget as HTMLDivElement).style.background = tokens.primarySoft)}
               onMouseLeave={(e) => m.on && ((e.currentTarget as HTMLDivElement).style.background = "transparent")}
             >
-              <Icon name={ic} tokens={tokens} size={28} tint={tokens.primaryColor} />
+              <Icon name={ICON_NAMES[i]} tokens={tokens} size={28} tint={tokens.primaryColor} />
               <div style={{
                 fontFamily: tokens.displayFont, fontSize: 72, lineHeight: 1,
                 fontWeight: tokens.displayWeight, letterSpacing: "-0.04em",
                 color: tokens.primaryInk, marginTop: 12,
               }}>
-                <CountUp tokens={tokens} to={num} prefix={num > 0 ? "+" : ""} suffix={suf} decimals={dec} />
+                <CountUp tokens={tokens} to={COUNT_NUMS[i]} prefix={COUNT_NUMS[i] > 0 ? "+" : ""} suffix="%" decimals={0} />
               </div>
               <div style={{
                 fontFamily: tokens.bodyFont, fontSize: 17, color: tokens.ink,
                 marginTop: 10, fontWeight: 500,
-              }}>{mid}</div>
+              }}>{stat.mid}</div>
               <div style={{
                 fontFamily: tokens.bodyFont, fontSize: 14, color: tokens.inkMute,
                 marginTop: 4, lineHeight: 1.4,
-              }}>{sub}</div>
+              }}>{stat.sub}</div>
             </div>
           </Reveal>
         ))}

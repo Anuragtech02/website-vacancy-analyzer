@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { type Tokens } from "../theme";
 import { Card, Button, Eyebrow } from "../primitives";
 import { useMotion, AmbientBG, Shimmer, TypingText } from "../motion";
+import { useV2T } from "../i18n-context";
 
 export interface LoadingStep {
   key: string;
@@ -30,6 +31,7 @@ export function Loading({ tokens, onComplete, onSkipToEmail }: LoadingProps) {
   const [stepIdx, setStepIdx] = useState(0);
   const [elapsed, setElapsed] = useState(0);
   const m = useMotion(tokens);
+  const t = useV2T();
 
   useEffect(() => {
     const tick = setInterval(() => setElapsed((e) => e + 0.1), 100);
@@ -48,6 +50,10 @@ export function Loading({ tokens, onComplete, onSkipToEmail }: LoadingProps) {
 
   const pct = Math.min(100, (stepIdx / LOADING_STEPS.length) * 100);
   const current = LOADING_STEPS[Math.min(stepIdx, LOADING_STEPS.length - 1)];
+  // Pull translated label/detail by the step's key
+  type StepKey = keyof typeof t.loading.steps;
+  const currentLabel  = t.loading.steps[current.key as StepKey].label;
+  const currentDetail = t.loading.steps[current.key as StepKey].detail;
 
   return (
     <div style={{
@@ -71,31 +77,35 @@ export function Loading({ tokens, onComplete, onSkipToEmail }: LoadingProps) {
               animation: "va-pulse 1.2s ease-in-out infinite",
             }} />
             <div style={{ fontFamily: tokens.monoFont, fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: tokens.inkSoft }}>
-              Our software is at work
+              {t.loading.header.working}
             </div>
           </div>
           <div style={{ fontFamily: tokens.monoFont, fontSize: 11, color: tokens.inkMute }}>
-            {elapsed.toFixed(1)}s elapsed
+            {t.loading.header.elapsed.replace('{seconds}', elapsed.toFixed(1))}
           </div>
         </div>
 
         {/* big status */}
         <div style={{ padding: "56px 40px 32px" }}>
-          <Eyebrow tokens={tokens}>Step {Math.min(stepIdx + 1, LOADING_STEPS.length)} of {LOADING_STEPS.length}</Eyebrow>
+          <Eyebrow tokens={tokens}>
+            {t.loading.stepCounter
+              .replace('{current}', String(Math.min(stepIdx + 1, LOADING_STEPS.length)))
+              .replace('{total}', String(LOADING_STEPS.length))}
+          </Eyebrow>
           <div style={{
             fontFamily: tokens.displayFont, fontSize: 48, lineHeight: 1.08,
             fontWeight: tokens.displayWeight, letterSpacing: "-0.03em",
             color: tokens.ink, marginTop: 14,
             minHeight: 64,
           }}>
-            <TypingText tokens={tokens} text={current.label} />
+            <TypingText tokens={tokens} text={currentLabel} />
             <span style={{ color: tokens.primaryColor }}>…</span>
           </div>
           <div style={{
             fontFamily: tokens.bodyFont, fontSize: 17, color: tokens.inkSoft,
             marginTop: 12, maxWidth: 540,
           }}>
-            {current.detail}
+            {currentDetail}
           </div>
         </div>
 
@@ -138,7 +148,7 @@ export function Loading({ tokens, onComplete, onSkipToEmail }: LoadingProps) {
                     letterSpacing: "0.08em",
                     lineHeight: 1.3,
                   }}>
-                    {s.label}
+                    {t.loading.steps[s.key as StepKey].label}
                   </div>
                 </div>
               );
@@ -159,10 +169,10 @@ export function Loading({ tokens, onComplete, onSkipToEmail }: LoadingProps) {
             <div style={{
               fontFamily: tokens.bodyFont, fontSize: 14, color: tokens.ink, lineHeight: 1.4,
             }}>
-              Taking longer than usual? We can email the full report when it&apos;s ready — no need to wait.
+              {t.loading.slowBanner.text}
             </div>
             <Button tokens={tokens} variant="ghost" onClick={onSkipToEmail} style={{ padding: "8px 14px", fontSize: 13, flexShrink: 0 }}>
-              Email it to me
+              {t.loading.slowBanner.cta}
             </Button>
           </div>
         )}

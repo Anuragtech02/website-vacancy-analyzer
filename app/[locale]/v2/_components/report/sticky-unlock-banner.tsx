@@ -2,6 +2,7 @@
 
 import { type Tokens } from "../theme";
 import { Button } from "../primitives";
+import { useV2T } from "../i18n-context";
 
 interface StickyUnlockBannerProps {
   tokens: Tokens;
@@ -9,6 +10,7 @@ interface StickyUnlockBannerProps {
 }
 
 export function StickyUnlockBanner({ tokens, onOpenEmail }: StickyUnlockBannerProps) {
+  const t = useV2T();
   return (
     <div style={{
       position: "fixed", bottom: 20, left: "50%", transform: "translateX(-50%)",
@@ -22,14 +24,14 @@ export function StickyUnlockBanner({ tokens, onOpenEmail }: StickyUnlockBannerPr
     }}>
       <div>
         <div style={{ fontFamily: tokens.bodyFont, fontSize: 14, fontWeight: 600 }}>
-          The rewrite is ready — projected 8.2 / 10
+          {t.report.stickyBanner.title}
         </div>
         <div style={{ fontFamily: tokens.bodyFont, fontSize: 12, color: "rgba(255,255,255,0.65)", marginTop: 2 }}>
-          Enter your email to unlock. No marketing spam, unsubscribe any time.
+          {t.report.stickyBanner.subtitle}
         </div>
       </div>
       <Button tokens={tokens} variant="primary" onClick={onOpenEmail} style={{ padding: "10px 16px", fontSize: 13 }}>
-        Unlock rewrite →
+        {t.report.stickyBanner.cta}
       </Button>
     </div>
   );
