@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { getAnalyzerPrompt, OPTIMIZER_PROMPT } from "./prompts";
+import { getAnalyzerPrompt, getOptimizerPrompt, type PromptLocale } from "./prompts";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
@@ -103,16 +103,14 @@ export async function analyzeVacancy(vacancyText: string, category: string = "Ge
 
   const model = genAI.getGenerativeModel({ model: "gemini-3-pro-preview" });
 
-  const languageInstruction = locale === 'en'
-    ? '\n\nIMPORTANT: Respond in English. All analysis, summaries, and feedback must be in English.'
-    : '\n\nIMPORTANT: Respond in Dutch. All analysis, summaries, and feedback must be in Dutch.';
+  const promptLocale: PromptLocale = locale === 'en' ? 'en' : 'nl';
 
   const result = await model.generateContent({
     contents: [
       {
         role: "user",
         parts: [
-          { text: getAnalyzerPrompt(category) + languageInstruction },
+          { text: getAnalyzerPrompt(category, promptLocale) },
           { text: `Vacancy Text:\n${vacancyText}` }
         ]
       }
@@ -133,12 +131,10 @@ export async function optimizeVacancy(vacancyText: string, analysis?: AnalysisRe
 
   const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
 
-  const languageInstruction = locale === 'en'
-    ? '\n\nIMPORTANT: Write the optimized vacancy text in English. All improvements, suggestions, and output must be in English.'
-    : '\n\nIMPORTANT: Write the optimized vacancy text in Dutch. All improvements, suggestions, and output must be in Dutch.';
+  const promptLocale: PromptLocale = locale === 'en' ? 'en' : 'nl';
 
   const promptParts = [
-    { text: OPTIMIZER_PROMPT + languageInstruction },
+    { text: getOptimizerPrompt(promptLocale) },
     { text: `Original Vacancy Text:\n${vacancyText}` }
   ];
 
