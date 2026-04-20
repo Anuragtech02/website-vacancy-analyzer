@@ -24,7 +24,7 @@ analysisQueue.process(async (job: Job<AnalysisJobData>) => {
 
     // Save to database
     const reportId = nanoid(10);
-    await dbClient.createReport(reportId, vacancyText, analysis);
+    await dbClient.createReport(reportId, vacancyText, JSON.stringify(analysis));
 
     // Update job status
     await updateJobStatus(jobId, 'completed', reportId);
@@ -65,15 +65,14 @@ async function updateJobStatus(
   const db = await import('../db-raw'); // Use raw SQL for job updates
   const completedAt = status === 'completed' || status === 'failed' ? Date.now() / 1000 : null;
 
-  await db.dbRaw.run(
+  db.dbRaw.prepare(
     `UPDATE analysis_jobs
      SET status = ?,
          result_json = ?,
          error_message = ?,
          completed_at = ?
-     WHERE id = ?`,
-    [status, reportId ? JSON.stringify({ reportId }) : null, errorMessage, completedAt, jobId]
-  );
+     WHERE id = ?`
+  ).run(status, reportId ? JSON.stringify({ reportId }) : null, errorMessage ?? null, completedAt ?? null, jobId);
 }
 
 // Helper: Send email when analysis completes

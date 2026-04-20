@@ -228,3 +228,40 @@ export async function sendOptimizedVacancyEmail({
     };
   }
 }
+
+interface SendEmailParams {
+  to: string;
+  subject: string;
+  body: string;
+  html?: string;
+}
+
+export async function sendEmail({
+  to,
+  subject,
+  body,
+  html,
+}: SendEmailParams): Promise<{ success: boolean; error?: string }> {
+  try {
+    const emailInfo = await mailGenerator.sendMail({
+      from: process.env.AWS_FROM_EMAIL || "Vacature Tovenaar <noreply@vacaturetovenaar.nl>",
+      to,
+      subject,
+      text: body,
+      html: html ?? body.replace(/\n/g, "<br/>"),
+    });
+
+    const rawMessage = emailInfo.message as Buffer;
+    const command = new SendRawEmailCommand({ RawMessage: { Data: rawMessage } });
+    const result = await ses.send(command);
+
+    console.log("sendEmail: success via SES:", result.MessageId);
+    return { success: true };
+  } catch (error) {
+    console.error("sendEmail error:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
