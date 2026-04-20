@@ -220,7 +220,7 @@ Formal bureaucratic verbs and archaic prepositions common in Dutch corporate wri
 
 ### 2. SEO Title Addition
 The final title of the rewritten text **MUST** include the Location(s) (City/Town or Region), if known, for maximal findability.
-- The location follows the job title, separated by a space. Multiple locations may be joined with natural Dutch connectors.
+- The location follows the job title, separated by a space. Multiple locations may be joined with natural ${lang} connectors appropriate to the locale.
 - The location(s) must **NOT** be enclosed in parentheses \`()\`.
 
 ### 3. Psychological Safety (Team Section)
@@ -309,7 +309,7 @@ Connect tasks to human impact by adding purpose and meaning.
 ## REWRITE RULES
 
 1. **Preserve original headers exactly** - only change content beneath them
-2. **If no headers exist** - create logical Dutch sections: Over Ons, De Functie, Wat Je Gaat Doen, Wat Je Meebrengt, Wat Wij Bieden, Solliciteren
+2. **If no headers exist** - create logical ${lang} sections appropriate to the language and culture (e.g. sections covering the company, the role, responsibilities, requirements, what's offered, and how to apply)
 3. **Keep the same approximate length** - aim for <500 words
 4. **Maintain factual accuracy** - don't invent requirements or benefits not implied in the original
 5. **End with clear CTA** - make applying feel easy and inviting
@@ -330,7 +330,7 @@ Connect tasks to human impact by adding purpose and meaning.
     "hook": "string (compelling 1-2 sentence opener in ${LANG_UPPER})",
     "sections": [
       {
-        "header": "string (exact original header OR suggested Dutch header if none existed)",
+        "header": "string (exact original header OR suggested ${LANG_UPPER} header if none existed)",
         "is_original_header": "boolean",
         "content": "string (rewritten paragraph/content in ${LANG_UPPER})",
         "bullets": ["string array in ${LANG_UPPER} if section contains list items"] | null
