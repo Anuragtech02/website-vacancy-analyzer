@@ -757,10 +757,10 @@ export default function Home() {
                           {t('footer.website')}
                       </a>
                       <a href={`/${locale}/privacy`} className="text-slate-400 hover:text-white transition-colors">
-                          {t('report.footer.privacy')}
+                          {t('footer.privacy')}
                       </a>
                       <a href={`/${locale}/terms`} className="text-slate-400 hover:text-white transition-colors">
-                          {t('report.footer.terms')}
+                          {t('footer.terms')}
                       </a>
                   </div>
               </div>
