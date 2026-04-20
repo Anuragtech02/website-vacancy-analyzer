@@ -37,7 +37,7 @@ export function PillarIcon({ name, color }: PillarIconProps) {
   };
 
   return (
-    <svg width="20" height="20" viewBox="0 0 20 20">
+    <svg width="20" height="20" viewBox="0 0 20 20" role="img" aria-hidden="true">
       {paths[name]}
     </svg>
   );

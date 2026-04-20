@@ -43,11 +43,10 @@ export async function POST(req: NextRequest) {
       const jobId = nanoid(12);
 
       // Create job record in database
-      await dbRaw.run(
+      dbRaw.prepare(
         `INSERT INTO analysis_jobs (id, status, vacancy_text, category, locale, email, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [jobId, 'pending', vacancyText, finalCategory, finalLocale, email, Math.floor(Date.now() / 1000)]
-      );
+         VALUES (?, ?, ?, ?, ?, ?, ?)`
+      ).run(jobId, 'pending', vacancyText, finalCategory, finalLocale, email, Math.floor(Date.now() / 1000));
 
       // Enqueue the job for background processing
       await enqueueAnalysis({

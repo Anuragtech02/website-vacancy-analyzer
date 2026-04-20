@@ -7,6 +7,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import React from "react";
+import { useLocale } from "next-intl";
 import type { Tokens } from "../theme";
 import { Card, Button } from "../primitives";
 import { Magnetic } from "../motion";
@@ -23,6 +24,7 @@ const MIN_CHARS = 1000;
 
 export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
   const t = useV2T();
+  const locale = useLocale();
   const [text, setText] = useState("");
   const [focus, setFocus] = useState(false);
   const chars = text.length;
@@ -120,7 +122,7 @@ export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
             color: canAnalyze ? tokens.ok : tokens.inkMute,
             letterSpacing: "0.08em",
           }}>
-            {t.analyzerCard.charsCount.replace('{count}', chars.toLocaleString()).replace('{min}', MIN_CHARS.toLocaleString())} {canAnalyze && "✓"}
+            {t.analyzerCard.charsCount.replace('{count}', chars.toLocaleString(locale)).replace('{min}', MIN_CHARS.toLocaleString(locale))} {canAnalyze && "✓"}
           </div>
         </div>
         <Magnetic tokens={tokens} strength={6}>

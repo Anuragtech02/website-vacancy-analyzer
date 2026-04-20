@@ -1,6 +1,8 @@
 // en.ts — English strings for the v2 vacancy analyzer page.
 // Kept self-contained in _messages/ so they don't mix with the main messages/{nl,en}.json.
 
+// NOTE: V2Messages is defined as "typeof en" in index.ts.
+// en.ts itself is the source of truth — no circular import needed here.
 const en = {
   common: {
     dismiss: "Dismiss",
@@ -298,7 +300,7 @@ Send your CV and motivation letter to jobs@company.example. We will come back to
     disclaimer:
       "Scores are produced by a large language model tuned on 14,000 anonymized postings and applicant outcomes. Treat them as a second opinion, not a verdict. Your domain knowledge wins every tie.",
     stickyBanner: {
-      title:    "The rewrite is ready — projected 8.2 / 10",
+      title:    "The rewrite is ready — projected {score} / 10",
       subtitle: "Enter your email to unlock. No marketing spam, unsubscribe any time.",
       cta:      "Unlock rewrite →",
     },

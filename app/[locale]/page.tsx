@@ -127,9 +127,7 @@ export default function Home() {
 
       if (data.async && data.jobId) {
         // Async mode - show success message and stop loading
-        const successMsg = data.message || (locale === 'en'
-          ? 'Your analysis has been queued. You will receive an email when it\'s ready.'
-          : 'Je analyse is in de wachtrij geplaatst. Je ontvangt een email wanneer deze klaar is.');
+        const successMsg = data.message || t('emailCapture.queuedMessage');
         setBanner({ message: successMsg, variant: "success" });
         setIsAnalyzing(false);
         setVacancyText("");
@@ -150,7 +148,7 @@ export default function Home() {
   const handleContinueInBackground = () => {
     if (!email.trim()) {
       setBanner({
-        message: locale === 'en' ? 'Please enter your email address' : 'Voer je e-mailadres in',
+        message: t('emailCapture.emailRequired'),
         variant: "error"
       });
       return;
@@ -422,9 +420,7 @@ export default function Home() {
 
                              {/* Time Indication */}
                              <p className="text-xs text-slate-500 mt-2">
-                                {locale === 'en'
-                                  ? `Estimated time: 30-60 seconds (${loadingTime}s elapsed)`
-                                  : `Geschatte tijd: 30-60 seconden (${loadingTime}s verstreken)`}
+                                {t('emailCapture.estimatedTime').replace('{elapsed}', loadingTime.toString())}
                              </p>
                           </div>
 
@@ -438,14 +434,10 @@ export default function Home() {
                                   </div>
                                   <div className="flex-1">
                                     <h4 className="font-bold text-slate-800 text-sm mb-1">
-                                      {locale === 'en'
-                                        ? 'Taking longer than expected?'
-                                        : 'Duurt het langer dan verwacht?'}
+                                      {t('emailCapture.title')}
                                     </h4>
                                     <p className="text-xs text-slate-600">
-                                      {locale === 'en'
-                                        ? 'Enter your email to receive results when ready. You can close this tab.'
-                                        : 'Vul je e-mailadres in om de resultaten te ontvangen zodra ze klaar zijn. Je kunt dit tabblad sluiten.'}
+                                      {t('emailCapture.body')}
                                     </p>
                                   </div>
                                 </div>
@@ -454,14 +446,14 @@ export default function Home() {
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    placeholder={locale === 'en' ? 'your@email.com' : 'jouw@email.nl'}
+                                    placeholder={t('emailCapture.placeholder')}
                                     className="flex-1 px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                                   />
                                   <Button
                                     onClick={handleContinueInBackground}
                                     className="px-4 py-2 text-sm font-semibold bg-primary hover:bg-primary/90"
                                   >
-                                    {locale === 'en' ? 'Continue' : 'Doorgaan'}
+                                    {t('emailCapture.continue')}
                                   </Button>
                                 </div>
                               </div>

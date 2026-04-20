@@ -49,7 +49,7 @@ function LanguageToggle({ tokens }: { tokens: Tokens }) {
 
   const switchTo = (target: string) => {
     if (target === locale) return;
-    const newPath = pathname.replace(`/${locale}`, `/${target}`);
+    const newPath = pathname.replace(new RegExp(`^/${locale}(?=/|$)`), `/${target}`);
     router.push(newPath);
   };
 
@@ -164,18 +164,20 @@ export function Navbar({ tokens, onHome, usesLeft, screen }: NavbarProps) {
           {/* Language toggle */}
           <LanguageToggle tokens={tokens} />
 
-          {/* Analyze vacancy CTA */}
-          <Button
-            tokens={tokens}
-            variant="primary"
-            onClick={handleScrollToAnalyzer}
-            style={{ padding: "10px 16px", fontSize: 14, display: "inline-flex", alignItems: "center", gap: 6 }}
-          >
-            {t.nav.analyzeVacancy}
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </Button>
+          {/* Analyze vacancy CTA — hidden on report screen (AnalyzerCard is unmounted there) */}
+          {screen !== 'report' && (
+            <Button
+              tokens={tokens}
+              variant="primary"
+              onClick={handleScrollToAnalyzer}
+              style={{ padding: "10px 16px", fontSize: 14, display: "inline-flex", alignItems: "center", gap: 6 }}
+            >
+              {t.nav.analyzeVacancy}
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </Button>
+          )}
         </div>
       </div>
     </header>

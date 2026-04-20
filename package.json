@@ -16,7 +16,6 @@
     "@ai-sdk/google": "^3.0.64",
     "@ai-sdk/google-vertex": "^4.0.112",
     "@aws-sdk/client-ses": "^3.971.0",
-    "@google/generative-ai": "^0.24.1",
     "@hubspot/api-client": "^13.4.0",
     "@radix-ui/react-progress": "^1.1.8",
     "@radix-ui/react-scroll-area": "^1.2.10",

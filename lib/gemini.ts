@@ -18,19 +18,14 @@ import { getAnalyzerPrompt, getOptimizerPrompt, type PromptLocale } from "./prom
 function parseVertexCredentials(): object | undefined {
   const b64 = process.env.GOOGLE_VERTEX_CREDENTIALS_B64;
   if (b64) {
-    try {
-      return JSON.parse(Buffer.from(b64, "base64").toString("utf-8"));
-    } catch (e) {
-      console.warn("GOOGLE_VERTEX_CREDENTIALS_B64 failed to parse", e);
-    }
+    // Let parse errors throw — a set-but-malformed credential is a
+    // misconfig that should fail loud at startup, not silently fall
+    // through to the Studio API.
+    return JSON.parse(Buffer.from(b64, "base64").toString("utf-8"));
   }
   const json = process.env.GOOGLE_VERTEX_CREDENTIALS;
   if (json) {
-    try {
-      return JSON.parse(json);
-    } catch (e) {
-      console.warn("GOOGLE_VERTEX_CREDENTIALS failed to parse", e);
-    }
+    return JSON.parse(json);
   }
   return undefined;
 }
@@ -196,7 +191,8 @@ function googleProviderOptions(opts?: { thinkingLevel?: "minimal" | "low" | "med
       ...(opts?.thinkingLevel != null && {
         thinkingConfig: { thinkingLevel: opts.thinkingLevel },
       }),
-      responseModalities: ["TEXT" as const],
+      // Note: intentionally no responseModalities set — matches chat-service/src/ai/aiClient.ts
+      // for consistency. Vertex AI + Gemini 3.x default TEXT output, which is what we want.
     },
   };
 }
@@ -204,17 +200,39 @@ function googleProviderOptions(opts?: { thinkingLevel?: "minimal" | "low" | "med
 // ─── Helpers ───────────────────────────────────────────────────────────────
 
 /**
- * Strip ```json fences the model sometimes adds, then JSON.parse.
- * Throws a readable error with a slice of the output on failure.
+ * Three-tier JSON extraction: fenced block → first-brace-to-last-brace → raw parse.
+ * Handles: model preamble prose, thinking-model leakage, bare JSON, ```json fences.
+ * Throws a readable error with a response preview on total failure.
  */
 function parseJsonResponse<T>(raw: string, context: string): T {
-  let text = raw.trim();
-  if (text.startsWith("```")) {
-    text = text.replace(/^```(?:json)?\s*/i, "").replace(/\s*```\s*$/i, "");
+  const text = raw.trim();
+
+  // Try 1: strip fences if present anywhere in the text.
+  // Matches: ```json ... ``` or ``` ... ``` (anywhere in the string, not just at start)
+  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+  if (fenced?.[1]) {
+    try {
+      return JSON.parse(fenced[1]) as T;
+    } catch {
+      // fall through to brace-extraction
+    }
   }
+
+  // Try 2: find the first `{` through the last `}` (handles prefix/suffix text around raw JSON)
+  const firstBrace = text.indexOf('{');
+  const lastBrace = text.lastIndexOf('}');
+  if (firstBrace >= 0 && lastBrace > firstBrace) {
+    try {
+      return JSON.parse(text.slice(firstBrace, lastBrace + 1)) as T;
+    } catch {
+      // fall through to raw-parse
+    }
+  }
+
+  // Try 3: raw parse (unchanged from current behavior)
   try {
     return JSON.parse(text) as T;
-  } catch (e) {
+  } catch {
     const preview = text.length > 200 ? text.slice(0, 200) + "…" : text;
     throw new Error(`${context}: model did not return valid JSON (got: ${preview})`);
   }

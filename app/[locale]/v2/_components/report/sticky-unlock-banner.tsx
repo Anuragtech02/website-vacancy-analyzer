@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale } from "next-intl";
 import { type Tokens } from "../theme";
 import { Button } from "../primitives";
 import { useV2T } from "../i18n-context";
@@ -12,7 +13,10 @@ interface StickyUnlockBannerProps {
 
 export function StickyUnlockBanner({ tokens, onOpenEmail, potentialScore }: StickyUnlockBannerProps) {
   const t = useV2T();
-  const scoreDisplay = potentialScore != null ? potentialScore.toFixed(1) : "8.2";
+  const locale = useLocale();
+  const scoreDisplay = potentialScore != null
+    ? potentialScore.toLocaleString(locale, { maximumFractionDigits: 1 })
+    : locale === 'nl' ? "8,2" : "8.2";
   return (
     <div style={{
       position: "fixed", bottom: 20, left: "50%", transform: "translateX(-50%)",
@@ -26,7 +30,7 @@ export function StickyUnlockBanner({ tokens, onOpenEmail, potentialScore }: Stic
     }}>
       <div>
         <div style={{ fontFamily: tokens.bodyFont, fontSize: 14, fontWeight: 600 }}>
-          {t.report.stickyBanner.title.replace("8.2", scoreDisplay)}
+          {t.report.stickyBanner.title.replace("{score}", scoreDisplay)}
         </div>
         <div style={{ fontFamily: tokens.bodyFont, fontSize: 12, color: "rgba(255,255,255,0.65)", marginTop: 2 }}>
           {t.report.stickyBanner.subtitle}

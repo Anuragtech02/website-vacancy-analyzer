@@ -120,7 +120,6 @@ export default function V2Page() {
   const [reportId, setReportId]         = useState<string | null>(null);
   const [optimization, setOptimization] = useState<OptimizationResult | null>(null);
   const [fingerprint, setFingerprint]   = useState<string>("");
-  const [submittedEmail, setSubmittedEmail] = useState<string>("");
 
   // ---- Fingerprint on mount ----
   useEffect(() => {
@@ -130,7 +129,9 @@ export default function V2Page() {
   // ---- localStorage hydration (SSR-safe: only inside useEffect) ----
   useEffect(() => {
     const saved = localStorage.getItem("va2_screen");
-    if (saved === "landing" || saved === "loading" || saved === "report") {
+    // Never rehydrate "loading" — if the user closed the tab mid-fetch,
+    // the in-flight analysis is gone. Restart from landing.
+    if (saved === "landing" || saved === "report") {
       setScreen(saved);
     }
   }, []);
@@ -270,9 +271,8 @@ export default function V2Page() {
     setScreen((s) => (s === "loading" ? "report" : s));
   };
 
-  const handleUnlock = (optim: OptimizationResult, email: string) => {
+  const handleUnlock = (optim: OptimizationResult, _email: string) => {
     setOptimization(optim);
-    setSubmittedEmail(email);
     setUnlocked(true);
     setUsesLeft((n) => Math.max(0, n - 1));
     setModal(null);
@@ -296,9 +296,6 @@ export default function V2Page() {
       setScreen(key as Screen);
     }
   };
-
-  // Suppress unused variable warning for submittedEmail
-  void submittedEmail;
 
   // ---- Render ----
   return (
@@ -392,7 +389,9 @@ export default function V2Page() {
           )}
         </div>
 
-        <ReviewChip screen={screen} unlocked={unlocked} onJump={jumpTo} />
+        {process.env.NODE_ENV === 'development' && (
+          <ReviewChip screen={screen} unlocked={unlocked} onJump={jumpTo} />
+        )}
       </div>
       </BannerProvider>
     </V2MessagesProvider>

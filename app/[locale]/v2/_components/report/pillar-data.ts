@@ -1,72 +1,76 @@
 import { type PillarKey } from "../theme";
 
+export type PillarLabelKey = 'excellent' | 'good' | 'fair' | 'needsWork' | 'critical';
+
 export interface PillarDatum {
   key: PillarKey;
   score: number;
-  label: string;
+  label: PillarLabelKey;
   verdict: string;
   tone: "ok" | "warn" | "bad";
 }
 
+// TODO: replace with real API data. Fallback for ReviewChip/preview mode.
 export const PILLAR_DATA: PillarDatum[] = [
   {
     key: "structure_layout",
     score: 5.8,
-    label: "Needs work",
+    label: "needsWork",
     verdict: "Responsibilities read as platitudes. Three of eight bullets repeat the same idea (\"be agile\", \"move fast\", \"ship quickly\") without naming a concrete outcome.",
     tone: "warn",
   },
   {
     key: "inclusion_bias",
     score: 4.1,
-    label: "Critical",
+    label: "critical",
     verdict: "\"Rockstar developer\", the 7-year experience gate, and \"native-level English\" together exclude roughly 38% of qualified candidates in our sample.",
     tone: "bad",
   },
   {
     key: "tone_of_voice",
     score: 7.2,
-    label: "Good",
+    label: "good",
     verdict: "Warm, conversational register overall. One sentence (\"work independently under pressure\") tips into a red flag — consider reframing.",
     tone: "ok",
   },
   {
     key: "evp_brand",
     score: 3.8,
-    label: "Critical",
+    label: "critical",
     verdict: "\"Pizza Fridays\" is the only concrete benefit mentioned. No comp range, growth budget, flexibility policy, or parental leave signal.",
     tone: "bad",
   },
   {
     key: "persona_fit",
     score: 6.4,
-    label: "Fair",
+    label: "fair",
     verdict: "The title is clear but seniority is ambiguous — \"Senior\" is undermined by reporting lines and scope that read more mid-level.",
     tone: "warn",
   },
   {
     key: "mobile_experience",
     score: 5.2,
-    label: "Needs work",
+    label: "needsWork",
     verdict: "Mobile scrollers may tune out by the benefits section — long unbroken paragraphs and dense bullet lists don't scan well on small screens.",
     tone: "warn",
   },
   {
     key: "seo_findability",
     score: 4.9,
-    label: "Needs work",
+    label: "needsWork",
     verdict: "No location in the title; no salary signals. Search ranking depends on these cues and candidates using filters will miss this posting.",
     tone: "warn",
   },
   {
     key: "neuromarketing",
     score: 5.5,
-    label: "Needs work",
+    label: "needsWork",
     verdict: "\"Send your CV to jobs@\" is 2010s-era. No hint of what happens next, how long it takes, or who will read it.",
     tone: "warn",
   },
 ];
 
+// TODO: replace with real API data. Fallback for ReviewChip/preview mode.
 export const CRITICAL_POINTS: { title: string; detail: string }[] = [
   { title: "The 7-year experience gate", detail: "Drops the qualified pool by ~31% with minimal signal gain above year 4." },
   { title: "\"Native-level English\"",   detail: "Legally risky in NL and excludes strong non-native speakers." },
@@ -75,6 +79,7 @@ export const CRITICAL_POINTS: { title: string; detail: string }[] = [
   { title: "Vague CTA",                  detail: "No process description, no timeline, no human on the other side." },
 ];
 
+// TODO: replace with real API data. Fallback for ReviewChip/preview mode.
 export const REWRITTEN = `Senior Full-Stack Engineer
 Remote (CET ±2) · Amsterdam HQ · €75–95k + equity
 

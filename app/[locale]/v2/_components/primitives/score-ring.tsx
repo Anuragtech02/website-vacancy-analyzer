@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Tokens } from "../theme";
+import { useMotion } from "../motion";
 
 interface ScoreRingProps {
   tokens: Tokens;
@@ -20,6 +21,7 @@ export function ScoreRing({
   stroke = 14,
   label,
 }: ScoreRingProps) {
+  const m = useMotion(tokens);
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
   const pct = Math.min(1, Math.max(0, value / max));
@@ -52,7 +54,7 @@ export function ScoreRing({
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={`${c * pct} ${c}`}
-          style={{ transition: "stroke-dasharray .9s cubic-bezier(.2,.7,.2,1)" }}
+          style={{ transition: m.on ? 'stroke-dasharray .9s cubic-bezier(.2,.7,.2,1)' : 'none' }}
         />
       </svg>
       <div

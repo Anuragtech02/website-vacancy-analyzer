@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { AnalysisResult, OptimizationResult } from "@/lib/gemini";
 import { Button } from "@/components/ui/button";
 import { InlineBanner, type BannerVariant } from "@/components/ui/inline-banner";
@@ -122,8 +122,21 @@ function EmailModal({
   status: "idle" | "loading" | "success" | "error";
 }) {
   const [email, setEmail] = useState("");
-  const [loadingMessage, setLoadingMessage] = useState(OPTIMIZATION_MESSAGES[0]);
   const t = useTranslations('report.modal.email');
+  const tReport = useTranslations('report');
+
+  const OPTIMIZATION_MESSAGES = useMemo(() => [
+    tReport('optimization.messages.removingBureaucratic'),
+    tReport('optimization.messages.addingSafety'),
+    tReport('optimization.messages.optimizingConversion'),
+    tReport('optimization.messages.rewritingTone'),
+    tReport('optimization.messages.strengtheningEVP'),
+    tReport('optimization.messages.applyingProtocol'),
+    tReport('optimization.messages.generatingPDF'),
+    tReport('optimization.messages.sendingEmail'),
+  ], [tReport]);
+
+  const [loadingMessage, setLoadingMessage] = useState(() => OPTIMIZATION_MESSAGES[0]);
 
   // Cycle through loading messages when loading
   useEffect(() => {
@@ -287,6 +300,7 @@ export function ReportView({
 }: ReportViewProps) {
   const t = useTranslations('report');
   const tSuccess = useTranslations('report.successToast');
+  const tErrors = useTranslations('errors');
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showLimitModal, setShowLimitModal] = useState(false);
@@ -299,18 +313,6 @@ export function ReportView({
   const [banner, setBanner] = useState<{ message: string; variant: BannerVariant } | null>(null);
 
   const { summary, metadata, pillars } = analysis;
-
-  // Optimization messages from translations
-  const OPTIMIZATION_MESSAGES = [
-    t('optimization.messages.removingBureaucratic'),
-    t('optimization.messages.addingSafety'),
-    t('optimization.messages.optimizingConversion'),
-    t('optimization.messages.rewritingTone'),
-    t('optimization.messages.strengtheningEVP'),
-    t('optimization.messages.applyingProtocol'),
-    t('optimization.messages.generatingPDF'),
-    t('optimization.messages.sendingEmail'),
-  ];
 
   useEffect(() => {
      // Determine User Phase from LocalStorage
@@ -381,7 +383,7 @@ export function ReportView({
       // Show user-friendly error message
       const errMsg = error instanceof Error
         ? getErrorMessage(error, locale)
-        : (locale === 'en' ? 'An error occurred' : 'Er is een fout opgetreden');
+        : tErrors('generic');
       setBanner({ message: errMsg, variant: "error" });
       setStatus("error");
     }

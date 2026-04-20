@@ -5,20 +5,22 @@ import { type Tokens } from "../theme";
 import { Card, Button, Eyebrow } from "../primitives";
 import { useMotion, AmbientBG, Shimmer, TypingText } from "../motion";
 import { useV2T } from "../i18n-context";
+import type { V2Messages } from "../../_messages";
+
+type StepKey = keyof V2Messages["loading"]["steps"];
 
 export interface LoadingStep {
-  key: string;
-  label: string;
-  detail: string;
+  key: StepKey;
 }
 
-export const LOADING_STEPS: LoadingStep[] = [
-  { key: "parse",    label: "Reading the posting",    detail: "Segmenting sections and role signals." },
-  { key: "bias",     label: "Scanning for bias",      detail: "Checking coded language and exclusion patterns." },
-  { key: "tone",     label: "Checking tone of voice", detail: "Balancing warmth against authority." },
-  { key: "structure",label: "Grading clarity",        detail: "Responsibilities, requirements, CTA." },
-  { key: "benefits", label: "Weighing benefits",      detail: "Comp, growth, flexibility, culture signals." },
-  { key: "rewrite",  label: "Drafting the rewrite",   detail: "Assembling a publishable version." },
+// TODO: replace with real API data. Fallback for step animation.
+export const LOADING_STEPS: Array<{ key: StepKey }> = [
+  { key: "parse" },
+  { key: "bias" },
+  { key: "tone" },
+  { key: "structure" },
+  { key: "benefits" },
+  { key: "rewrite" },
 ];
 
 interface LoadingProps {
@@ -44,16 +46,15 @@ export function Loading({ tokens, onComplete, onSkipToEmail }: LoadingProps) {
       return () => clearTimeout(t);
     }
     const durations = [900, 1100, 1000, 1200, 1100, 1300];
-    const t = setTimeout(() => setStepIdx((i) => i + 1), durations[stepIdx]);
+    const t = setTimeout(() => setStepIdx((i) => i + 1), durations[stepIdx] ?? 1000);
     return () => clearTimeout(t);
   }, [stepIdx, onComplete]);
 
   const pct = Math.min(100, (stepIdx / LOADING_STEPS.length) * 100);
   const current = LOADING_STEPS[Math.min(stepIdx, LOADING_STEPS.length - 1)];
-  // Pull translated label/detail by the step's key
-  type StepKey = keyof typeof t.loading.steps;
-  const currentLabel  = t.loading.steps[current.key as StepKey].label;
-  const currentDetail = t.loading.steps[current.key as StepKey].detail;
+  // Pull translated label/detail by the step's key — fully type-safe, no cast needed
+  const currentLabel  = t.loading.steps[current.key].label;
+  const currentDetail = t.loading.steps[current.key].detail;
 
   return (
     <div style={{
@@ -148,7 +149,7 @@ export function Loading({ tokens, onComplete, onSkipToEmail }: LoadingProps) {
                     letterSpacing: "0.08em",
                     lineHeight: 1.3,
                   }}>
-                    {t.loading.steps[s.key as StepKey].label}
+                    {t.loading.steps[s.key].label}
                   </div>
                 </div>
               );
