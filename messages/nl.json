@@ -148,7 +148,9 @@
       "outOf": "Van de 10",
       "criticalPoints": "Kritieke Punten",
       "allGood": "Uitstekend werk!",
-      "noIssues": "Geen kritieke problemen gedetecteerd."
+      "noIssues": "Geen kritieke problemen gedetecteerd.",
+      "showAllIssues": "Toon alle {count} punten",
+      "showFewerIssues": "Toon minder"
     },
     "pillars": {
       "title": "Score Verdeling",

@@ -148,7 +148,9 @@
       "outOf": "Out of 10",
       "criticalPoints": "Critical Points",
       "allGood": "Excellent work!",
-      "noIssues": "No critical issues detected."
+      "noIssues": "No critical issues detected.",
+      "showAllIssues": "Show all {count} points",
+      "showFewerIssues": "Show less"
     },
     "pillars": {
       "title": "Score Distribution",
