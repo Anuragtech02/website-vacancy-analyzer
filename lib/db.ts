@@ -65,6 +65,40 @@ export const dbClient = {
     return result[0]?.count || 0;
   },
 
+  // Atomically checks count + inserts lead in a single transaction to prevent
+  // double-click / fetch-retry races past the usage limit guard.
+  createLeadIfUnderLimit: async (params: {
+    email: string;
+    reportId: string;
+    ipAddress?: string;
+    fingerprint?: string;
+    limit: number;
+  }): Promise<{ allowed: boolean; usageCountBefore: number }> => {
+    return await db.transaction(async (tx) => {
+      const fpCountResult = params.fingerprint
+        ? await tx.select({ count: count() }).from(leads).where(eq(leads.fingerprint, params.fingerprint))
+        : [{ count: 0 }];
+      const emCountResult = await tx.select({ count: count() }).from(leads).where(eq(leads.email, params.email));
+
+      const fpCount = Number(fpCountResult[0]?.count ?? 0);
+      const emCount = Number(emCountResult[0]?.count ?? 0);
+      const usageCountBefore = Math.max(fpCount, emCount);
+
+      if (usageCountBefore >= params.limit) {
+        return { allowed: false, usageCountBefore };
+      }
+
+      await tx.insert(leads).values({
+        email: params.email,
+        report_id: params.reportId,
+        ip_address: params.ipAddress || null,
+        fingerprint: params.fingerprint || null,
+      });
+
+      return { allowed: true, usageCountBefore };
+    });
+  },
+
   // Delete leads by identity (for admin reset functionality)
   deleteLeadsByIdentity: async (params: {
     email?: string;

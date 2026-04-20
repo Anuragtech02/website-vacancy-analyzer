@@ -31,20 +31,23 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Check usage count by fingerprint and email.
-    // IP is intentionally excluded — shared office/VPN IPs would cause
-    // colleagues to block each other. See lib/db.ts: countLeadsByFingerprint.
-    // BYPASS_USAGE_LIMIT=true can be set in .env.local for development
+    // Check + insert atomically to prevent double-click / fetch-retry races.
+    // IP is intentionally excluded from the count — shared office/VPN IPs would
+    // cause colleagues to block each other. See lib/db.ts: countLeadsByFingerprint.
+    // BYPASS_USAGE_LIMIT=true can be set in .env.local for development.
     const bypassLimit = process.env.BYPASS_USAGE_LIMIT === 'true';
+    const effectiveLimit = bypassLimit ? Number.MAX_SAFE_INTEGER : 2;
 
-    const fingerprintUsageCount = await dbClient.countLeadsByFingerprint(fingerprint);
-    const emailUsageCount = await dbClient.countLeadsByEmail(email);
-    const usageCount = Math.max(fingerprintUsageCount, emailUsageCount);
+    const { allowed, usageCountBefore } = await dbClient.createLeadIfUnderLimit({
+      email,
+      reportId,
+      ipAddress,
+      fingerprint,
+      limit: effectiveLimit,
+    });
 
-    // Phase 3: Lock State (Logic: If user ALREADY has 2 leads, this is the 3rd attempt -> Block)
-    // Wait, if they have 0, this is 1st. If 1, this is 2nd. If 2, this is 3rd.
-    // So if usageCount >= 2, we block (unless bypass is enabled for development).
-    if (usageCount >= 2 && !bypassLimit) {
+    // Phase 3: Lock State — user already has 2 leads; this would be the 3rd attempt.
+    if (!allowed) {
       return NextResponse.json({
         success: false,
         isLocked: true,
@@ -52,19 +55,11 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Save lead with IP and fingerprint (Increments the count for next time)
-    await dbClient.createLead(email, reportId, ipAddress, fingerprint);
-    
-    // The current usage count for THIS email being sent (0 -> 1st email, 1 -> 2nd email)
-    // We pass `usageCount + 1` to the email function to indicate this is the Nth email?
-    // Let's look at email logic: `usageCount >= 2` triggers Phase 2 content? 
-    // Wait, User request: "Mail #2 – versturen na tweede herschrijving".
-    // So if previous usage is 1, this is the 2nd one. `usageCount` (before createLead) is 1.
-    // So we invoke email with `usageCount + 1`.
-    // If usageCount was 0, we pass 1. (Phase 1)
-    // If usageCount was 1, we pass 2. (Phase 2)
-    // If usageCount was 2, we mocked above.
-    
+    // The lead has been inserted inside the transaction.
+    // usageCountBefore: 0 → 1st rewrite, 1 → 2nd rewrite.
+    // Pass (usageCountBefore + 1) as the "Nth email" value for HubSpot + email template.
+    const usageCount = usageCountBefore; // alias for clarity below
+
     // Generate optimization (pass locale for localized responses)
     const analysis = JSON.parse(report.analysis_json);
     const optimizationResult = await optimizeVacancy(report.vacancy_text, analysis, locale || 'nl');
