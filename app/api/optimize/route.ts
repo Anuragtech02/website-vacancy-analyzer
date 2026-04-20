@@ -5,6 +5,9 @@ import { sendOptimizedVacancyEmail } from "@/lib/email";
 import { syncHubSpotContact } from "@/lib/hubspot";
 import { getClientIP } from "@/lib/fingerprint";
 
+// Gemini 3 Flash optimization + Puppeteer PDF + SES send. Budget 5 min.
+export const maxDuration = 300;
+
 export async function POST(req: NextRequest) {
   try {
     const { email, reportId, fingerprint, locale } = await req.json() as { email: string; reportId: string; fingerprint?: string; locale?: string };

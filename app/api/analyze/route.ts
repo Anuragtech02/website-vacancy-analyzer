@@ -6,6 +6,10 @@ import { nanoid } from "nanoid";
 import { enqueueAnalysis } from "@/lib/queue";
 import { dbRaw } from "@/lib/db-raw";
 
+// Gemini 3 Pro analysis can take up to ~3 minutes on long vacancies.
+// Default Vercel serverless timeout is 60s on Pro. Bump to 300s (5 min).
+export const maxDuration = 300;
+
 export async function POST(req: NextRequest) {
   // Rate Limiting
   const ip = req.headers.get("x-forwarded-for") || "unknown";
