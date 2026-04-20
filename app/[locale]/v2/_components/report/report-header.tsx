@@ -3,14 +3,23 @@
 import { type Tokens } from "../theme";
 import { Button, Pill } from "../primitives";
 import { useV2T } from "../i18n-context";
+import { useBanner } from "../banner-context";
 
 interface ReportHeaderProps {
   tokens: Tokens;
   usesLeft: number;
+  unlocked: boolean;
 }
 
-export function ReportHeader({ tokens, usesLeft }: ReportHeaderProps) {
+export function ReportHeader({ tokens, usesLeft, unlocked }: ReportHeaderProps) {
   const t = useV2T();
+  const setBanner = useBanner();
+
+  const handleDownloadPdf = () => {
+    if (!unlocked) return;
+    setBanner({ message: t.report.header.pdfSentInfo, variant: "info" });
+  };
+
   return (
     <div style={{
       position: "sticky", top: 0, zIndex: 5,
@@ -39,7 +48,17 @@ export function ReportHeader({ tokens, usesLeft }: ReportHeaderProps) {
         }}>
           {t.report.header.rewritesLeft.replace('{count}', String(usesLeft))}
         </div>
-        <Button tokens={tokens} variant="ghost" style={{ padding: "8px 14px", fontSize: 13 }}>
+        <Button
+          tokens={tokens}
+          variant="ghost"
+          onClick={handleDownloadPdf}
+          style={{
+            padding: "8px 14px",
+            fontSize: 13,
+            opacity: unlocked ? 1 : 0.45,
+            cursor: unlocked ? "pointer" : "not-allowed",
+          }}
+        >
           {t.report.header.downloadPdf}
         </Button>
       </div>

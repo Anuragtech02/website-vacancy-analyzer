@@ -14,6 +14,8 @@ import { Loading } from "./_components/loading";
 import { Report } from "./_components/report";
 import { EmailModal, LimitModal, DemoModal } from "./_components/modals";
 import { V2MessagesProvider } from "./_components/i18n-context";
+import { BannerProvider, type BannerState } from "./_components/banner-context";
+import { InlineBanner } from "./_components/inline-banner";
 import { getV2Messages } from "./_messages";
 
 // ---------------------------------------------------------------------------
@@ -104,10 +106,12 @@ export default function V2Page() {
   const v2messages = useMemo(() => getV2Messages(locale), [locale]);
 
   // ---- State (hydrated from localStorage via effects below) ----
-  const [screen, setScreen]   = useState<Screen>("landing");
+  const [screen, setScreen]     = useState<Screen>("landing");
   const [unlocked, setUnlocked] = useState<boolean>(false);
   const [usesLeft, setUsesLeft] = useState<number>(2);
-  const [modal, setModal]     = useState<Modal>(null);
+  const [modal, setModal]       = useState<Modal>(null);
+  const [submittedText, setSubmittedText] = useState<string>("");
+  const [banner, setBanner]     = useState<BannerState | null>(null);
 
   // ---- localStorage hydration (SSR-safe: only inside useEffect) ----
   useEffect(() => {
@@ -128,6 +132,11 @@ export default function V2Page() {
     if (!isNaN(parsed)) setUsesLeft(Math.max(0, parsed));
   }, []);
 
+  useEffect(() => {
+    const saved = localStorage.getItem("va2_submitted_text");
+    if (saved) setSubmittedText(saved);
+  }, []);
+
   // ---- Persist changes back to localStorage ----
   useEffect(() => {
     localStorage.setItem("va2_screen", screen);
@@ -141,11 +150,16 @@ export default function V2Page() {
     localStorage.setItem("va2_uses", String(usesLeft));
   }, [usesLeft]);
 
+  useEffect(() => {
+    localStorage.setItem("va2_submitted_text", submittedText);
+  }, [submittedText]);
+
   // ---- Handlers ----
 
   // Called from Landing's AnalyzerCard submit.
   // TODO: wire to /api/analyze in a later pass — for now just start the loading animation.
-  const startAnalyze = (_text?: string) => {
+  const startAnalyze = (text: string) => {
+    setSubmittedText(text);
     setUnlocked(false);
     setScreen("loading");
   };
@@ -182,6 +196,7 @@ export default function V2Page() {
   // ---- Render ----
   return (
     <V2MessagesProvider messages={v2messages}>
+      <BannerProvider setBanner={setBanner}>
       <div
         style={{
           minHeight: "100vh",
@@ -201,6 +216,20 @@ export default function V2Page() {
             screen={screen}
           />
 
+          {banner && (
+            <div style={{
+              position: "fixed", top: 80, left: "50%", transform: "translateX(-50%)",
+              zIndex: 50, maxWidth: 520, width: "calc(100% - 32px)",
+            }}>
+              <InlineBanner
+                tokens={tokens}
+                message={banner.message}
+                variant={banner.variant}
+                onDismiss={() => setBanner(null)}
+              />
+            </div>
+          )}
+
           {screen === "landing" && (
             <Landing tokens={tokens} onAnalyze={startAnalyze} />
           )}
@@ -218,6 +247,7 @@ export default function V2Page() {
               tokens={tokens}
               unlocked={unlocked}
               usesLeft={usesLeft}
+              submittedText={submittedText}
               onOpenEmail={openEmailOrLimit}
               onOpenLimit={() => setModal("limit")}
               onOpenDemo={() => setModal("demo")}
@@ -250,6 +280,7 @@ export default function V2Page() {
 
         <ReviewChip screen={screen} unlocked={unlocked} onJump={jumpTo} />
       </div>
+      </BannerProvider>
     </V2MessagesProvider>
   );
 }

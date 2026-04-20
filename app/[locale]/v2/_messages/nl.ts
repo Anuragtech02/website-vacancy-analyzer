@@ -2,6 +2,9 @@
 // Business-casual Dutch, uses "je" (informal), active voice.
 
 const nl = {
+  common: {
+    dismiss: "Sluiten",
+  },
   nav: {
     analyzeVacancy: "Analyseer vacature",
     langEn: "EN",
@@ -189,6 +192,7 @@ Stuur je CV en motivatiebrief naar jobs@bedrijf.nl. We komen bij je terug als er
       generatedNow: "Zojuist gegenereerd",
       rewritesLeft: "{count} gratis herschrijvingen over",
       downloadPdf:  "Download PDF",
+      pdfSentInfo:  "Je rapport is als PDF gemaild toen je ontgrendelde — bekijk je inbox (en spam folder).",
     },
     scoreCard: {
       eyebrow: "Oordeel",
@@ -270,9 +274,11 @@ Stuur je CV en motivatiebrief naar jobs@bedrijf.nl. We komen bij je terug als er
       },
       actions: {
         copy:         "Kopiëren",
+        copied:       "Gekopieerd!",
         downloadDocx: "Download .docx",
         emailToMe:    "Mail naar mij",
       },
+      alreadySent: "De herschrijving is naar je e-mail gestuurd toen je ontgrendelde. Bekijk je inbox (en spam folder).",
     },
     accordion: {
       show:   "Toon de tekst die je hebt ingediend",

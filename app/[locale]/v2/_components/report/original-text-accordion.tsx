@@ -7,9 +7,10 @@ import { useV2T } from "../i18n-context";
 
 interface OriginalTextAccordionProps {
   tokens: Tokens;
+  text: string;
 }
 
-export function OriginalTextAccordion({ tokens }: OriginalTextAccordionProps) {
+export function OriginalTextAccordion({ tokens, text }: OriginalTextAccordionProps) {
   const [textOpen, setTextOpen] = useState(false);
   const t = useV2T();
 
@@ -37,7 +38,7 @@ export function OriginalTextAccordion({ tokens }: OriginalTextAccordionProps) {
             color: tokens.inkSoft, whiteSpace: "pre-wrap",
             borderTop: `1px dashed ${tokens.line}`, paddingTop: 18,
           }}>
-            {`Senior Full-Stack Engineer (m/f/d)\n\nWe are a fast-growing SaaS company looking for a rockstar developer to join our dynamic team…`}
+            {text || "(no text submitted)"}
           </div>
         )}
       </Card>

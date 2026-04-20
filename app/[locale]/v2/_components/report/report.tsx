@@ -17,12 +17,13 @@ export interface ReportProps {
   tokens: Tokens;
   unlocked: boolean;
   usesLeft: number;
+  submittedText: string;
   onOpenEmail: () => void;
   onOpenLimit: () => void;
   onOpenDemo: () => void;
 }
 
-export function Report({ tokens, unlocked, usesLeft, onOpenEmail, onOpenLimit: _onOpenLimit, onOpenDemo: _onOpenDemo }: ReportProps) {
+export function Report({ tokens, unlocked, usesLeft, submittedText, onOpenEmail, onOpenLimit: _onOpenLimit, onOpenDemo: _onOpenDemo }: ReportProps) {
   const t = useV2T();
 
   const overall = useMemo(() => {
@@ -38,7 +39,7 @@ export function Report({ tokens, unlocked, usesLeft, onOpenEmail, onOpenLimit: _
 
   return (
     <div style={{ width: "100%" }}>
-      <ReportHeader tokens={tokens} usesLeft={usesLeft} />
+      <ReportHeader tokens={tokens} usesLeft={usesLeft} unlocked={unlocked} />
 
       {/* TOP: score + gate/critical */}
       <section style={{
@@ -58,7 +59,7 @@ export function Report({ tokens, unlocked, usesLeft, onOpenEmail, onOpenLimit: _
 
       {unlocked && <RewriteSection tokens={tokens} />}
 
-      <OriginalTextAccordion tokens={tokens} />
+      <OriginalTextAccordion tokens={tokens} text={submittedText} />
 
       {/* Disclaimer */}
       <section style={{ padding: "16px 48px 48px", maxWidth: 1360, margin: "0 auto" }}>

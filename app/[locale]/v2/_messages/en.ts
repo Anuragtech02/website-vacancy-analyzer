@@ -2,6 +2,9 @@
 // Kept self-contained in _messages/ so they don't mix with the main messages/{nl,en}.json.
 
 const en = {
+  common: {
+    dismiss: "Dismiss",
+  },
   nav: {
     analyzeVacancy: "Analyze vacancy",
     langEn: "EN",
@@ -189,6 +192,7 @@ Send your CV and motivation letter to jobs@company.example. We will come back to
       generatedNow:  "Generated just now",
       rewritesLeft:  "{count} free rewrites left",
       downloadPdf:   "Download PDF",
+      pdfSentInfo:   "Your report was emailed as a PDF when you unlocked — check your inbox (and spam folder).",
     },
     scoreCard: {
       eyebrow: "Verdict",
@@ -270,9 +274,11 @@ Send your CV and motivation letter to jobs@company.example. We will come back to
       },
       actions: {
         copy:          "Copy",
+        copied:        "Copied!",
         downloadDocx:  "Download .docx",
         emailToMe:     "Email to me",
       },
+      alreadySent: "The rewrite was sent to your email when you unlocked. Check your inbox (and spam folder).",
     },
     accordion: {
       show:   "Show the text you submitted",
