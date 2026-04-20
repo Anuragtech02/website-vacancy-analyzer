@@ -461,7 +461,7 @@ export function ReportView({
 
         {/* Disclaimer */}
         <div className="mb-20 p-6 rounded-xl text-xs text-muted-foreground leading-relaxed text-center max-w-2xl mx-auto">
-          Disclaimer: Deze analyse is gegenereerd door software. Hoewel we streven naar nauwkeurigheid, raden we aan alle suggesties in context te beoordelen.
+          {t('disclaimer')}
         </div>
       </div>
 

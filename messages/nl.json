@@ -143,7 +143,12 @@
         "weak": "Zwak",
         "weakDesc": "Significante verbeteringen nodig"
       },
-      "summary": "Samenvatting"
+      "summary": "Samenvatting",
+      "reportLabel": "Analyse Rapport",
+      "outOf": "Van de 10",
+      "criticalPoints": "Kritieke Punten",
+      "allGood": "Uitstekend werk!",
+      "noIssues": "Geen kritieke problemen gedetecteerd."
     },
     "pillars": {
       "title": "Score Verdeling",
@@ -227,8 +232,12 @@
     "original": {
       "title": "Originele Vacaturetekst",
       "show": "Toon originele tekst",
-      "hide": "Verberg originele tekst"
+      "hide": "Verberg originele tekst",
+      "characters": "{count} tekens",
+      "copyText": "Tekst kopiëren",
+      "copied": "Gekopieerd!"
     },
+    "disclaimer": "Disclaimer: Deze analyse is gegenereerd door software. Hoewel we streven naar nauwkeurigheid, raden we aan alle suggesties in context te beoordelen.",
     "successToast": {
       "title": "Mail succesvol verzonden!",
       "body": "We hebben de geoptimaliseerde versie naar je inbox gestuurd. Check ook je spam folder voor de zekerheid."

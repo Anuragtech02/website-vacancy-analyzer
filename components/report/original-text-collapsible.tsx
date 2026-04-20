@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ChevronDown, FileText, Copy, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "next-intl";
 
 interface OriginalTextCollapsibleProps {
   vacancyText: string;
@@ -16,6 +17,7 @@ export function OriginalTextCollapsible({
 }: OriginalTextCollapsibleProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const [copied, setCopied] = useState(false);
+  const t = useTranslations('report.original');
 
   const handleCopy = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -41,13 +43,13 @@ export function OriginalTextCollapsible({
               <FileText className="w-5 h-5 text-primary" />
             </div>
             <div className="text-left">
-              <h3 className="font-bold text-on-surface text-lg">Originele Vacaturetekst</h3>
+              <h3 className="font-bold text-on-surface text-lg">{t('title')}</h3>
               <p className="text-sm text-muted-foreground font-medium flex items-center gap-2">
-                <span>{vacancyText.length.toLocaleString()} tekens</span>
+                <span>{t('characters', { count: vacancyText.length.toLocaleString() })}</span>
               </p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-4">
             <Button
                 variant="ghost"
@@ -58,12 +60,12 @@ export function OriginalTextCollapsible({
                 {copied ? (
                   <>
                     <Check className="w-3.5 h-3.5 mr-1.5 text-green-600" />
-                    Gekopieerd!
+                    {t('copied')}
                   </>
                 ) : (
                   <>
                     <Copy className="w-3.5 h-3.5 mr-1.5" />
-                    Tekst kopiëren
+                    {t('copyText')}
                   </>
                 )}
             </Button>
