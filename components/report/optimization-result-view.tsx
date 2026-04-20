@@ -7,7 +7,7 @@ import { Copy, Download, FileText, Check } from "lucide-react";
 import { useState } from "react";
 import { saveAs } from "file-saver";
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from "docx";
-import { useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 
 interface OptimizationResultViewProps {
   result: OptimizationResult;
@@ -16,7 +16,7 @@ interface OptimizationResultViewProps {
 }
 
 export function OptimizationResultView({ result, email, phase }: OptimizationResultViewProps) {
-  const locale = useLocale();
+  const t = useTranslations('report.optimizationResult');
   const [copied, setCopied] = useState(false);
   const [downloadingWord, setDownloadingWord] = useState(false);
   const [downloadingPdf, setDownloadingPdf] = useState(false);
@@ -31,7 +31,7 @@ export function OptimizationResultView({ result, email, phase }: OptimizationRes
     } catch (error) {
       console.error("Failed to copy:", error);
       setBanner({
-        message: locale === 'en' ? 'Failed to copy text' : 'Kopiëren mislukt',
+        message: t('copyError'),
         variant: "error"
       });
     }
@@ -58,7 +58,7 @@ export function OptimizationResultView({ result, email, phase }: OptimizationRes
         docSections.push(
           new Paragraph({
             children: [
-              new TextRun({ text: locale === 'en' ? 'Organization: ' : 'Organisatie: ', bold: true }),
+              new TextRun({ text: t('orgLabel'), bold: true }),
               new TextRun(result.metadata.organization),
             ],
             spacing: { after: 200 },
@@ -70,7 +70,7 @@ export function OptimizationResultView({ result, email, phase }: OptimizationRes
         docSections.push(
           new Paragraph({
             children: [
-              new TextRun({ text: locale === 'en' ? 'Location: ' : 'Locatie: ', bold: true }),
+              new TextRun({ text: t('locationLabel'), bold: true }),
               new TextRun(result.metadata.location),
             ],
             spacing: { after: 400 },
@@ -126,7 +126,7 @@ export function OptimizationResultView({ result, email, phase }: OptimizationRes
       if (result.content.diversity_statement) {
         docSections.push(
           new Paragraph({
-            text: locale === 'en' ? 'Diversity & Inclusion' : 'Diversiteit & Inclusie',
+            text: t('diversityHeader'),
             heading: HeadingLevel.HEADING_2,
             spacing: { before: 400, after: 200 },
           })
@@ -166,7 +166,7 @@ export function OptimizationResultView({ result, email, phase }: OptimizationRes
     } catch (error) {
       console.error("Failed to generate Word document:", error);
       setBanner({
-        message: locale === 'en' ? 'Failed to generate Word document' : 'Word-document genereren mislukt',
+        message: t('wordError'),
         variant: "error"
       });
     } finally {
@@ -180,13 +180,13 @@ export function OptimizationResultView({ result, email, phase }: OptimizationRes
     try {
       // This triggers the existing PDF email flow
       setBanner({
-        message: locale === 'en' ? 'PDF has been sent to your email' : 'PDF is naar je e-mail verzonden',
+        message: t('pdfSent'),
         variant: "success"
       });
     } catch (error) {
       console.error("Failed to send PDF:", error);
       setBanner({
-        message: locale === 'en' ? 'Failed to send PDF' : 'PDF verzenden mislukt',
+        message: t('pdfError'),
         variant: "error"
       });
     } finally {
@@ -215,12 +215,10 @@ export function OptimizationResultView({ result, email, phase }: OptimizationRes
           </div>
           <div className="flex-1">
             <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">
-              {locale === 'en' ? 'Optimized Vacancy' : 'Verbeterde Vacature'}
+              {t('heading')}
             </h2>
             <p className="text-sm text-slate-600">
-              {locale === 'en'
-                ? 'Your improved vacancy text is ready. Copy or download it below.'
-                : 'Je verbeterde vacaturetekst is klaar. Kopieer of download deze hieronder.'}
+              {t('subheading')}
             </p>
           </div>
         </div>
@@ -236,12 +234,12 @@ export function OptimizationResultView({ result, email, phase }: OptimizationRes
             {copied ? (
               <>
                 <Check className="w-4 h-4" />
-                {locale === 'en' ? 'Copied!' : 'Gekopieerd!'}
+                {t('copied')}
               </>
             ) : (
               <>
                 <Copy className="w-4 h-4" />
-                {locale === 'en' ? 'Copy Text' : 'Kopieer Tekst'}
+                {t('copyText')}
               </>
             )}
           </Button>
@@ -254,9 +252,7 @@ export function OptimizationResultView({ result, email, phase }: OptimizationRes
             className="flex items-center gap-2 font-semibold border-2"
           >
             <Download className="w-4 h-4" />
-            {downloadingWord
-              ? (locale === 'en' ? 'Generating...' : 'Genereren...')
-              : (locale === 'en' ? 'Download Word' : 'Download Word')}
+            {downloadingWord ? t('generating') : t('downloadWord')}
           </Button>
 
           {/* Download PDF (Priority 3) */}
@@ -267,9 +263,7 @@ export function OptimizationResultView({ result, email, phase }: OptimizationRes
             className="flex items-center gap-2 font-semibold border-2"
           >
             <FileText className="w-4 h-4" />
-            {downloadingPdf
-              ? (locale === 'en' ? 'Sending...' : 'Verzenden...')
-              : (locale === 'en' ? 'Download PDF' : 'Download PDF')}
+            {downloadingPdf ? t('sending') : t('downloadPdf')}
           </Button>
         </div>
       </div>
@@ -277,7 +271,7 @@ export function OptimizationResultView({ result, email, phase }: OptimizationRes
       {/* Optimized Text Display */}
       <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 sm:p-8">
         <h3 className="text-lg font-bold text-slate-900 mb-4 pb-3 border-b border-slate-200">
-          {locale === 'en' ? 'Full Text' : 'Volledige Tekst'}
+          {t('fullText')}
         </h3>
 
         <div className="prose prose-slate max-w-none">
@@ -291,13 +285,13 @@ export function OptimizationResultView({ result, email, phase }: OptimizationRes
             <div className="text-sm text-slate-600 mb-6 space-y-1">
               {result.metadata.organization && (
                 <p>
-                  <strong>{locale === 'en' ? 'Organization:' : 'Organisatie:'}</strong>{' '}
+                  <strong>{t('orgLabel')}</strong>{' '}
                   {result.metadata.organization}
                 </p>
               )}
               {result.metadata.location && (
                 <p>
-                  <strong>{locale === 'en' ? 'Location:' : 'Locatie:'}</strong>{' '}
+                  <strong>{t('locationLabel')}</strong>{' '}
                   {result.metadata.location}
                 </p>
               )}
@@ -330,7 +324,7 @@ export function OptimizationResultView({ result, email, phase }: OptimizationRes
           {result.content.diversity_statement && (
             <div className="mb-6">
               <h2 className="text-xl font-bold text-slate-900 mb-3">
-                {locale === 'en' ? 'Diversity & Inclusion' : 'Diversiteit & Inclusie'}
+                {t('diversityHeader')}
               </h2>
               <p className="text-slate-700 leading-relaxed">
                 {result.content.diversity_statement}
@@ -353,7 +347,7 @@ export function OptimizationResultView({ result, email, phase }: OptimizationRes
       {result.changes && result.changes.summary && (
         <div className="bg-blue-50 rounded-2xl border border-blue-200 p-6 sm:p-8">
           <h3 className="text-lg font-bold text-slate-900 mb-4">
-            {locale === 'en' ? 'What Changed?' : 'Wat is er veranderd?'}
+            {t('whatChanged')}
           </h3>
           <p className="text-slate-700 leading-relaxed mb-4">{result.changes.summary}</p>
 

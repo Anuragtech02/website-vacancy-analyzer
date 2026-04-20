@@ -176,11 +176,11 @@ export function ScoreHero({
                      >
                        {isExpanded ? (
                          <>
-                           Toon minder <ChevronUp className="w-3 h-3" />
+                           {tHero('showLess')} <ChevronUp className="w-3 h-3" />
                          </>
                        ) : (
                          <>
-                           Lees meer <ChevronDown className="w-3 h-3" />
+                           {tHero('readMore')} <ChevronDown className="w-3 h-3" />
                          </>
                        )}
                      </button>

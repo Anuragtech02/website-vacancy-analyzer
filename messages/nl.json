@@ -37,7 +37,8 @@
       "analyzeReadability": "Leesbaarheid analyseren",
       "evaluateStructure": "Structuur evalueren",
       "checkSEO": "SEO vindbaarheid checken",
-      "finalize": "Analyse afronden"
+      "finalize": "Analyse afronden",
+      "fallback": "Analyse afronden..."
     },
     "category": {
       "label": "Functiecategorie",
@@ -92,6 +93,7 @@
       "title": "Structurele vacature",
       "titleHighlight": "verbetering",
       "description": "Onze software analyseert je tekst op belangrijke dimensies die bewezen zorgen voor hogere conversie en kwaliteit.",
+      "cta": "Nu gratis analyseren",
       "checks": [
         "Kandidaat fit check",
         "Tone of voice & veiligheid",
@@ -154,7 +156,9 @@
       "noIssues": "Geen kritieke problemen gedetecteerd.",
       "showAllIssues": "Toon alle {count} punten",
       "showFewerIssues": "Toon minder",
-      "planDemoSecondary": "Of plan een demo"
+      "planDemoSecondary": "Of plan een demo",
+      "readMore": "Lees meer",
+      "showLess": "Toon minder"
     },
     "pillars": {
       "title": "Score Verdeling",
@@ -193,14 +197,16 @@
       }
     },
     "cta": {
-      "unlock": "Ontgrendel",
-      "maxPotential": "maximum potentieel",
+      "unlock": "Bekijk",
+      "maxPotential": "verbeterde versie",
       "getOptimized": "Krijg de geoptimaliseerde versie.",
       "unlockNow": "Nu ontgrendelen",
       "currentScore": "Huidige Score",
       "potentialScore": "Potentiële Score",
       "optimized": "Geoptimaliseerd",
-      "hoverHint": "Hover voor resultaat"
+      "hoverHint": "Hover voor resultaat",
+      "stickySubtitle": "Krijg de geoptimaliseerde versie van deze vacature",
+      "stickyCta": "Bekijk verbeterde versie"
     },
     "modal": {
       "limitReached": {
@@ -252,6 +258,25 @@
       "privacy": "Privacybeleid",
       "terms": "Algemene Voorwaarden",
       "copyright": "© 2025 Vacature Tovenaar. Alle rechten voorbehouden."
+    },
+    "optimizationResult": {
+      "heading": "Verbeterde Vacature",
+      "subheading": "Je verbeterde vacaturetekst is klaar. Kopieer of download deze hieronder.",
+      "copied": "Gekopieerd!",
+      "copyText": "Kopieer Tekst",
+      "generating": "Genereren...",
+      "downloadWord": "Download Word",
+      "sending": "Verzenden...",
+      "downloadPdf": "Download PDF",
+      "fullText": "Volledige Tekst",
+      "whatChanged": "Wat is er veranderd?",
+      "orgLabel": "Organisatie: ",
+      "locationLabel": "Locatie: ",
+      "diversityHeader": "Diversiteit & Inclusie",
+      "copyError": "Kopiëren mislukt",
+      "wordError": "Word-document genereren mislukt",
+      "pdfSent": "PDF is naar je e-mail verzonden",
+      "pdfError": "PDF verzenden mislukt"
     }
   },
   "metadata": {

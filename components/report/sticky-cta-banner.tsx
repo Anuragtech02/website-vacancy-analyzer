@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Lock, Shield, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 interface StickyCTABannerProps {
   onUnlockClick: () => void;
@@ -14,6 +15,7 @@ interface StickyCTABannerProps {
 export function StickyCTABanner({ onUnlockClick, isUnlocked, phase }: StickyCTABannerProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
+  const t = useTranslations('report.cta');
 
   useEffect(() => {
     if (isUnlocked || isDismissed) {
@@ -56,7 +58,7 @@ export function StickyCTABanner({ onUnlockClick, isUnlocked, phase }: StickyCTAB
               </div>
               <div>
                 <h3 className="font-bold text-slate-900 text-base sm:text-lg">
-                  Krijg de geoptimaliseerde versie van deze vacature
+                  {t('stickySubtitle')}
                 </h3>
                 <p className="text-sm text-slate-500 hidden sm:block">
                   Onze software heeft de pijnpunten uit je tekst gehaald voor direct resultaat.
@@ -72,7 +74,7 @@ export function StickyCTABanner({ onUnlockClick, isUnlocked, phase }: StickyCTAB
                 className="flex-1 sm:flex-none h-12 px-6 font-bold text-white shadow-lg bg-primary hover:bg-primary/90 shadow-primary/20"
               >
                 <Lock className="w-4 h-4 mr-2" />
-                Bekijk verbeterde versie
+                {t('stickyCta')}
               </Button>
 
               {/* Dismiss button - mobile only */}

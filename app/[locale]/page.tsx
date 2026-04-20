@@ -451,7 +451,7 @@ export default function Home() {
                           {/* Dynamic Text */}
                           <div className="space-y-2 sm:space-y-3 text-center max-w-lg mx-auto mb-6 sm:mb-8 px-4">
                              <h3 className="text-xl sm:text-3xl font-black text-slate-800 tracking-tight leading-tight">
-                                {ANALYSIS_STEPS.find(s => s.id === currentStep)?.label || "Analyse afronden..."}
+                                {ANALYSIS_STEPS.find(s => s.id === currentStep)?.label || t('steps.fallback')}
                              </h3>
                              <p className="text-xs sm:text-sm text-slate-400 font-bold uppercase tracking-widest opacity-80">
                                 {t('analyzing.working')}
@@ -701,7 +701,7 @@ export default function Home() {
                      
                      <div>
                         <Button className="h-14 px-10 rounded-full text-lg font-bold shadow-none border border-transparent bg-primary text-primary-foreground hover:bg-primary/90 transition-all" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                           Nu gratis analyseren
+                           {t('solution.cta')}
                         </Button>
                      </div>
                  </div>

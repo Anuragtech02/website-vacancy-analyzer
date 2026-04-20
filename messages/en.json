@@ -37,7 +37,8 @@
       "analyzeReadability": "Analyzing readability",
       "evaluateStructure": "Evaluating structure",
       "checkSEO": "Checking SEO discoverability",
-      "finalize": "Finalizing analysis"
+      "finalize": "Finalizing analysis",
+      "fallback": "Finalizing analysis..."
     },
     "category": {
       "label": "Job Category",
@@ -92,6 +93,7 @@
       "title": "Structural vacancy",
       "titleHighlight": "improvement",
       "description": "Our software analyzes your text on important dimensions that are proven to ensure higher conversion and quality.",
+      "cta": "Analyze for free now",
       "checks": [
         "Candidate fit check",
         "Tone of voice & safety",
@@ -154,7 +156,9 @@
       "noIssues": "No critical issues detected.",
       "showAllIssues": "Show all {count} points",
       "showFewerIssues": "Show less",
-      "planDemoSecondary": "Or plan a demo"
+      "planDemoSecondary": "Or plan a demo",
+      "readMore": "Read more",
+      "showLess": "Show less"
     },
     "pillars": {
       "title": "Score Distribution",
@@ -193,14 +197,16 @@
       }
     },
     "cta": {
-      "unlock": "Unlock",
-      "maxPotential": "maximum potential",
+      "unlock": "View",
+      "maxPotential": "improved version",
       "getOptimized": "Get the optimized version.",
       "unlockNow": "Unlock now",
       "currentScore": "Current Score",
       "potentialScore": "Potential Score",
       "optimized": "Optimized",
-      "hoverHint": "Hover for result"
+      "hoverHint": "Hover for result",
+      "stickySubtitle": "Get the optimized version of this vacancy",
+      "stickyCta": "View improved version"
     },
     "modal": {
       "limitReached": {
@@ -252,6 +258,25 @@
       "privacy": "Privacy Policy",
       "terms": "Terms & Conditions",
       "copyright": "© 2025 Vacancy Wizard. All rights reserved."
+    },
+    "optimizationResult": {
+      "heading": "Optimized Vacancy",
+      "subheading": "Your improved vacancy text is ready. Copy or download it below.",
+      "copied": "Copied!",
+      "copyText": "Copy Text",
+      "generating": "Generating...",
+      "downloadWord": "Download Word",
+      "sending": "Sending...",
+      "downloadPdf": "Download PDF",
+      "fullText": "Full Text",
+      "whatChanged": "What Changed?",
+      "orgLabel": "Organization: ",
+      "locationLabel": "Location: ",
+      "diversityHeader": "Diversity & Inclusion",
+      "copyError": "Failed to copy text",
+      "wordError": "Failed to generate Word document",
+      "pdfSent": "PDF has been sent to your email",
+      "pdfError": "Failed to send PDF"
     }
   },
   "metadata": {
