@@ -35,6 +35,7 @@ function LimitReachedModal({
   onOpenAccessModal: () => void;
 }) {
   const [showCopiedToast, setShowCopiedToast] = useState(false);
+  const t = useTranslations('report.limitModal');
 
   const handleCopyEmail = async () => {
     try {
@@ -74,9 +75,9 @@ function LimitReachedModal({
               <span className="text-3xl">✨</span>
            </div>
 
-           <h3 className="text-2xl font-black text-slate-900 mb-2">De smaak te pakken?</h3>
+           <h3 className="text-2xl font-black text-slate-900 mb-2">{t('title')}</h3>
            <p className="text-slate-600 mb-8 leading-relaxed">
-             Je hebt je gratis analyses verbruikt. Wil je onbeperkt toegang tot onze software voor al je vacatures?
+             {t('body')}
            </p>
 
            <div className="space-y-3">
@@ -84,7 +85,7 @@ function LimitReachedModal({
                 className="w-full h-12 text-base font-bold shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 rounded-xl"
                 onClick={handleRequestAccess}
              >
-                Vraag volledige toegang aan
+                {t('requestAccess')}
              </Button>
 
              <Button
@@ -92,14 +93,14 @@ function LimitReachedModal({
                 className="w-full text-slate-500 hover:text-slate-900"
                 onClick={handleCopyEmail}
              >
-                Of neem contact op
+                {t('contact')}
              </Button>
            </div>
 
            {/* Toast notification */}
            {showCopiedToast && (
              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-4 py-2 rounded-lg shadow-lg animate-in fade-in slide-in-from-bottom-2 duration-200 text-sm font-medium">
-               📋 E-mailadres gekopieerd: joost@vacaturetovenaar.nl
+               {t('copiedToast')}
              </div>
            )}
        </div>
@@ -121,6 +122,7 @@ function EmailModal({
 }) {
   const [email, setEmail] = useState("");
   const [loadingMessage, setLoadingMessage] = useState(OPTIMIZATION_MESSAGES[0]);
+  const t = useTranslations('report.emailModal');
 
   // Cycle through loading messages when loading
   useEffect(() => {
@@ -174,22 +176,22 @@ function EmailModal({
               <Mail className="w-8 h-8 text-orange-600" />
             </div>
             <h3 className="text-3xl font-bold text-slate-900 tracking-tight">
-              Waar mogen we het heen sturen?
+              {t('title')}
             </h3>
             <p className="text-slate-600 text-sm leading-relaxed max-w-[280px] mx-auto">
-              We sturen je de geoptimaliseerde versie van deze vacature per e-mail.
+              {t('subtitle')}
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-               <label className="text-xs font-bold uppercase text-slate-400 tracking-wider ml-1">Werk Email</label>
+               <label className="text-xs font-bold uppercase text-slate-400 tracking-wider ml-1">{t('label')}</label>
                <input
                  type="email"
                  required
                  value={email}
                  onChange={(e) => setEmail(e.target.value)}
-                 placeholder="naam@bedrijf.nl"
+                 placeholder={t('placeholder')}
                  className="w-full px-5 py-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all font-medium"
                  disabled={status === "loading"}
                  autoFocus
@@ -207,7 +209,7 @@ function EmailModal({
                 </>
               ) : (
                 <>
-                  Verstuur mijn geoptimaliseerde vacature <ArrowRight className="w-5 h-5 ml-2" />
+                  {t('submit')} <ArrowRight className="w-5 h-5 ml-2" />
                 </>
               )}
             </Button>
@@ -215,15 +217,15 @@ function EmailModal({
 
           {status === "error" && (
             <p className="text-red-700 text-sm text-center font-medium bg-red-50 py-2 rounded-lg">
-              Er ging iets mis. Probeer het opnieuw.
+              {t('error')}
             </p>
           )}
 
           <div className="flex items-center justify-center gap-2 text-[10px] text-slate-400 font-medium uppercase tracking-widest">
              <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-             Geen Spam
+             {t('trustNoSpam')}
              <div className="w-1 h-1 rounded-full bg-slate-300"></div>
-             Veilig
+             {t('trustSecure')}
           </div>
         </div>
       </div>
@@ -283,6 +285,7 @@ export function ReportView({
   locale,
 }: ReportViewProps) {
   const t = useTranslations('report');
+  const tSuccess = useTranslations('report.successToast');
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showLimitModal, setShowLimitModal] = useState(false);
@@ -498,8 +501,8 @@ export function ReportView({
        <NotificationToast
          show={showNotification}
          onClose={() => setShowNotification(false)}
-         message="Mail succesvol verzonden!"
-         description="We hebben de geoptimaliseerde versie naar je inbox gestuurd. Check ook je spam folder voor de zekerheid."
+         message={tSuccess('title')}
+         description={tSuccess('body')}
        />
     </div>
   );

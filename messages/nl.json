@@ -226,6 +226,27 @@
       "show": "Toon originele tekst",
       "hide": "Verberg originele tekst"
     },
+    "limitModal": {
+      "title": "De smaak te pakken?",
+      "body": "Je hebt je gratis analyses verbruikt. Wil je onbeperkt toegang tot onze software voor al je vacatures?",
+      "requestAccess": "Vraag volledige toegang aan",
+      "contact": "Of neem contact op",
+      "copiedToast": "📋 E-mailadres gekopieerd: joost@vacaturetovenaar.nl"
+    },
+    "emailModal": {
+      "title": "Waar mogen we het heen sturen?",
+      "subtitle": "We sturen je de geoptimaliseerde versie van deze vacature per e-mail.",
+      "label": "Werk Email",
+      "placeholder": "naam@bedrijf.nl",
+      "submit": "Verstuur mijn geoptimaliseerde vacature",
+      "error": "Er ging iets mis. Probeer het opnieuw.",
+      "trustNoSpam": "Geen Spam",
+      "trustSecure": "Veilig"
+    },
+    "successToast": {
+      "title": "Mail succesvol verzonden!",
+      "body": "We hebben de geoptimaliseerde versie naar je inbox gestuurd. Check ook je spam folder voor de zekerheid."
+    },
     "footer": {
       "privacy": "Privacybeleid",
       "terms": "Algemene Voorwaarden",
