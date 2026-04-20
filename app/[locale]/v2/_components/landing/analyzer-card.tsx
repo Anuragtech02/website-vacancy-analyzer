@@ -8,11 +8,10 @@
 import { useState, useRef, useEffect } from "react";
 import React from "react";
 import type { Tokens } from "../theme";
-import { Card, Button, Pill } from "../primitives";
-import { useMotion, Magnetic } from "../motion";
+import { Card, Button } from "../primitives";
+import { Magnetic } from "../motion";
 import { AnalyzerBackdrop } from "./analyzer-backdrop";
 import { FloatingReassurance } from "./floating-reassurance";
-import { SAMPLE_VACANCY } from "./sample-vacancy";
 import { useV2T } from "../i18n-context";
 
 interface AnalyzerCardProps {
@@ -20,13 +19,14 @@ interface AnalyzerCardProps {
   onAnalyze: (text: string) => void;
 }
 
+const MIN_CHARS = 1000;
+
 export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
   const t = useV2T();
   const [text, setText] = useState("");
   const [focus, setFocus] = useState(false);
   const chars = text.length;
-  const minChars = 400;
-  const canAnalyze = chars >= 40; // forgiving for the mock
+  const canAnalyze = chars >= MIN_CHARS;
 
   const cardRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -47,20 +47,8 @@ export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
         display: "flex", alignItems: "center", justifyContent: "space-between",
         background: tokens.bgMuted,
       }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{
-            width: 28, height: 28, borderRadius: tokens.cardRadius > 6 ? 8 : 2,
-            background: tokens.primaryColor,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            color: "#fff", fontFamily: tokens.displayFont, fontWeight: 600, fontSize: 14,
-          }}>V</div>
-          <div style={{ fontFamily: tokens.bodyFont, fontSize: 14, fontWeight: 600, color: tokens.ink }}>
-            {t.analyzerCard.header.title}
-          </div>
-        </div>
-        <div style={{ display: "flex", gap: 6 }}>
-          <Pill tokens={tokens}>EN</Pill>
-          <Pill tokens={tokens}>NL</Pill>
+        <div style={{ fontFamily: tokens.bodyFont, fontSize: 14, fontWeight: 600, color: tokens.ink }}>
+          {t.analyzerCard.header.title}
         </div>
       </div>
 
@@ -118,7 +106,7 @@ export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
           borderTop: `1px dashed ${tokens.line}`,
         }}>
           <button
-            onClick={() => setText(SAMPLE_VACANCY)}
+            onClick={() => setText(t.analyzerCard.sampleVacancy)}
             style={{
               background: "none", border: "none", cursor: "pointer",
               fontFamily: tokens.monoFont, fontSize: 11,
@@ -129,10 +117,10 @@ export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
           >{t.analyzerCard.trySample}</button>
           <div style={{
             fontFamily: tokens.monoFont, fontSize: 11,
-            color: chars >= minChars ? tokens.ok : tokens.inkMute,
+            color: canAnalyze ? tokens.ok : tokens.inkMute,
             letterSpacing: "0.08em",
           }}>
-            {t.analyzerCard.charsCount.replace('{count}', String(chars)).replace('{min}', String(minChars))} {chars >= minChars && "✓"}
+            {t.analyzerCard.charsCount.replace('{count}', chars.toLocaleString()).replace('{min}', MIN_CHARS.toLocaleString())} {canAnalyze && "✓"}
           </div>
         </div>
         <Magnetic tokens={tokens} strength={6}>

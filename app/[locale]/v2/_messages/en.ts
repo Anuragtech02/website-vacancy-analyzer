@@ -45,6 +45,38 @@ const en = {
     trySample: "Try with a sample posting",
     charsCount: "{count} / {min} chars",
     submit: "Analyze vacancy",
+    sampleVacancy: `Senior Full-Stack Engineer (m/f/x)
+Amsterdam · Hybrid · Permanent contract
+
+About us
+We are a fast-growing SaaS scale-up that has been active in the market for over 10 years. Our dynamic team works in an agile environment and we pride ourselves on being a rockstar organisation with a no-nonsense culture. We are looking for a native-level English speaker who is not afraid of a challenge and can hit the ground running from day one.
+
+What you will do
+- Build scalable systems in a microservices architecture
+- Work closely with stakeholders across the business
+- Drive innovation and think outside the box
+- Take ownership of your work and wear many hats
+- Move fast and break things; we value speed over perfection
+- Mentor junior developers and help them grow
+
+What you bring
+- 7+ years of professional experience with React, Node.js, TypeScript, GraphQL and AWS
+- Bachelor's or Master's degree in Computer Science
+- Excellent communication skills (native-level English required)
+- Strong sense of urgency and the ability to work under pressure
+- Experience in a fast-paced startup environment is a big plus
+- A proactive, hands-on attitude
+
+What we offer
+- Competitive salary
+- A fun and dynamic team culture
+- Pizza Fridays and a ping-pong table in the office
+- 25 vacation days per year
+- Modern office in the centre of Amsterdam
+- Informal work atmosphere with an open-door policy
+
+How to apply
+Send your CV and motivation letter to jobs@company.example. We will come back to you if there is a fit. No agencies please.`,
   },
   floatingReassurance: {
     noSpam:  "No spam",

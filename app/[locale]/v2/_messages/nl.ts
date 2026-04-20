@@ -45,6 +45,38 @@ const nl = {
     trySample: "Probeer met een voorbeeldvacature",
     charsCount: "{count} / {min} tekens",
     submit: "Analyseer vacature",
+    sampleVacancy: `Senior Full-Stack Engineer (m/v/x)
+Amsterdam · Hybride · Vast contract
+
+Over ons
+Wij zijn een snelgroeiende SaaS-scaleup die al ruim 10 jaar actief is in de markt. Ons dynamische team werkt in een agile omgeving en wij prijzen onszelf als een rockstar-organisatie met een no-nonsense cultuur. Wij zijn op zoek naar iemand met moedertaal Nederlands die geen uitdaging uit de weg gaat en vanaf dag één impact wil maken.
+
+Wat ga je doen
+- Schaalbare systemen bouwen in een microservices-architectuur
+- Nauw samenwerken met stakeholders binnen de hele organisatie
+- Innovatie aanjagen en out-of-the-box denken
+- Ownership nemen over je werk en veel petten dragen
+- Snel handelen en niet bang zijn om dingen te breken; we kiezen snelheid boven perfectie
+- Junior developers begeleiden en helpen groeien
+
+Wat breng je mee
+- 7+ jaar professionele ervaring met React, Node.js, TypeScript, GraphQL en AWS
+- HBO- of WO-opleiding in Informatica of gelijkwaardig
+- Uitstekende communicatieve vaardigheden (moedertaal Nederlands vereist)
+- Sterk gevoel voor urgentie en het vermogen om onder druk te werken
+- Ervaring in een dynamische startup-omgeving is een grote pre
+- Een proactieve, hands-on mentaliteit
+
+Wat bieden wij
+- Marktconform salaris
+- Een leuke en dynamische teamcultuur
+- Pizza Fridays en een pingpongtafel op kantoor
+- 25 vakantiedagen per jaar
+- Modern kantoor in het centrum van Amsterdam
+- Informele werksfeer met een open-deur-beleid
+
+Hoe solliciteren
+Stuur je CV en motivatiebrief naar jobs@bedrijf.nl. We komen bij je terug als er een match is. Geen acquisitie alstublieft.`,
   },
   floatingReassurance: {
     noSpam:  "Geen spam",
