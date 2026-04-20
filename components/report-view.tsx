@@ -35,7 +35,7 @@ function LimitReachedModal({
   onOpenAccessModal: () => void;
 }) {
   const [showCopiedToast, setShowCopiedToast] = useState(false);
-  const t = useTranslations('report.limitModal');
+  const t = useTranslations('report.modal.limitReached');
 
   const handleCopyEmail = async () => {
     try {
@@ -77,7 +77,7 @@ function LimitReachedModal({
 
            <h3 className="text-2xl font-black text-slate-900 mb-2">{t('title')}</h3>
            <p className="text-slate-600 mb-8 leading-relaxed">
-             {t('body')}
+             {t('description')}
            </p>
 
            <div className="space-y-3">
@@ -100,7 +100,7 @@ function LimitReachedModal({
            {/* Toast notification */}
            {showCopiedToast && (
              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-4 py-2 rounded-lg shadow-lg animate-in fade-in slide-in-from-bottom-2 duration-200 text-sm font-medium">
-               {t('copiedToast')}
+               {t('emailCopied')}
              </div>
            )}
        </div>
@@ -122,7 +122,7 @@ function EmailModal({
 }) {
   const [email, setEmail] = useState("");
   const [loadingMessage, setLoadingMessage] = useState(OPTIMIZATION_MESSAGES[0]);
-  const t = useTranslations('report.emailModal');
+  const t = useTranslations('report.modal.email');
 
   // Cycle through loading messages when loading
   useEffect(() => {
@@ -179,7 +179,7 @@ function EmailModal({
               {t('title')}
             </h3>
             <p className="text-slate-600 text-sm leading-relaxed max-w-[280px] mx-auto">
-              {t('subtitle')}
+              {t('description')}
             </p>
           </div>
 

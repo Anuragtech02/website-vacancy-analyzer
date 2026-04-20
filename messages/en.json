@@ -206,7 +206,10 @@
         "submit": "Send optimization",
         "sending": "Sending...",
         "success": "Sent! Check your inbox.",
-        "error": "Something went wrong. Please try again."
+        "error": "Something went wrong. Please try again.",
+        "label": "Work Email",
+        "trustNoSpam": "No Spam",
+        "trustSecure": "Secure"
       }
     },
     "optimization": {
@@ -225,23 +228,6 @@
       "title": "Original Vacancy Text",
       "show": "Show original text",
       "hide": "Hide original text"
-    },
-    "limitModal": {
-      "title": "Got a taste for it?",
-      "body": "You've used up your free analyses. Want unlimited access to our software for all your vacancies?",
-      "requestAccess": "Request full access",
-      "contact": "Or get in touch",
-      "copiedToast": "📋 Email copied: joost@vacaturetovenaar.nl"
-    },
-    "emailModal": {
-      "title": "Where should we send it?",
-      "subtitle": "We'll email you the optimized version of this vacancy.",
-      "label": "Work Email",
-      "placeholder": "name@company.com",
-      "submit": "Send my optimized vacancy",
-      "error": "Something went wrong. Please try again.",
-      "trustNoSpam": "No Spam",
-      "trustSecure": "Secure"
     },
     "successToast": {
       "title": "Email sent successfully!",
