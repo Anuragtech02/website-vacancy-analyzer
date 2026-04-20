@@ -13,6 +13,8 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@ai-sdk/google": "^3.0.64",
+    "@ai-sdk/google-vertex": "^4.0.112",
     "@aws-sdk/client-ses": "^3.971.0",
     "@google/generative-ai": "^0.24.1",
     "@hubspot/api-client": "^13.4.0",
@@ -21,6 +23,7 @@
     "@radix-ui/react-separator": "^1.1.8",
     "@radix-ui/react-slot": "^1.2.4",
     "@types/bull": "^3.15.9",
+    "ai": "^6.0.168",
     "bull": "^4.16.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
