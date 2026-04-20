@@ -1,9 +1,11 @@
 "use client";
 
-// navbar.tsx — site-wide top navigation with logo, menu, and CTA.
-// Ported from navbar.jsx (React-in-HTML prototype).
+// navbar.tsx — site-wide top navigation with logo, language toggle, and CTA.
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
+import { useRouter, usePathname } from "next/navigation";
+import { useLocale } from "next-intl";
 import type { Tokens } from "./theme";
 import { Button } from "./primitives";
 import { useMotion } from "./motion";
@@ -12,30 +14,16 @@ import { useMotion } from "./motion";
 // Wordmark (internal)
 // ---------------------------------------------------------------------------
 
-function Wordmark({ tokens }: { tokens: Tokens }) {
+function Wordmark({ tokens, onHome }: { tokens: Tokens; onHome: () => void }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-      <div style={{
-        width: 30, height: 30,
-        borderRadius: tokens.cardRadius > 6 ? 8 : 3,
-        background: tokens.ink,
-        display: "grid", placeItems: "center",
-        position: "relative", overflow: "hidden",
-      }}>
-        <div style={{
-          position: "absolute", inset: 0,
-          background: `radial-gradient(circle at 30% 30%, ${tokens.primaryColor}, transparent 60%)`,
-          opacity: 0.9,
-        }} />
-        <span style={{
-          position: "relative",
-          fontFamily: tokens.displayFont,
-          fontWeight: 700,
-          color: tokens.bgRaised,
-          fontSize: 15,
-          letterSpacing: "-0.02em",
-        }}>V</span>
-      </div>
+    <button
+      onClick={onHome}
+      style={{
+        display: "flex", alignItems: "center", gap: 10,
+        background: "none", border: "none", padding: 0, cursor: "pointer",
+      }}
+    >
+      <Image src="/logo-icon.png" alt="Vacature Tovenaar logo" width={32} height={32} />
       <span style={{
         fontFamily: tokens.displayFont,
         fontWeight: tokens.displayWeight,
@@ -43,51 +31,63 @@ function Wordmark({ tokens }: { tokens: Tokens }) {
         fontSize: 18,
         letterSpacing: "-0.02em",
       }}>
-        Vacancy<span style={{ color: tokens.primaryColor }}>.</span>Wizard
+        Vacature Tovenaar
       </span>
-    </div>
+    </button>
   );
 }
 
 // ---------------------------------------------------------------------------
-// NavItem (internal)
+// LanguageToggle (internal)
 // ---------------------------------------------------------------------------
 
-interface NavItemProps {
-  tokens: Tokens;
-  label: string;
-  active: boolean;
-  onClick?: () => void;
-}
+function LanguageToggle({ tokens }: { tokens: Tokens }) {
+  const locale = useLocale();
+  const router = useRouter();
+  const pathname = usePathname();
 
-function NavItem({ tokens, label, active, onClick }: NavItemProps) {
-  const m = useMotion(tokens);
-  const [hover, setHover] = useState(false);
+  const switchTo = (target: string) => {
+    if (target === locale) return;
+    const newPath = pathname.replace(`/${locale}`, `/${target}`);
+    router.push(newPath);
+  };
+
   return (
-    <button
-      onClick={onClick}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      style={{
-        position: "relative",
-        background: "none", border: "none", cursor: "pointer",
-        padding: "9px 14px",
-        fontFamily: tokens.bodyFont, fontSize: 14,
-        color: active ? tokens.ink : tokens.inkSoft,
-        fontWeight: active ? 600 : 500,
-      }}
-    >
-      {label}
-      <span style={{
-        position: "absolute", left: 14, right: 14, bottom: 4,
-        height: 2, borderRadius: 2,
-        background: active ? tokens.primaryColor : tokens.ink,
-        transform: active ? "scaleX(1)" : hover ? "scaleX(1)" : "scaleX(0)",
-        transformOrigin: active ? "left" : hover ? "left" : "right",
-        transition: m.on ? "transform .28s cubic-bezier(.2,.7,.2,1)" : "none",
-        opacity: active ? 1 : 0.7,
-      }} />
-    </button>
+    <div style={{
+      display: "inline-flex", alignItems: "center",
+      border: `1px solid ${tokens.line}`,
+      background: tokens.bgRaised,
+      borderRadius: 999,
+      overflow: "hidden",
+      padding: 3,
+      gap: 2,
+    }}>
+      {(["en", "nl"] as const).map((lang) => {
+        const active = locale === lang;
+        return (
+          <button
+            key={lang}
+            onClick={() => switchTo(lang)}
+            style={{
+              background: active ? tokens.ink : "transparent",
+              color: active ? tokens.bgRaised : tokens.inkSoft,
+              border: "none",
+              cursor: active ? "default" : "pointer",
+              borderRadius: 999,
+              padding: "4px 9px",
+              fontFamily: tokens.monoFont,
+              fontSize: 11,
+              fontWeight: 600,
+              textTransform: "uppercase",
+              letterSpacing: "0.08em",
+              transition: "background .15s ease, color .15s ease",
+            }}
+          >
+            {lang}
+          </button>
+        );
+      })}
+    </div>
   );
 }
 
@@ -113,13 +113,9 @@ export function Navbar({ tokens, onHome, usesLeft, screen }: NavbarProps) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const items: Array<{ label: string; active: boolean; onClick?: () => void }> = [
-    { label: "Analyzer",    active: true,  onClick: onHome },
-    { label: "Methodology", active: false },
-    { label: "Rewriter",    active: false },
-    { label: "Pricing",     active: false },
-    { label: "Blog",        active: false },
-  ];
+  const handleScrollToAnalyzer = () => {
+    window.dispatchEvent(new CustomEvent("va2:scroll-to-analyzer"));
+  };
 
   return (
     <header style={{
@@ -135,34 +131,19 @@ export function Navbar({ tokens, onHome, usesLeft, screen }: NavbarProps) {
       <div style={{
         maxWidth: 1360, margin: "0 auto",
         padding: "14px 48px",
-        display: "grid",
-        gridTemplateColumns: "auto 1fr auto",
+        display: "flex",
         alignItems: "center",
-        gap: 32,
+        justifyContent: "space-between",
       }}>
         {/* Logo */}
-        <button
-          onClick={onHome}
-          style={{
-            display: "flex", alignItems: "center", gap: 10,
-            background: "none", border: "none", padding: 0, cursor: "pointer",
-          }}
-        >
-          <Wordmark tokens={tokens} />
-        </button>
+        <Wordmark tokens={tokens} onHome={onHome} />
 
-        {/* Center nav */}
-        <nav style={{
-          display: "flex", alignItems: "center", gap: 4,
-          justifyContent: "center",
-        }}>
-          {items.map((it) => (
-            <NavItem key={it.label} tokens={tokens} {...it} />
-          ))}
-        </nav>
+        {/* Spacer */}
+        <div style={{ flex: 1 }} />
 
         {/* Right cluster */}
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          {/* Uses left pill — only on report screen */}
           <div style={{
             display: screen === "report" ? "inline-flex" : "none",
             alignItems: "center", gap: 6,
@@ -177,16 +158,21 @@ export function Navbar({ tokens, onHome, usesLeft, screen }: NavbarProps) {
             <span style={{ width: 6, height: 6, borderRadius: 999, background: tokens.primaryColor }} />
             {usesLeft} free left
           </div>
-          <button style={{
-            background: "none", border: "none", cursor: "pointer",
-            padding: "9px 14px",
-            fontFamily: tokens.bodyFont, fontSize: 14, color: tokens.ink,
-            fontWeight: 500,
-          }}>
-            Sign in
-          </button>
-          <Button tokens={tokens} variant="primary" style={{ padding: "10px 16px", fontSize: 14 }}>
-            Book a demo
+
+          {/* Language toggle */}
+          <LanguageToggle tokens={tokens} />
+
+          {/* Analyze vacancy CTA */}
+          <Button
+            tokens={tokens}
+            variant="primary"
+            onClick={handleScrollToAnalyzer}
+            style={{ padding: "10px 16px", fontSize: 14, display: "inline-flex", alignItems: "center", gap: 6 }}
+          >
+            Analyze vacancy
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           </Button>
         </div>
       </div>

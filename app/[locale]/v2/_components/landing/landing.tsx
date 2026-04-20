@@ -4,7 +4,6 @@
 // Ported from landing.jsx (React-in-HTML prototype).
 
 import type { Tokens } from "../theme";
-import { Eyebrow } from "../primitives";
 import { Reveal } from "../motion";
 import { HeroSection } from "./hero-section";
 import { AnalyzerCard } from "./analyzer-card";
@@ -24,10 +23,7 @@ export function Landing({ tokens, onAnalyze }: LandingProps) {
       {/* HERO */}
       <section style={{ padding: "32px 64px 32px", maxWidth: 1360, margin: "0 auto", position: "relative" }}>
         <div style={{ position: "relative", zIndex: 1 }}>
-          <Reveal tokens={tokens}>
-            <Eyebrow tokens={tokens}>Free vacancy analyzer · English &amp; Dutch</Eyebrow>
-          </Reveal>
-          <div style={{ display: "grid", gridTemplateColumns: "1.05fr 1.25fr", gap: 64, alignItems: "start", marginTop: 22 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1.05fr 1.25fr", gap: 64, alignItems: "start" }}>
             <HeroSection tokens={tokens} />
             <Reveal tokens={tokens} delay={180} y={16}>
               <AnalyzerCard tokens={tokens} onAnalyze={onAnalyze} />

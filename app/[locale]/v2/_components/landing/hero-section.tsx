@@ -81,25 +81,6 @@ export function HeroSection({ tokens }: HeroSectionProps) {
         ))}
       </div>
 
-      {/* trust strip */}
-      <div style={{
-        display: "flex", gap: 22, marginTop: 36, flexWrap: "wrap",
-        alignItems: "center",
-        fontFamily: tokens.monoFont, fontSize: 11, letterSpacing: "0.14em",
-        textTransform: "uppercase", color: tokens.inkMute,
-      }}>
-        <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-          <Icon name="spark" tokens={tokens} size={14} tint={tokens.primaryColor} /> Free · No login
-        </span>
-        <span>·</span>
-        <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-          <Icon name="shield" tokens={tokens} size={14} tint={tokens.primaryColor} /> GDPR safe
-        </span>
-        <span>·</span>
-        <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-          <Icon name="clock" tokens={tokens} size={14} tint={tokens.primaryColor} /> Results in ~50s
-        </span>
-      </div>
     </div>
   );
 }

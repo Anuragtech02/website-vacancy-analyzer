@@ -5,7 +5,7 @@
 // State (text, focus) is internal.
 // Ported from landing.jsx (React-in-HTML prototype).
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import React from "react";
 import type { Tokens } from "../theme";
 import { Card, Button, Pill } from "../primitives";
@@ -26,7 +26,17 @@ export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
   const minChars = 400;
   const canAnalyze = chars >= 40; // forgiving for the mock
 
+  const cardRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const handler = () => {
+      cardRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    };
+    window.addEventListener("va2:scroll-to-analyzer", handler);
+    return () => window.removeEventListener("va2:scroll-to-analyzer", handler);
+  }, []);
+
   return (
+    <div ref={cardRef}>
     <Card tokens={tokens} pad={0} style={{ overflow: "hidden", position: "relative" }}>
       <AnalyzerBackdrop tokens={tokens} />
       <div style={{
@@ -149,5 +159,6 @@ export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
       {/* floating reassurance — fades out when text has content */}
       <FloatingReassurance tokens={tokens} visible={!text && !focus} />
     </Card>
+    </div>
   );
 }
