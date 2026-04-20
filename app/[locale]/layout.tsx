@@ -48,10 +48,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         'en': `${baseUrl}/en`,
       },
     },
-    icons: {
-      icon: "/favicon.ico",
-      apple: "/logo-icon.png",
-    },
+    // Icons are auto-discovered by Next.js App Router from
+    // app/icon.png and app/apple-icon.png. No manual entry needed.
     robots: {
       index: true,
       follow: true,
