@@ -2,14 +2,21 @@
 
 import { type Tokens } from "../theme";
 import { Card, Eyebrow } from "../primitives";
+import { CRITICAL_POINTS } from "./pillar-data";
 import { useV2T } from "../i18n-context";
 
 interface CriticalPointsProps {
   tokens: Tokens;
+  issues?: Array<{ problem: string; why_it_matters: string; how_to_improve: string }>;
 }
 
-export function CriticalPoints({ tokens }: CriticalPointsProps) {
+export function CriticalPoints({ tokens, issues }: CriticalPointsProps) {
   const t = useV2T();
+
+  const items = issues && issues.length > 0
+    ? issues.slice(0, 5).map((i) => ({ title: i.problem, detail: i.why_it_matters }))
+    : CRITICAL_POINTS;
+
   return (
     <Card
       tokens={tokens}
@@ -27,7 +34,7 @@ export function CriticalPoints({ tokens }: CriticalPointsProps) {
         {t.report.critical.title}
       </div>
       <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: 14 }}>
-        {t.report.critical.points.map((p, i) => (
+        {items.map((p, i) => (
           <div key={i} style={{ display: "grid", gridTemplateColumns: "22px 1fr", gap: 12, alignItems: "start" }}>
             <div style={{
               width: 22, height: 22, borderRadius: 999,

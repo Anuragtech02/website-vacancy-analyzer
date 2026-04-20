@@ -3,12 +3,13 @@
 import { type Tokens, PILLAR_COLORS, pillarColor } from "../theme";
 import { Card, Eyebrow, Pill, ScoreBar } from "../primitives";
 import { useMotion, Reveal } from "../motion";
-import { PILLAR_DATA } from "./pillar-data";
+import { type PillarDatum, PILLAR_DATA } from "./pillar-data";
 import { PillarIcon } from "./pillar-icon";
 import { useV2T } from "../i18n-context";
 
 interface PillarGridProps {
   tokens: Tokens;
+  pillars?: PillarDatum[];
 }
 
 // Map PILLAR_DATA's English label strings to translation keys
@@ -20,9 +21,11 @@ const PILLAR_LABEL_KEY_MAP: Record<string, "excellent" | "good" | "fair" | "need
   "Critical":   "critical",
 };
 
-export function PillarGrid({ tokens }: PillarGridProps) {
+export function PillarGrid({ tokens, pillars }: PillarGridProps) {
   const m = useMotion(tokens);
   const t = useV2T();
+
+  const data = pillars ?? PILLAR_DATA;
 
   return (
     <section style={{ padding: "16px 48px 32px", maxWidth: 1360, margin: "0 auto" }}>
@@ -50,7 +53,7 @@ export function PillarGrid({ tokens }: PillarGridProps) {
         gridAutoRows: "minmax(220px, auto)",
         gap: 14,
       }}>
-        {PILLAR_DATA
+        {data
           .slice()
           .sort((a, b) => a.score - b.score)
           .map((p, i) => {
@@ -96,7 +99,7 @@ export function PillarGrid({ tokens }: PillarGridProps) {
                       </div>
                       <div>
                         <div style={{ fontFamily: tokens.monoFont, fontSize: 10, letterSpacing: "0.14em", color: tokens.inkMute, textTransform: "uppercase" }}>
-                          P{String(PILLAR_DATA.findIndex((x) => x.key === p.key) + 1).padStart(2, "0")}
+                          P{String(data.findIndex((x) => x.key === p.key) + 1).padStart(2, "0")}
                         </div>
                         <div style={{ fontFamily: tokens.displayFont, fontSize: 20, fontWeight: tokens.displayWeight, color: tokens.ink, letterSpacing: "-0.01em" }}>
                           {t.methodology.pillars[p.key]}

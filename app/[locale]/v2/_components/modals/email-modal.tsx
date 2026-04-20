@@ -5,14 +5,21 @@ import { type Tokens } from "../theme";
 import { Button, Eyebrow, Highlight } from "../primitives";
 import { ModalShell } from "./modal-shell";
 import { useV2T } from "../i18n-context";
+import { fetchWithTimeout } from "@/lib/fetch-with-timeout";
+import type { OptimizationResult } from "@/lib/gemini";
 
 interface EmailModalProps {
   tokens: Tokens;
+  reportId: string | null;
+  fingerprint: string;
+  locale: string;
   onClose: () => void;
-  onUnlock: () => void;
+  onUnlock: (optimization: OptimizationResult, email: string) => void;
+  onLimit: () => void;
+  onError: (message: string) => void;
 }
 
-export function EmailModal({ tokens, onClose, onUnlock }: EmailModalProps) {
+export function EmailModal({ tokens, reportId, fingerprint, locale, onClose, onUnlock, onLimit, onError }: EmailModalProps) {
   const t = useV2T();
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
@@ -24,10 +31,40 @@ export function EmailModal({ tokens, onClose, onUnlock }: EmailModalProps) {
     return () => clearInterval(timer);
   }, [busy, t.modals.email.busy.length]);
 
-  const submit = () => {
+  const submit = async () => {
     if (!email || !email.includes("@")) return;
+    if (!reportId) {
+      onError(t.errors.reportNotAvailable);
+      return;
+    }
     setBusy(true);
-    setTimeout(onUnlock, 3400);
+    try {
+      const response = await fetchWithTimeout("/api/optimize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, reportId, fingerprint, locale }),
+        timeout: 90000,
+        retries: 1,
+      });
+      const data = await response.json();
+
+      if (data.isLocked) {
+        setBusy(false);
+        onLimit();
+        onClose();
+        return;
+      }
+
+      if (!data.success || !data.optimization) {
+        throw new Error(t.errors.optimizeFailed);
+      }
+
+      onUnlock(data.optimization as OptimizationResult, email);
+      onClose();
+    } catch (error) {
+      setBusy(false);
+      onError(error instanceof Error ? error.message : t.errors.optimizeFailed);
+    }
   };
 
   return (
@@ -59,6 +96,7 @@ export function EmailModal({ tokens, onClose, onUnlock }: EmailModalProps) {
                 placeholder={t.modals.email.placeholder}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter") submit(); }}
                 style={{
                   width: "100%", marginTop: 8,
                   background: tokens.bgMuted,

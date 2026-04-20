@@ -11,18 +11,23 @@ import { useBanner } from "../banner-context";
 
 interface RewriteSectionProps {
   tokens: Tokens;
+  rewrittenText?: string;
+  projectedScore?: number;
 }
 
-export function RewriteSection({ tokens }: RewriteSectionProps) {
+export function RewriteSection({ tokens, rewrittenText, projectedScore }: RewriteSectionProps) {
   const t = useV2T();
   const setBanner = useBanner();
 
   const [copied, setCopied] = useState(false);
   const [downloadingDocx, setDownloadingDocx] = useState(false);
 
+  const bodyText = rewrittenText ?? REWRITTEN;
+  const scoreDisplay = projectedScore != null ? `${projectedScore.toFixed(1)} / 10` : t.report.rewrite.projected.score;
+
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(REWRITTEN);
+      await navigator.clipboard.writeText(bodyText);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -33,7 +38,7 @@ export function RewriteSection({ tokens }: RewriteSectionProps) {
   const handleDownloadDocx = async () => {
     try {
       setDownloadingDocx(true);
-      const paragraphs = REWRITTEN.split(/\n{2,}/).map(
+      const paragraphs = bodyText.split(/\n{2,}/).map(
         (p) => new Paragraph({ text: p, spacing: { after: 200 } })
       );
       const doc = new Document({ sections: [{ children: paragraphs }] });
@@ -61,7 +66,7 @@ export function RewriteSection({ tokens }: RewriteSectionProps) {
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
             <Pill tokens={tokens} tone="ok">{t.report.rewrite.badge}</Pill>
             <div style={{ fontFamily: tokens.bodyFont, fontSize: 14, color: tokens.inkSoft }}>
-              {t.report.rewrite.projected.prefix}<strong style={{ color: tokens.ink }}>{t.report.rewrite.projected.score}</strong>
+              {t.report.rewrite.projected.prefix}<strong style={{ color: tokens.ink }}>{scoreDisplay}</strong>
             </div>
           </div>
           <div style={{ display: "flex", gap: 8 }}>
@@ -103,7 +108,7 @@ export function RewriteSection({ tokens }: RewriteSectionProps) {
           color: tokens.ink, whiteSpace: "pre-wrap",
           columnCount: 2, columnGap: 40,
         }}>
-          {REWRITTEN}
+          {bodyText}
         </div>
       </Card>
     </section>

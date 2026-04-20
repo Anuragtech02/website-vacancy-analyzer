@@ -5,6 +5,14 @@ const nl = {
   common: {
     dismiss: "Sluiten",
   },
+  errors: {
+    analysisFailed: "Analyse mislukt — probeer het opnieuw.",
+    analysisTimeout: "De analyse duurt langer dan verwacht. Probeer opnieuw of laat het resultaat mailen.",
+    optimizeFailed: "Het lukte niet om de herschrijving te genereren. Probeer het opnieuw.",
+    reportNotAvailable: "Rapport niet beschikbaar — voer de analyse opnieuw uit.",
+    rateLimited: "Je hebt je gratis herschrijvingen voor deze browser opgebruikt.",
+    networkError: "Netwerkfout. Controleer je verbinding en probeer opnieuw.",
+  },
   nav: {
     analyzeVacancy: "Analyseer vacature",
     langEn: "EN",
@@ -22,7 +30,7 @@ const nl = {
     bullets: [
       {
         title: "Acht-punts diagnose",
-        desc: "Helderheid, inclusie, toon, voorwaarden, rol, groei, cultuur, CTA.",
+        desc: "Structuur, persona fit, EVP, toon, inclusie, mobiel, SEO, neuromarketing.",
       },
       {
         title: "Uitleg in normale taal",
@@ -131,14 +139,14 @@ Stuur je CV en motivatiebrief naar jobs@bedrijf.nl. We komen bij je terug als er
     sidebar:
       "Opgebouwd met 18 interne recruiters en gevalideerd tegen een corpus van 14.000 sollicitaties.",
     pillars: {
-      clarity:   "Helderheid & structuur",
-      inclusion: "Inclusiviteit",
-      tone:      "Tone of voice",
-      benefits:  "Voorwaarden",
-      role:      "Roldefinitie",
-      growth:    "Groei & leren",
-      culture:   "Cultuursignaal",
-      cta:       "Call to action",
+      structure_layout:  "Structuur & opmaak",
+      persona_fit:       "Persona fit",
+      evp_brand:         "EVP & merk",
+      tone_of_voice:     "Tone of voice",
+      inclusion_bias:    "Inclusie & bias",
+      mobile_experience: "Mobiele ervaring",
+      seo_findability:   "Vindbaarheid (SEO)",
+      neuromarketing:    "Neuromarketing",
     },
   },
   footer: {

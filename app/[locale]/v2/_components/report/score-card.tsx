@@ -8,10 +8,13 @@ interface ScoreCardProps {
   tokens: Tokens;
   overall: number;
   verdictLabel: string;
+  executiveSummary?: string;
+  wordCount?: number;
 }
 
-export function ScoreCard({ tokens, overall, verdictLabel }: ScoreCardProps) {
+export function ScoreCard({ tokens, overall, verdictLabel, executiveSummary, wordCount }: ScoreCardProps) {
   const t = useV2T();
+  const wordsDisplay = wordCount != null ? String(wordCount) : "148";
   return (
     <Card tokens={tokens} pad={36}>
       <div style={{ display: "grid", gridTemplateColumns: "240px 1fr", gap: 36, alignItems: "center" }}>
@@ -29,12 +32,12 @@ export function ScoreCard({ tokens, overall, verdictLabel }: ScoreCardProps) {
             fontFamily: tokens.bodyFont, fontSize: 16, lineHeight: 1.55,
             color: tokens.inkSoft, marginTop: 14,
           }}>
-            {t.report.scoreCard.summary}
+            {executiveSummary ?? t.report.scoreCard.summary}
           </p>
           <div style={{ display: "flex", gap: 20, marginTop: 22, flexWrap: "wrap" }}>
             {(
               [
-                [t.report.scoreCard.stats.words,       "148"],
+                [t.report.scoreCard.stats.words,       wordsDisplay],
                 [t.report.scoreCard.stats.readTime,     "52s"],
                 [t.report.scoreCard.stats.applicants,   "+38%"],
                 [t.report.scoreCard.stats.qualityLift,  "+2.4 pts"],

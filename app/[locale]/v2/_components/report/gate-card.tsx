@@ -7,10 +7,12 @@ import { useV2T } from "../i18n-context";
 interface GateCardProps {
   tokens: Tokens;
   currentScore: number;
+  potentialScore?: number;
   onUnlock: () => void;
 }
 
-export function GateCard({ tokens, currentScore, onUnlock }: GateCardProps) {
+export function GateCard({ tokens, currentScore, potentialScore, onUnlock }: GateCardProps) {
+  const displayPotential = potentialScore ?? 8.2;
   const t = useV2T();
   return (
     <Card
@@ -36,7 +38,7 @@ export function GateCard({ tokens, currentScore, onUnlock }: GateCardProps) {
           {t.report.gate.headline.prefix}
           <span style={{ color: tokens.primaryColor }}>{currentScore.toFixed(1)}</span>
           {t.report.gate.headline.to}
-          <span style={{ color: tokens.ok }}>8.2</span>
+          <span style={{ color: tokens.ok }}>{displayPotential.toFixed(1)}</span>
           {t.report.gate.headline.suffix}
         </div>
       </div>
@@ -63,7 +65,7 @@ export function GateCard({ tokens, currentScore, onUnlock }: GateCardProps) {
               color: tokens.ok, letterSpacing: "-0.03em", lineHeight: 1, marginTop: 4,
               filter: "blur(6px)",
               userSelect: "none",
-            }}>8.2</div>
+            }}>{displayPotential.toFixed(1)}</div>
             <div style={{
               position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center",
             }}>

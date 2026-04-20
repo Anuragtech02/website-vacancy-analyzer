@@ -7,10 +7,12 @@ import { useV2T } from "../i18n-context";
 interface StickyUnlockBannerProps {
   tokens: Tokens;
   onOpenEmail: () => void;
+  potentialScore?: number;
 }
 
-export function StickyUnlockBanner({ tokens, onOpenEmail }: StickyUnlockBannerProps) {
+export function StickyUnlockBanner({ tokens, onOpenEmail, potentialScore }: StickyUnlockBannerProps) {
   const t = useV2T();
+  const scoreDisplay = potentialScore != null ? potentialScore.toFixed(1) : "8.2";
   return (
     <div style={{
       position: "fixed", bottom: 20, left: "50%", transform: "translateX(-50%)",
@@ -24,7 +26,7 @@ export function StickyUnlockBanner({ tokens, onOpenEmail }: StickyUnlockBannerPr
     }}>
       <div>
         <div style={{ fontFamily: tokens.bodyFont, fontSize: 14, fontWeight: 600 }}>
-          {t.report.stickyBanner.title}
+          {t.report.stickyBanner.title.replace("8.2", scoreDisplay)}
         </div>
         <div style={{ fontFamily: tokens.bodyFont, fontSize: 12, color: "rgba(255,255,255,0.65)", marginTop: 2 }}>
           {t.report.stickyBanner.subtitle}

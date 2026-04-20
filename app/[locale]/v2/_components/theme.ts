@@ -37,14 +37,14 @@ export const DEFAULT_TWEAKS: TweakSettings = {
 // ---------------------------------------------------------------------------
 
 export type PillarKey =
-  | 'clarity'
-  | 'inclusion'
-  | 'tone'
-  | 'benefits'
-  | 'role'
-  | 'growth'
-  | 'culture'
-  | 'cta';
+  | 'structure_layout'
+  | 'persona_fit'
+  | 'evp_brand'
+  | 'tone_of_voice'
+  | 'inclusion_bias'
+  | 'mobile_experience'
+  | 'seo_findability'
+  | 'neuromarketing';
 
 export interface PillarColorDef {
   hue: number;
@@ -52,14 +52,14 @@ export interface PillarColorDef {
 }
 
 export const PILLAR_COLORS: Record<PillarKey, PillarColorDef> = {
-  clarity:   { hue: 230, name: 'Clarity & structure' },
-  inclusion: { hue: 290, name: 'Inclusivity' },
-  tone:      { hue: 40,  name: 'Tone of voice' },
-  benefits:  { hue: 340, name: 'Benefits framing' },
-  role:      { hue: 10,  name: 'Role definition' },
-  growth:    { hue: 170, name: 'Growth & learning' },
-  culture:   { hue: 60,  name: 'Culture signal' },
-  cta:       { hue: 140, name: 'Call to action' },
+  structure_layout:  { hue: 230, name: 'Structure & layout' },
+  persona_fit:       { hue: 10,  name: 'Persona fit' },
+  evp_brand:         { hue: 60,  name: 'EVP & brand' },
+  tone_of_voice:     { hue: 40,  name: 'Tone of voice' },
+  inclusion_bias:    { hue: 290, name: 'Inclusion & bias' },
+  mobile_experience: { hue: 170, name: 'Mobile experience' },
+  seo_findability:   { hue: 340, name: 'Findability (SEO)' },
+  neuromarketing:    { hue: 140, name: 'Neuromarketing' },
 };
 
 export interface PillarColorResult {

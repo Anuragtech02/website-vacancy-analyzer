@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo } from "react";
-import { type Tokens } from "../theme";
-import { PILLAR_DATA } from "./pillar-data";
+import { type Tokens, type PillarKey } from "../theme";
+import { type PillarDatum, PILLAR_DATA } from "./pillar-data";
 import { useV2T } from "../i18n-context";
 import { ReportHeader } from "./report-header";
 import { ScoreCard } from "./score-card";
@@ -12,30 +12,76 @@ import { PillarGrid } from "./pillar-grid";
 import { RewriteSection } from "./rewrite-section";
 import { OriginalTextAccordion } from "./original-text-accordion";
 import { StickyUnlockBanner } from "./sticky-unlock-banner";
+import type { AnalysisResult, OptimizationResult } from "@/lib/gemini";
 
 export interface ReportProps {
   tokens: Tokens;
   unlocked: boolean;
   usesLeft: number;
   submittedText: string;
+  analysis: AnalysisResult | null;
+  optimization: OptimizationResult | null;
   onOpenEmail: () => void;
   onOpenLimit: () => void;
   onOpenDemo: () => void;
 }
 
-export function Report({ tokens, unlocked, usesLeft, submittedText, onOpenEmail, onOpenLimit: _onOpenLimit, onOpenDemo: _onOpenDemo }: ReportProps) {
+function mapAnalysisToPillarData(analysis: AnalysisResult): PillarDatum[] {
+  const keys: PillarKey[] = [
+    "structure_layout",
+    "inclusion_bias",
+    "tone_of_voice",
+    "evp_brand",
+    "persona_fit",
+    "mobile_experience",
+    "seo_findability",
+    "neuromarketing",
+  ];
+
+  return keys.map((key) => {
+    const p = analysis.pillars[key];
+    const tone: "ok" | "warn" | "bad" =
+      p.score >= 7.5 ? "ok" : p.score >= 5 ? "warn" : "bad";
+    const label =
+      p.score >= 8   ? "Strong" :
+      p.score >= 7   ? "Good" :
+      p.score >= 6   ? "Fair" :
+      p.score >= 4.5 ? "Needs work" :
+                       "Critical";
+    return { key, score: p.score, label, verdict: p.diagnosis, tone };
+  });
+}
+
+export function Report({
+  tokens,
+  unlocked,
+  usesLeft,
+  submittedText,
+  analysis,
+  optimization,
+  onOpenEmail,
+  onOpenLimit: _onOpenLimit,
+  onOpenDemo: _onOpenDemo,
+}: ReportProps) {
   const t = useV2T();
 
+  const pillarData = useMemo(
+    () => (analysis ? mapAnalysisToPillarData(analysis) : PILLAR_DATA),
+    [analysis],
+  );
+
   const overall = useMemo(() => {
-    const avg = PILLAR_DATA.reduce((s, p) => s + p.score, 0) / PILLAR_DATA.length;
+    const avg = pillarData.reduce((s, p) => s + p.score, 0) / pillarData.length;
     return Math.round(avg * 10) / 10;
-  }, []);
+  }, [pillarData]);
 
   const verdict =
-    overall >= 8    ? { label: t.report.scoreCard.verdict.excellent,        tone: "ok" } :
-    overall >= 6.5  ? { label: t.report.scoreCard.verdict.good,             tone: "primary" } :
-    overall >= 5    ? { label: t.report.scoreCard.verdict.needsImprovement, tone: "warn" } :
-                      { label: t.report.scoreCard.verdict.weak,             tone: "bad" };
+    overall >= 8   ? { label: t.report.scoreCard.verdict.excellent,        tone: "ok" } :
+    overall >= 6.5 ? { label: t.report.scoreCard.verdict.good,             tone: "primary" } :
+    overall >= 5   ? { label: t.report.scoreCard.verdict.needsImprovement, tone: "warn" } :
+                     { label: t.report.scoreCard.verdict.weak,             tone: "bad" };
+
+  const potentialScore = optimization?.estimated_scores?.total_score ?? undefined;
 
   return (
     <div style={{ width: "100%" }}>
@@ -46,18 +92,38 @@ export function Report({ tokens, unlocked, usesLeft, submittedText, onOpenEmail,
         padding: "48px 48px 32px", maxWidth: 1360, margin: "0 auto",
         display: "grid", gridTemplateColumns: "1.35fr 1fr", gap: 32, alignItems: "start",
       }}>
-        <ScoreCard tokens={tokens} overall={overall} verdictLabel={verdict.label} />
+        <ScoreCard
+          tokens={tokens}
+          overall={overall}
+          verdictLabel={verdict.label}
+          executiveSummary={analysis?.summary.executive_summary}
+          wordCount={analysis?.metadata.word_count}
+        />
 
         {!unlocked ? (
-          <GateCard tokens={tokens} currentScore={overall} onUnlock={onOpenEmail} />
+          <GateCard
+            tokens={tokens}
+            currentScore={overall}
+            potentialScore={potentialScore}
+            onUnlock={onOpenEmail}
+          />
         ) : (
-          <CriticalPoints tokens={tokens} />
+          <CriticalPoints
+            tokens={tokens}
+            issues={analysis?.summary.key_issues}
+          />
         )}
       </section>
 
-      <PillarGrid tokens={tokens} />
+      <PillarGrid tokens={tokens} pillars={pillarData} />
 
-      {unlocked && <RewriteSection tokens={tokens} />}
+      {unlocked && (
+        <RewriteSection
+          tokens={tokens}
+          rewrittenText={optimization?.full_text_plain}
+          projectedScore={potentialScore}
+        />
+      )}
 
       <OriginalTextAccordion tokens={tokens} text={submittedText} />
 
@@ -71,7 +137,13 @@ export function Report({ tokens, unlocked, usesLeft, submittedText, onOpenEmail,
         </div>
       </section>
 
-      {!unlocked && <StickyUnlockBanner tokens={tokens} onOpenEmail={onOpenEmail} />}
+      {!unlocked && (
+        <StickyUnlockBanner
+          tokens={tokens}
+          onOpenEmail={onOpenEmail}
+          potentialScore={potentialScore}
+        />
+      )}
     </div>
   );
 }

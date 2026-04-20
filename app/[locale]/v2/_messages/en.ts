@@ -5,6 +5,14 @@ const en = {
   common: {
     dismiss: "Dismiss",
   },
+  errors: {
+    analysisFailed: "Analysis failed — please try again.",
+    analysisTimeout: "Analysis is taking longer than expected. Please try again or have the result emailed to you.",
+    optimizeFailed: "Couldn't generate the rewrite. Please try again.",
+    reportNotAvailable: "Report not available — please re-run the analysis.",
+    rateLimited: "You've used up your free rewrites for this browser.",
+    networkError: "Network error. Check your connection and try again.",
+  },
   nav: {
     analyzeVacancy: "Analyze vacancy",
     langEn: "EN",
@@ -22,7 +30,7 @@ const en = {
     bullets: [
       {
         title: "Eight-point diagnostic",
-        desc: "Clarity, inclusion, tone, benefits, role, growth, culture, CTA.",
+        desc: "Structure, persona fit, EVP, tone, inclusion, mobile, SEO, neuromarketing.",
       },
       {
         title: "Plain-English explanations",
@@ -131,14 +139,14 @@ Send your CV and motivation letter to jobs@company.example. We will come back to
     sidebar:
       "Built with 18 in-house recruiters and validated against a corpus of 14,000 applications.",
     pillars: {
-      clarity:   "Clarity & structure",
-      inclusion: "Inclusivity",
-      tone:      "Tone of voice",
-      benefits:  "Benefits framing",
-      role:      "Role definition",
-      growth:    "Growth & learning",
-      culture:   "Culture signal",
-      cta:       "Call to action",
+      structure_layout:  "Structure & layout",
+      persona_fit:       "Persona fit",
+      evp_brand:         "EVP & brand",
+      tone_of_voice:     "Tone of voice",
+      inclusion_bias:    "Inclusion & bias",
+      mobile_experience: "Mobile experience",
+      seo_findability:   "Findability (SEO)",
+      neuromarketing:    "Neuromarketing",
     },
   },
   footer: {
