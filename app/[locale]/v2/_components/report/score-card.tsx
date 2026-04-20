@@ -15,6 +15,15 @@ interface ScoreCardProps {
 export function ScoreCard({ tokens, overall, verdictLabel, executiveSummary, wordCount }: ScoreCardProps) {
   const t = useV2T();
   const wordsDisplay = wordCount != null ? String(wordCount) : "148";
+
+  // Derive read time from word count (~200 WPM)
+  const readTimeDisplay = wordCount != null
+    ? (() => {
+        const secs = Math.max(5, Math.round((wordCount / 200) * 60));
+        return secs < 60 ? `${secs}s` : `${Math.round(secs / 60)}m`;
+      })()
+    : "—";
+
   return (
     <Card tokens={tokens} pad={36}>
       <div style={{ display: "grid", gridTemplateColumns: "240px 1fr", gap: 36, alignItems: "center" }}>
@@ -37,10 +46,8 @@ export function ScoreCard({ tokens, overall, verdictLabel, executiveSummary, wor
           <div style={{ display: "flex", gap: 20, marginTop: 22, flexWrap: "wrap" }}>
             {(
               [
-                [t.report.scoreCard.stats.words,       wordsDisplay],
-                [t.report.scoreCard.stats.readTime,     "52s"],
-                [t.report.scoreCard.stats.applicants,   "+38%"],
-                [t.report.scoreCard.stats.qualityLift,  "+2.4 pts"],
+                [t.report.scoreCard.stats.words,    wordsDisplay],
+                [t.report.scoreCard.stats.readTime,  readTimeDisplay],
               ] as const
             ).map(([k, v]) => (
               <div key={k}>

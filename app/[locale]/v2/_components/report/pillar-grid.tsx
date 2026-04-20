@@ -12,15 +12,6 @@ interface PillarGridProps {
   pillars?: PillarDatum[];
 }
 
-// Map PILLAR_DATA's English label strings to translation keys
-const PILLAR_LABEL_KEY_MAP: Record<string, "excellent" | "good" | "fair" | "needsWork" | "critical"> = {
-  "Strong":     "excellent",
-  "Good":       "good",
-  "Fair":       "fair",
-  "Needs work": "needsWork",
-  "Critical":   "critical",
-};
-
 export function PillarGrid({ tokens, pillars }: PillarGridProps) {
   const m = useMotion(tokens);
   const t = useV2T();
@@ -107,7 +98,7 @@ export function PillarGrid({ tokens, pillars }: PillarGridProps) {
                       </div>
                     </div>
                     <Pill tokens={tokens} tone={p.tone}>
-                      {t.report.pillars.labels[PILLAR_LABEL_KEY_MAP[p.label] ?? "good"]}
+                      {t.report.pillars.labels[p.label]}
                     </Pill>
                   </div>
                   <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 10 }}>

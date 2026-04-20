@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { type Tokens, type PillarKey } from "../theme";
-import { type PillarDatum, PILLAR_DATA } from "./pillar-data";
+import { type PillarDatum, type PillarLabelKey, PILLAR_DATA } from "./pillar-data";
 import { useV2T } from "../i18n-context";
 import { ReportHeader } from "./report-header";
 import { ScoreCard } from "./score-card";
@@ -42,12 +42,12 @@ function mapAnalysisToPillarData(analysis: AnalysisResult): PillarDatum[] {
     const p = analysis.pillars[key];
     const tone: "ok" | "warn" | "bad" =
       p.score >= 7.5 ? "ok" : p.score >= 5 ? "warn" : "bad";
-    const label =
-      p.score >= 8   ? "Strong" :
-      p.score >= 7   ? "Good" :
-      p.score >= 6   ? "Fair" :
-      p.score >= 4.5 ? "Needs work" :
-                       "Critical";
+    const label: PillarLabelKey =
+      p.score >= 8   ? "excellent" :
+      p.score >= 7   ? "good" :
+      p.score >= 6   ? "fair" :
+      p.score >= 4.5 ? "needsWork" :
+                       "critical";
     return { key, score: p.score, label, verdict: p.diagnosis, tone };
   });
 }

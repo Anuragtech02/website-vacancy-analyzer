@@ -168,9 +168,11 @@ export function ShaderSurface({
       if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) { console.warn(gl.getShaderInfoLog(s)); }
       return s;
     };
+    const vert = compile(gl.VERTEX_SHADER, SHADER_VERT);
+    const frag = compile(gl.FRAGMENT_SHADER, SHADER_FRAG);
     const prog = gl.createProgram()!;
-    gl.attachShader(prog, compile(gl.VERTEX_SHADER, SHADER_VERT));
-    gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, SHADER_FRAG));
+    gl.attachShader(prog, vert);
+    gl.attachShader(prog, frag);
     gl.linkProgram(prog); gl.useProgram(prog);
 
     const buf = gl.createBuffer()!;
@@ -250,6 +252,8 @@ export function ShaderSurface({
         evtTarget.removeEventListener("mouseenter", onEnter);
         evtTarget.removeEventListener("mouseleave", onLeave);
       }
+      gl.deleteShader(vert);
+      gl.deleteShader(frag);
       gl.deleteProgram(prog);
       gl.deleteBuffer(buf);
     };

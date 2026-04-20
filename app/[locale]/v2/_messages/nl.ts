@@ -1,6 +1,9 @@
 // nl.ts — Dutch strings for the v2 vacancy analyzer page.
 // Business-casual Dutch, uses "je" (informal), active voice.
 
+import type en from './en';
+type V2Messages = typeof en;
+
 const nl = {
   common: {
     dismiss: "Sluiten",
@@ -29,7 +32,7 @@ const nl = {
       "Plak je vacature. In minder dan een minuut beoordeelt ons model hem op acht dimensies en vertelt je exact wat er beter moet — inclusief een herschreven versie die je direct kunt publiceren.",
     bullets: [
       {
-        title: "Acht-punts diagnose",
+        title: "Achtpuntsdiagnose",
         desc: "Structuur, persona fit, EVP, toon, inclusie, mobiel, SEO, neuromarketing.",
       },
       {
@@ -48,7 +51,7 @@ const nl = {
     },
     steps: [
       { title: "Plakken",    desc: "Je huidige vacature" },
-      { title: "Analyseren", desc: "8-punts diagnose" },
+      { title: "Analyseren", desc: "8-puntsdiagnose" },
       { title: "Ontvangen",  desc: "Score + herschreven versie" },
     ],
     placeholder:
@@ -298,7 +301,7 @@ Stuur je CV en motivatiebrief naar jobs@bedrijf.nl. We komen bij je terug als er
     disclaimer:
       "Scores worden gegenereerd door een taalmodel dat is afgestemd op 14.000 geanonimiseerde vacatures en sollicitatieresultaten. Behandel ze als second opinion, niet als uitspraak. Jouw vakkennis wint altijd.",
     stickyBanner: {
-      title:    "De herschrijving is klaar — voorspelling 8,2 / 10",
+      title:    "De herschrijving is klaar — voorspelling {score} / 10",
       subtitle: "Voer je e-mail in om te ontgrendelen. Geen marketingmail, altijd uitschrijven.",
       cta:      "Ontgrendel herschrijving →",
     },
@@ -366,6 +369,6 @@ Stuur je CV en motivatiebrief naar jobs@bedrijf.nl. We komen bij je terug als er
       note: "Geen verkooppraatje. Een echte recruiter aan de lijn. Neem een echte vacature mee.",
     },
   },
-};
+} satisfies V2Messages;
 
 export default nl;

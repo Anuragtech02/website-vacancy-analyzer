@@ -15,6 +15,15 @@ interface RewriteSectionProps {
   projectedScore?: number;
 }
 
+function stripBasicMarkdown(text: string): string {
+  return text
+    .replace(/\*\*([^*]+)\*\*/g, '$1')  // **bold** → bold
+    .replace(/__([^_]+)__/g, '$1')       // __bold__ → bold
+    .replace(/\*([^*]+)\*/g, '$1')       // *italic* → italic
+    .replace(/^#{1,6}\s+/gm, '')         // # heading → heading
+    .replace(/^\s*[-*]\s+/gm, '• ');     // - bullet / * bullet → • bullet
+}
+
 export function RewriteSection({ tokens, rewrittenText, projectedScore }: RewriteSectionProps) {
   const t = useV2T();
   const setBanner = useBanner();
@@ -22,7 +31,7 @@ export function RewriteSection({ tokens, rewrittenText, projectedScore }: Rewrit
   const [copied, setCopied] = useState(false);
   const [downloadingDocx, setDownloadingDocx] = useState(false);
 
-  const bodyText = rewrittenText ?? REWRITTEN;
+  const bodyText = stripBasicMarkdown(rewrittenText ?? REWRITTEN);
   const scoreDisplay = projectedScore != null ? `${projectedScore.toFixed(1)} / 10` : t.report.rewrite.projected.score;
 
   const handleCopy = async () => {

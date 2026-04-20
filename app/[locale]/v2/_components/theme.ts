@@ -58,7 +58,7 @@ export const PILLAR_COLORS: Record<PillarKey, PillarColorDef> = {
   tone_of_voice:     { hue: 40,  name: 'Tone of voice' },
   inclusion_bias:    { hue: 290, name: 'Inclusion & bias' },
   mobile_experience: { hue: 170, name: 'Mobile experience' },
-  seo_findability:   { hue: 340, name: 'Findability (SEO)' },
+  seo_findability:   { hue: 260, name: 'Findability (SEO)' },
   neuromarketing:    { hue: 140, name: 'Neuromarketing' },
 };
 
