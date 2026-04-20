@@ -33,9 +33,9 @@ export async function POST(req: NextRequest) {
     // BYPASS_USAGE_LIMIT=true can be set in .env.local for development
     const bypassLimit = process.env.BYPASS_USAGE_LIMIT === 'true';
 
-    const identityUsageCount = await dbClient.countLeadsByIdentity(ipAddress, fingerprint);
+    const fingerprintUsageCount = await dbClient.countLeadsByFingerprint(fingerprint);
     const emailUsageCount = await dbClient.countLeadsByEmail(email);
-    const usageCount = Math.max(identityUsageCount, emailUsageCount);
+    const usageCount = Math.max(fingerprintUsageCount, emailUsageCount);
 
     // Phase 3: Lock State (Logic: If user ALREADY has 2 leads, this is the 3rd attempt -> Block)
     // Wait, if they have 0, this is 1st. If 1, this is 2nd. If 2, this is 3rd.

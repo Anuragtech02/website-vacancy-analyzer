@@ -1,15 +1,12 @@
 /**
  * Rate limiting for analysis API
  *
- * IMPORTANT: Per client request, analysis should be UNLIMITED.
- * Only optimization (rewriting) is limited to 2x per user.
+ * Analysis: UNLIMITED (this function always returns true).
+ * Optimization (rewriting): limited to 2x per user via lib/db.ts.
  *
- * This function now always returns true (unlimited analysis).
- * We keep the function signature for backwards compatibility.
- *
- * Rate limiting is enforced only on optimization via database in:
- * - app/api/optimize/route.ts
- * - lib/db.ts (countLeadsByEmail, countLeadsByIdentity)
+ * Usage is counted by (fingerprint, email) — NOT IP. Shared office/VPN/NAT
+ * IPs would otherwise cause legitimate users to be blocked by a colleague's
+ * usage.
  */
 export function checkRateLimit(ip: string): boolean {
   // Unlimited analysis - always allow
