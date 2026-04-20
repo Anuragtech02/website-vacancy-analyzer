@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
-import { Wand2, ArrowRight, CheckCircle2, Lock, Search, MessageSquare, FileText, Layout, Globe, Loader2, Play, Building2, Sparkles, XCircle, Mail, TrendingUp, Clock, DollarSign } from "lucide-react";
+import { Wand2, ArrowRight, CheckCircle2, Search, MessageSquare, FileText, Layout, Globe, Play, Building2, Sparkles, XCircle, Mail, TrendingUp, Clock, DollarSign } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { InlineBanner, type BannerVariant } from "@/components/ui/inline-banner";
@@ -269,25 +269,9 @@ export default function Home() {
                         <span className="text-xs sm:text-sm font-bold text-slate-700">{t('hero.rightCandidates')}</span>
                     </div>
 
-                    {/* Input Card - App Window Aesthetic */}
+                    {/* Input Card */}
                     <div className="relative bg-white rounded-3xl sm:rounded-4xl shadow-[0_32px_64px_-12px_rgba(0,0,0,0.08)] border border-slate-100 transform transition-all hover:scale-[1.005] duration-500">
-                        
-                        {/* Browser Header */}
-                        <div className="px-4 sm:px-6 py-3 sm:py-4 bg-slate-50/50 border-b border-slate-100 flex items-center justify-between">
-                            <div className="flex items-center gap-1.5 sm:gap-2">
-                                <div className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-red-400"></div>
-                                <div className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-amber-400"></div>
-                                <div className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-emerald-400"></div>
-                            </div>
-                            <div className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                               <Lock className="w-2.5 sm:w-3 h-2.5 sm:h-3" />
-                               <span className="hidden xs:inline">{t('hero.analyzeTitle')}</span>
-                               <span className="xs:hidden">{t('hero.cta')}</span>
-                            </div>
-                            <div className="w-8 sm:w-12"></div>
-                        </div>
-
-                        <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 relative">
+                        <div className="p-4 sm:p-5 space-y-4 relative">
                             {/* How It Works - Visual Step-by-Step */}
                             <div className="pb-4 border-b border-slate-100">
                               <h3 className="text-sm font-bold text-slate-900 mb-4 text-center">
@@ -299,7 +283,7 @@ export default function Home() {
 
                                 {/* Step 1 */}
                                 <div className="relative flex flex-col items-center text-center">
-                                  <div className="relative z-10 w-10 h-10 rounded-full bg-primary/10 ring-4 ring-white flex items-center justify-center mb-2">
+                                  <div className="relative z-10 w-10 h-10 rounded-full bg-orange-50 ring-4 ring-white flex items-center justify-center mb-2">
                                     <FileText className="w-5 h-5 text-primary" />
                                     <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-primary text-white text-[9px] font-bold flex items-center justify-center">1</span>
                                   </div>
@@ -313,7 +297,7 @@ export default function Home() {
 
                                 {/* Step 2 */}
                                 <div className="relative flex flex-col items-center text-center">
-                                  <div className="relative z-10 w-10 h-10 rounded-full bg-primary/10 ring-4 ring-white flex items-center justify-center mb-2">
+                                  <div className="relative z-10 w-10 h-10 rounded-full bg-orange-50 ring-4 ring-white flex items-center justify-center mb-2">
                                     <Sparkles className="w-5 h-5 text-primary" />
                                     <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-primary text-white text-[9px] font-bold flex items-center justify-center">2</span>
                                   </div>
@@ -402,25 +386,8 @@ export default function Home() {
                     </div>
                   </>
                 ) : (
-                  /* Analysis Progress Card - App Window Aesthetic */
-                  <div className="relative bg-white rounded-3xl sm:rounded-4xl shadow-2xl shadow-blue-900/10 border border-white/40 ring-1 ring-slate-200/50 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 min-h-[380px] sm:min-h-[440px] flex flex-col">
-                      {/* Browser Header */}
-                      <div className="px-4 sm:px-5 py-3 sm:py-4 bg-slate-50/80 border-b border-slate-100 flex items-center justify-between gap-4">
-                          <div className="flex items-center gap-1.5 sm:gap-2">
-                              <div className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-red-400/90 shadow-sm"></div>
-                              <div className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-amber-400/90 shadow-sm"></div>
-                              <div className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-emerald-400/90 shadow-sm"></div>
-                          </div>
-
-                          {/* Fake URL Bar - Processing state */}
-                          <div className="flex-1 max-w-[200px] hidden sm:flex items-center justify-center gap-2 px-3 py-1.5 bg-white rounded-lg border border-slate-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
-                              <Loader2 className="w-2.5 h-2.5 text-primary animate-spin" />
-                              <span className="text-[10px] font-semibold text-slate-400 tracking-wide">{t('analyzing.processing')}</span>
-                          </div>
-
-                          <div className="w-8 sm:w-12"></div>
-                      </div>
-
+                  /* Analysis Progress Card */
+                  <div className="relative bg-white rounded-3xl sm:rounded-4xl shadow-2xl shadow-blue-900/10 border border-white/40 ring-1 ring-slate-200/50 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 min-h-[340px] sm:min-h-[400px] flex flex-col">
                       {/* Main Loading Content */}
                       <div className="flex-1 p-6 sm:p-10 flex flex-col items-center justify-center relative bg-white/50">
                           
