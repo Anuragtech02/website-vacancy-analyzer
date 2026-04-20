@@ -148,9 +148,7 @@ export function PeelCTA({ onUnlock, currentScore }: PeelCTAProps) {
                     type: "tween"
                  }}
                >
-                   <div className="w-full h-full bg-gradient-to-br from-white via-slate-50 to-slate-200 rounded-bl-3xl border-b border-l border-white/60 shadow-md" 
-                        style={{ borderBottomLeftRadius: isHovered ? 24 : 12 }}
-                   />
+                   <div className="w-full h-full bg-gradient-to-br from-white via-slate-50 to-slate-200 rounded-bl-3xl border-b border-l border-white/60 shadow-md" />
                    <div className="absolute inset-0 bg-gradient-to-tr from-black/0 via-white/50 to-white/10 rounded-bl-3xl" />
                </motion.div>
 
