@@ -272,59 +272,6 @@ export default function Home() {
                     {/* Input Card */}
                     <div className="relative bg-white rounded-3xl sm:rounded-4xl shadow-[0_32px_64px_-12px_rgba(0,0,0,0.08)] border border-slate-100 transform transition-all hover:scale-[1.005] duration-500">
                         <div className="p-4 sm:p-5 space-y-4 relative">
-                            {/* How It Works - Visual Step-by-Step */}
-                            <div className="pb-4 border-b border-slate-100">
-                              <h3 className="text-sm font-bold text-slate-900 mb-4 text-center">
-                                {t('hero.howItWorks.title')}
-                              </h3>
-                              <div className="relative grid grid-cols-3 gap-3 sm:gap-4">
-                                {/* Connecting line behind icons (desktop only) */}
-                                <div className="hidden sm:block absolute top-5 left-[16.66%] right-[16.66%] h-px bg-slate-200" aria-hidden="true" />
-
-                                {/* Step 1 */}
-                                <div className="relative flex flex-col items-center text-center">
-                                  <div className="relative z-10 w-10 h-10 rounded-full bg-orange-50 ring-4 ring-white flex items-center justify-center mb-2">
-                                    <FileText className="w-5 h-5 text-primary" />
-                                    <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-primary text-white text-[9px] font-bold flex items-center justify-center">1</span>
-                                  </div>
-                                  <div className="font-bold text-xs sm:text-sm text-slate-900 mb-0.5">
-                                    {t('hero.howItWorks.step1Title')}
-                                  </div>
-                                  <div className="text-[10px] sm:text-xs text-slate-500 leading-tight">
-                                    {t('hero.howItWorks.step1Desc')}
-                                  </div>
-                                </div>
-
-                                {/* Step 2 */}
-                                <div className="relative flex flex-col items-center text-center">
-                                  <div className="relative z-10 w-10 h-10 rounded-full bg-orange-50 ring-4 ring-white flex items-center justify-center mb-2">
-                                    <Sparkles className="w-5 h-5 text-primary" />
-                                    <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-primary text-white text-[9px] font-bold flex items-center justify-center">2</span>
-                                  </div>
-                                  <div className="font-bold text-xs sm:text-sm text-slate-900 mb-0.5">
-                                    {t('hero.howItWorks.step2Title')}
-                                  </div>
-                                  <div className="text-[10px] sm:text-xs text-slate-500 leading-tight">
-                                    {t('hero.howItWorks.step2Desc')}
-                                  </div>
-                                </div>
-
-                                {/* Step 3 */}
-                                <div className="relative flex flex-col items-center text-center">
-                                  <div className="relative z-10 w-10 h-10 rounded-full bg-emerald-100 ring-4 ring-white flex items-center justify-center mb-2">
-                                    <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-                                    <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-emerald-600 text-white text-[9px] font-bold flex items-center justify-center">3</span>
-                                  </div>
-                                  <div className="font-bold text-xs sm:text-sm text-slate-900 mb-0.5">
-                                    {t('hero.howItWorks.step3Title')}
-                                  </div>
-                                  <div className="text-[10px] sm:text-xs text-slate-500 leading-tight">
-                                    {t('hero.howItWorks.step3Desc')}
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-
                             <div className="relative">
                                 <textarea
                                     value={vacancyText}
