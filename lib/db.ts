@@ -1,7 +1,7 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { reports, leads } from "./db/schema";
-import { eq, count, or, and } from "drizzle-orm";
+import { eq, count, or } from "drizzle-orm";
 
 const connectionString = process.env.DATABASE_URL!;
 
@@ -53,18 +53,15 @@ export const dbClient = {
     return result[0]?.count || 0;
   },
 
-  // Check usage by IP or fingerprint (to prevent incognito bypass)
-  countLeadsByIdentity: async (ipAddress?: string, fingerprint?: string) => {
-    if (!ipAddress && !fingerprint) return 0;
-
-    const conditions = [];
-    if (ipAddress) conditions.push(eq(leads.ip_address, ipAddress));
-    if (fingerprint) conditions.push(eq(leads.fingerprint, fingerprint));
-
+  // Count leads by browser fingerprint only. IP is intentionally NOT used here
+  // because office/VPN/NAT networks share IPs across many users; including IP
+  // in the OR caused legitimate users to be blocked by a colleague's usage.
+  countLeadsByFingerprint: async (fingerprint?: string) => {
+    if (!fingerprint) return 0;
     const result = await db
       .select({ count: count() })
       .from(leads)
-      .where(or(...conditions));
+      .where(eq(leads.fingerprint, fingerprint));
     return result[0]?.count || 0;
   },
 

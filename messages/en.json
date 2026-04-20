@@ -1,0 +1,323 @@
+{
+  "common": {
+    "dismiss": "Dismiss"
+  },
+  "landing": {
+    "hero": {
+      "badge": "Stop wasting budget",
+      "title": "Better job postings",
+      "subtitle": "Better candidates",
+      "description": "Analyze and rewrite your vacancy text in 1 minute.",
+      "cta": "Analyze vacancy",
+      "analyzing": "Analyzing...",
+      "placeholder": "Paste your existing job posting here (including job title)",
+      "helperText": "💡 Tip: Copy the full text of your current job posting",
+      "error": "Something went wrong. Please try again.",
+      "howItWorks": {
+        "title": "How does it work?",
+        "step1Title": "Paste vacancy",
+        "step1Desc": "Copy your current job posting",
+        "step2Title": "AI analyzes",
+        "step2Desc": "Our AI scans and optimizes",
+        "step3Title": "Receive result",
+        "step3Desc": "Download improved version"
+      },
+      "navTitle": "Vacancy Analysis",
+      "discoverLink": "Discover Vacature Tovenaar",
+      "benefit1": "Attract suitable candidates",
+      "benefit2": "Filter out unsuitable candidates",
+      "benefit3": "Convince scarce profiles to apply",
+      "rightCandidates": "The right candidates",
+      "analyzeTitle": "Analyze Vacancy",
+      "vacancyQuality": "Vacancy Quality"
+    },
+    "steps": {
+      "scanBias": "Scanning for bias",
+      "checkTone": "Checking tone of voice",
+      "analyzeReadability": "Analyzing readability",
+      "evaluateStructure": "Evaluating structure",
+      "checkSEO": "Checking SEO discoverability",
+      "finalize": "Finalizing analysis",
+      "fallback": "Finalizing analysis..."
+    },
+    "category": {
+      "label": "Job Category",
+      "general": "General (Default)",
+      "government": "Government / Public Sector",
+      "tech": "Technology / Startups",
+      "healthcareEducation": "Healthcare / Education",
+      "legalCorporate": "Legal / Corporate",
+      "blueCollar": "Blue Collar / Manual"
+    },
+    "analyzing": {
+      "processing": "processing vacancy...",
+      "working": "Our software is at work..."
+    },
+    "statistics": {
+      "title": "Proven Results",
+      "subtitle": "Based on real client data",
+      "quality": {
+        "value": "+20%",
+        "label": "Candidate quality"
+      },
+      "time": {
+        "value": "+25%",
+        "label": "Time saved in process"
+      },
+      "cost": {
+        "value": "-14%",
+        "label": "Campaign costs"
+      }
+    },
+    "problem": {
+      "title": "The Problem",
+      "subtitle1": "Why many vacancies",
+      "subtitle2": "don't attract suitable candidates",
+      "description": "Unconscious wording, weak structure and vague language drive away qualified candidates.",
+      "mismatch": {
+        "title": "Mismatch & noise",
+        "description": "Generic texts attract generic candidates. You miss the",
+        "highlight": "top talent"
+      },
+      "structure": {
+        "title": "Unclear structure",
+        "description": "Large blocks of text without white space cause candidates to drop off immediately."
+      },
+      "persuasion": {
+        "title": "Lack of persuasion",
+        "description": "A dry requirements list doesn't inspire. You miss the emotional connection to win talent."
+      }
+    },
+    "solution": {
+      "badge": "The Solution",
+      "title": "Structural vacancy",
+      "titleHighlight": "improvement",
+      "description": "Our software analyzes your text on important dimensions that are proven to ensure higher conversion and quality.",
+      "cta": "Analyze for free now",
+      "checks": [
+        "Candidate fit check",
+        "Tone of voice & safety",
+        "Inclusive language",
+        "Mobile scannability",
+        "Keywords & discoverability",
+        "Structure & order",
+        "Clarity of employment conditions",
+        "Noise & mismatch reduction"
+      ]
+    },
+    "features": {
+      "title": "What does the AI analyze?",
+      "subtitle": "8 crucial aspects that determine if your vacancy is successful",
+      "attract": "Attract suitable candidates",
+      "filter": "Filter out unsuitable candidates",
+      "clarity": "Create crystal clear job picture",
+      "competitive": "Stand out from competitors"
+    },
+    "trust": {
+      "analyzed": "vacancies analyzed",
+      "improvement": "average improvement",
+      "free": "Free to use"
+    },
+    "footer": {
+      "brandName": "Vacancy Wizard",
+      "tagline": "Transform generic job postings into compelling assets.",
+      "website": "Website",
+      "privacy": "Privacy Policy",
+      "terms": "Terms & Conditions",
+      "copyright": "© 2025 Vacancy Wizard. All rights reserved."
+    }
+  },
+  "report": {
+    "navigation": {
+      "newAnalysis": "New Analysis",
+      "logo": "Vacancy Wizard",
+      "tagline": "The #1 Recruitment Software",
+      "reportLabel": "Report"
+    },
+    "hero": {
+      "title": "Analysis Report",
+      "reportId": "Report ID",
+      "overallScore": "Overall Score",
+      "verdict": {
+        "excellent": "Excellent",
+        "excellentDesc": "This vacancy scores excellent on all aspects",
+        "good": "Good",
+        "goodDesc": "Good vacancy with room for improvement",
+        "needsImprovement": "Needs improvement",
+        "needsImprovementDesc": "Points of attention that improve effectiveness",
+        "weak": "Weak",
+        "weakDesc": "Significant improvements needed"
+      },
+      "summary": "Summary",
+      "reportLabel": "Analysis Report",
+      "outOf": "Out of 10",
+      "criticalPoints": "Critical Points",
+      "allGood": "Excellent work!",
+      "noIssues": "No critical issues detected.",
+      "showAllIssues": "Show all {count} points",
+      "showFewerIssues": "Show less",
+      "planDemoSecondary": "Or plan a demo",
+      "readMore": "Read more",
+      "showLess": "Show less"
+    },
+    "pillars": {
+      "title": "Score Distribution",
+      "subtitle": "Detailed analysis of 8 important components",
+      "structure": {
+        "title": "Structure & Layout",
+        "description": "Clear structure and visual hierarchy"
+      },
+      "targetAudience": {
+        "title": "Target Audience Match",
+        "description": "Connection with the right candidates"
+      },
+      "evp": {
+        "title": "EVP & Brand",
+        "description": "Employer branding and value proposition"
+      },
+      "tone": {
+        "title": "Tone of Voice",
+        "description": "Tone and writing style of the vacancy"
+      },
+      "inclusion": {
+        "title": "Inclusion & Bias",
+        "description": "Inclusive language and accessibility"
+      },
+      "mobile": {
+        "title": "Mobile Experience",
+        "description": "Readability on mobile devices"
+      },
+      "seo": {
+        "title": "SEO Discoverability",
+        "description": "Findability in search engines"
+      },
+      "neuromarketing": {
+        "title": "Neuromarketing",
+        "description": "Psychological triggers and persuasiveness"
+      }
+    },
+    "cta": {
+      "unlock": "View",
+      "maxPotential": "improved version",
+      "getOptimized": "Get the optimized version.",
+      "unlockNow": "Unlock now",
+      "currentScore": "Current Score",
+      "potentialScore": "Potential Score",
+      "optimized": "Optimized",
+      "hoverHint": "Hover for result",
+      "stickySubtitle": "Get the optimized version of this vacancy",
+      "stickyCta": "View improved version"
+    },
+    "modal": {
+      "limitReached": {
+        "title": "Got a taste for it?",
+        "description": "You've used your free analyses. Want unlimited access to our software for all your vacancies?",
+        "requestAccess": "Request full access",
+        "contact": "Or contact us",
+        "emailCopied": "📋 Email address copied: joost@vacaturetovenaar.nl"
+      },
+      "email": {
+        "title": "Request optimization",
+        "description": "Enter your email address to receive the optimized version.",
+        "placeholder": "name@company.com",
+        "submit": "Send optimization",
+        "sending": "Sending...",
+        "success": "Sent! Check your inbox.",
+        "error": "Something went wrong. Please try again.",
+        "label": "Work Email",
+        "trustNoSpam": "No Spam",
+        "trustSecure": "Secure"
+      }
+    },
+    "optimization": {
+      "messages": {
+        "removingBureaucratic": "Removing bureaucratic terms...",
+        "addingSafety": "Adding psychological safety...",
+        "optimizingConversion": "Optimizing for conversion...",
+        "rewritingTone": "Rewriting in warm tone...",
+        "strengtheningEVP": "Strengthening EVP elements...",
+        "applyingProtocol": "Applying Human AI Protocol...",
+        "generatingPDF": "Generating PDF document...",
+        "sendingEmail": "Sending to your inbox..."
+      }
+    },
+    "original": {
+      "title": "Original Vacancy Text",
+      "show": "Show original text",
+      "hide": "Hide original text",
+      "characters": "{count} characters",
+      "copyText": "Copy text",
+      "copied": "Copied!"
+    },
+    "disclaimer": "Disclaimer: This analysis was generated by software. While we strive for accuracy, we recommend evaluating all suggestions in context.",
+    "successToast": {
+      "title": "Email sent successfully!",
+      "body": "We've sent the optimized version to your inbox. Please check your spam folder as well, just in case."
+    },
+    "footer": {
+      "privacy": "Privacy Policy",
+      "terms": "Terms & Conditions",
+      "copyright": "© 2025 Vacancy Wizard. All rights reserved."
+    },
+    "optimizationResult": {
+      "heading": "Optimized Vacancy",
+      "subheading": "Your improved vacancy text is ready. Copy or download it below.",
+      "copied": "Copied!",
+      "copyText": "Copy Text",
+      "generating": "Generating...",
+      "downloadWord": "Download Word",
+      "sending": "Sending...",
+      "downloadPdf": "Download PDF",
+      "fullText": "Full Text",
+      "whatChanged": "What Changed?",
+      "orgLabel": "Organization: ",
+      "locationLabel": "Location: ",
+      "diversityHeader": "Diversity & Inclusion",
+      "copyError": "Failed to copy text",
+      "wordError": "Failed to generate Word document",
+      "pdfSent": "PDF has been sent to your email",
+      "pdfError": "Failed to send PDF"
+    }
+  },
+  "metadata": {
+    "title": "Free AI Vacancy Analysis | Vacancy Wizard",
+    "description": "Analyze your vacancy text with AI. Get immediate insights into 8 crucial aspects that determine if you attract the right candidates. 100% free.",
+    "keywords": "vacancy analysis, AI recruitment, optimize vacancy, recruitment tool, HR software, job posting"
+  },
+  "errors": {
+    "analysisFailed": "Something went wrong. Please try again.",
+    "emptyVacancy": "Please enter a vacancy text.",
+    "networkError": "Network error. Check your internet connection."
+  },
+  "accessModal": {
+    "title": "This was just a preview...",
+    "subtitle": "You've used the free version. Our full software offers much more.",
+    "features": {
+      "recruitment": {
+        "title": "Recruitment Strategies",
+        "description": "Get personalized recruitment strategies based on your target audience and sector"
+      },
+      "persona": {
+        "title": "Persona Matching",
+        "description": "Automatically match your vacancy with the right candidate profiles"
+      },
+      "ats": {
+        "title": "ATS Integrations",
+        "description": "Direct integration with your existing recruitment system"
+      },
+      "unlimited": {
+        "title": "Unlimited Optimizations",
+        "description": "Analyze and optimize as many vacancies as you want"
+      }
+    },
+    "cta": {
+      "question": "Want to see how it works?",
+      "planDemo": "Schedule a quick demo",
+      "noThanks": "No, thanks"
+    },
+    "trust": {
+      "noSpam": "No spam",
+      "freeTrial": "Free trial"
+    }
+  }
+}

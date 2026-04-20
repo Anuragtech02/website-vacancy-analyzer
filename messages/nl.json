@@ -1,0 +1,323 @@
+{
+  "common": {
+    "dismiss": "Sluiten"
+  },
+  "landing": {
+    "hero": {
+      "badge": "Stop met verspillen van budget",
+      "title": "Betere vacatures",
+      "subtitle": "Betere kandidaten",
+      "description": "Analyseer en herschrijf je vacaturetekst in 1 minuut.",
+      "cta": "Analyseer vacature",
+      "analyzing": "Analyseren...",
+      "placeholder": "Plak hier je bestaande vacaturetekst (inclusief functietitel)",
+      "helperText": "💡 Tip: Kopieer de volledige tekst van je huidige vacature",
+      "error": "Er ging iets mis. Probeer het opnieuw.",
+      "howItWorks": {
+        "title": "Hoe werkt het?",
+        "step1Title": "Plak vacature",
+        "step1Desc": "Kopieer je huidige vacaturetekst",
+        "step2Title": "AI analyseert",
+        "step2Desc": "Onze AI scant en optimaliseert",
+        "step3Title": "Ontvang resultaat",
+        "step3Desc": "Download verbeterde versie"
+      },
+      "navTitle": "Vacature Analyse",
+      "discoverLink": "Ontdek Vacature Tovenaar",
+      "benefit1": "Trek passende kandidaten aan",
+      "benefit2": "Laat ongeschikte kandidaten afhaken",
+      "benefit3": "Overtuig schaarse profielen om te reageren",
+      "rightCandidates": "De juiste kandidaten",
+      "analyzeTitle": "Analyse Vacature",
+      "vacancyQuality": "Vacaturekwaliteit"
+    },
+    "steps": {
+      "scanBias": "Scannen op bias",
+      "checkTone": "Tone of voice controleren",
+      "analyzeReadability": "Leesbaarheid analyseren",
+      "evaluateStructure": "Structuur evalueren",
+      "checkSEO": "SEO vindbaarheid checken",
+      "finalize": "Analyse afronden",
+      "fallback": "Analyse afronden..."
+    },
+    "category": {
+      "label": "Functiecategorie",
+      "general": "Algemeen (Standaard)",
+      "government": "Overheid / Publiek",
+      "tech": "Tech / IT",
+      "healthcareEducation": "Zorg / Onderwijs",
+      "legalCorporate": "Zakelijk / Corporate",
+      "blueCollar": "Bouw / Techniek"
+    },
+    "analyzing": {
+      "processing": "vacature verwerken...",
+      "working": "Onze software is aan het werk..."
+    },
+    "statistics": {
+      "title": "Bewezen Resultaten",
+      "subtitle": "Gebaseerd op echte klantdata",
+      "quality": {
+        "value": "+20%",
+        "label": "Kwaliteit kandidaten"
+      },
+      "time": {
+        "value": "+25%",
+        "label": "Tijdswinst in proces"
+      },
+      "cost": {
+        "value": "-14%",
+        "label": "Campagnekosten"
+      }
+    },
+    "problem": {
+      "title": "Het Probleem",
+      "subtitle1": "Waarom veel vacatures",
+      "subtitle2": "geen geschikte kandidaten trekken.",
+      "description": "Onbewuste bewoordingen, zwakke structuur en vaag taalgebruik jagen gekwalificeerde kandidaten weg.",
+      "mismatch": {
+        "title": "Mismatch & ruis",
+        "description": "Generieke teksten trekken generieke kandidaten aan. Je mist het",
+        "highlight": "toptalent"
+      },
+      "structure": {
+        "title": "Onduidelijke structuur",
+        "description": "Grote lappen tekst zonder witruimte zorgen dat kandidaten direct afhaken."
+      },
+      "persuasion": {
+        "title": "Gebrek aan overtuigingskracht",
+        "description": "Een droge eisenlijst inspireert niet. Je mist de emotionele klik om talent te winnen."
+      }
+    },
+    "solution": {
+      "badge": "De Oplossing",
+      "title": "Structurele vacature",
+      "titleHighlight": "verbetering",
+      "description": "Onze software analyseert je tekst op belangrijke dimensies die bewezen zorgen voor hogere conversie en kwaliteit.",
+      "cta": "Nu gratis analyseren",
+      "checks": [
+        "Kandidaat fit check",
+        "Tone of voice & veiligheid",
+        "Inclusieve taal",
+        "Mobiele scanbaarheid",
+        "Trefwoorden & vindbaarheid",
+        "Structuur & volgorde",
+        "Duidelijkheid arbeidsvoorwaarden",
+        "Ruis & mismatch reductie"
+      ]
+    },
+    "features": {
+      "title": "Wat analyseert de AI?",
+      "subtitle": "8 cruciale aspecten die bepalen of jouw vacature succesvol is",
+      "attract": "Trek passende kandidaten aan",
+      "filter": "Laat ongeschikte kandidaten afhaken",
+      "clarity": "Creëer glashelder functiebeeld",
+      "competitive": "Onderscheid je van concurrenten"
+    },
+    "trust": {
+      "analyzed": "vacatures geanalyseerd",
+      "improvement": "gemiddelde verbetering",
+      "free": "Gratis te gebruiken"
+    },
+    "footer": {
+      "brandName": "Vacature Tovenaar",
+      "tagline": "Transformeer generieke vacatureteksten in wervende assets.",
+      "website": "Website",
+      "privacy": "Privacybeleid",
+      "terms": "Algemene Voorwaarden",
+      "copyright": "© 2025 Vacature Tovenaar. Alle rechten voorbehouden."
+    }
+  },
+  "report": {
+    "navigation": {
+      "newAnalysis": "Nieuwe Analyse",
+      "logo": "Vacature Tovenaar",
+      "tagline": "De #1 Recruitment Software",
+      "reportLabel": "Rapport"
+    },
+    "hero": {
+      "title": "Analyse Rapport",
+      "reportId": "Rapport ID",
+      "overallScore": "Overall Score",
+      "verdict": {
+        "excellent": "Uitstekend",
+        "excellentDesc": "Deze vacature scoort uitstekend op alle aspecten",
+        "good": "Goed",
+        "goodDesc": "Goede vacature met ruimte voor verbetering",
+        "needsImprovement": "Verbetering nodig",
+        "needsImprovementDesc": "Aandachtspunten die de effectiviteit verbeteren",
+        "weak": "Zwak",
+        "weakDesc": "Significante verbeteringen nodig"
+      },
+      "summary": "Samenvatting",
+      "reportLabel": "Analyse Rapport",
+      "outOf": "Van de 10",
+      "criticalPoints": "Kritieke Punten",
+      "allGood": "Uitstekend werk!",
+      "noIssues": "Geen kritieke problemen gedetecteerd.",
+      "showAllIssues": "Toon alle {count} punten",
+      "showFewerIssues": "Toon minder",
+      "planDemoSecondary": "Of plan een demo",
+      "readMore": "Lees meer",
+      "showLess": "Toon minder"
+    },
+    "pillars": {
+      "title": "Score Verdeling",
+      "subtitle": "Gedetailleerde analyse van 8 belangrijke onderdelen",
+      "structure": {
+        "title": "Structuur & Opmaak",
+        "description": "Heldere opbouw en visuele hiërarchie"
+      },
+      "targetAudience": {
+        "title": "Doelgroep Match",
+        "description": "Aansluiting bij de juiste kandidaten"
+      },
+      "evp": {
+        "title": "EVP & Merk",
+        "description": "Employer branding en waardepropositie"
+      },
+      "tone": {
+        "title": "Tone of Voice",
+        "description": "Toon en schrijfstijl van de vacature"
+      },
+      "inclusion": {
+        "title": "Inclusie & Bias",
+        "description": "Inclusieve taal en toegankelijkheid"
+      },
+      "mobile": {
+        "title": "Mobiele Ervaring",
+        "description": "Leesbaarheid op mobiele apparaten"
+      },
+      "seo": {
+        "title": "SEO Vindbaarheid",
+        "description": "Vindbaarheid in zoekmachines"
+      },
+      "neuromarketing": {
+        "title": "Neuromarketing",
+        "description": "Psychologische triggers en overtuigingskracht"
+      }
+    },
+    "cta": {
+      "unlock": "Bekijk",
+      "maxPotential": "verbeterde versie",
+      "getOptimized": "Krijg de geoptimaliseerde versie.",
+      "unlockNow": "Nu ontgrendelen",
+      "currentScore": "Huidige Score",
+      "potentialScore": "Potentiële Score",
+      "optimized": "Geoptimaliseerd",
+      "hoverHint": "Hover voor resultaat",
+      "stickySubtitle": "Krijg de geoptimaliseerde versie van deze vacature",
+      "stickyCta": "Bekijk verbeterde versie"
+    },
+    "modal": {
+      "limitReached": {
+        "title": "De smaak te pakken?",
+        "description": "Je hebt je gratis analyses verbruikt. Wil je onbeperkt toegang tot onze software voor al je vacatures?",
+        "requestAccess": "Vraag volledige toegang aan",
+        "contact": "Of neem contact op",
+        "emailCopied": "📋 E-mailadres gekopieerd: joost@vacaturetovenaar.nl"
+      },
+      "email": {
+        "title": "Optimalisatie aanvragen",
+        "description": "Vul je e-mailadres in om de geoptimaliseerde versie te ontvangen.",
+        "placeholder": "naam@bedrijf.nl",
+        "submit": "Verstuur optimalisatie",
+        "sending": "Versturen...",
+        "success": "Verstuurd! Check je inbox.",
+        "error": "Er ging iets mis. Probeer opnieuw.",
+        "label": "Werk Email",
+        "trustNoSpam": "Geen Spam",
+        "trustSecure": "Veilig"
+      }
+    },
+    "optimization": {
+      "messages": {
+        "removingBureaucratic": "Verwijderen bureaucratische termen...",
+        "addingSafety": "Toevoegen psychologische veiligheid...",
+        "optimizingConversion": "Optimaliseren voor conversie...",
+        "rewritingTone": "Herschrijven in warme toon...",
+        "strengtheningEVP": "Versterken van EVP elementen...",
+        "applyingProtocol": "Toepassen Human AI Protocol...",
+        "generatingPDF": "Genereren PDF document...",
+        "sendingEmail": "Versturen naar je inbox..."
+      }
+    },
+    "original": {
+      "title": "Originele Vacaturetekst",
+      "show": "Toon originele tekst",
+      "hide": "Verberg originele tekst",
+      "characters": "{count} tekens",
+      "copyText": "Tekst kopiëren",
+      "copied": "Gekopieerd!"
+    },
+    "disclaimer": "Disclaimer: Deze analyse is gegenereerd door software. Hoewel we streven naar nauwkeurigheid, raden we aan alle suggesties in context te beoordelen.",
+    "successToast": {
+      "title": "Mail succesvol verzonden!",
+      "body": "We hebben de geoptimaliseerde versie naar je inbox gestuurd. Check ook je spam folder voor de zekerheid."
+    },
+    "footer": {
+      "privacy": "Privacybeleid",
+      "terms": "Algemene Voorwaarden",
+      "copyright": "© 2025 Vacature Tovenaar. Alle rechten voorbehouden."
+    },
+    "optimizationResult": {
+      "heading": "Verbeterde Vacature",
+      "subheading": "Je verbeterde vacaturetekst is klaar. Kopieer of download deze hieronder.",
+      "copied": "Gekopieerd!",
+      "copyText": "Kopieer Tekst",
+      "generating": "Genereren...",
+      "downloadWord": "Download Word",
+      "sending": "Verzenden...",
+      "downloadPdf": "Download PDF",
+      "fullText": "Volledige Tekst",
+      "whatChanged": "Wat is er veranderd?",
+      "orgLabel": "Organisatie: ",
+      "locationLabel": "Locatie: ",
+      "diversityHeader": "Diversiteit & Inclusie",
+      "copyError": "Kopiëren mislukt",
+      "wordError": "Word-document genereren mislukt",
+      "pdfSent": "PDF is naar je e-mail verzonden",
+      "pdfError": "PDF verzenden mislukt"
+    }
+  },
+  "metadata": {
+    "title": "Gratis AI Vacature Analyse | Vacature Tovenaar",
+    "description": "Analyseer je vacaturetekst met AI. Krijg direct inzicht in 8 cruciale aspecten die bepalen of je de juiste kandidaten aantrekt. 100% gratis.",
+    "keywords": "vacature analyse, AI recruitment, vacature optimaliseren, recruitment tool, HR software, vacature schrijven"
+  },
+  "errors": {
+    "analysisFailed": "Er ging iets mis. Probeer het opnieuw.",
+    "emptyVacancy": "Voer een vacaturetekst in.",
+    "networkError": "Netwerkfout. Controleer je internetverbinding."
+  },
+  "accessModal": {
+    "title": "Dit was maar een voorproefje...",
+    "subtitle": "Je hebt de gratis versie gebruikt. Onze volledige software biedt veel meer.",
+    "features": {
+      "recruitment": {
+        "title": "Recruitment Strategieën",
+        "description": "Krijg gepersonaliseerde wervingsstrategieën op basis van je doelgroep en sector"
+      },
+      "persona": {
+        "title": "Persona-Matching",
+        "description": "Match je vacature automatisch met de juiste kandidaatprofielen"
+      },
+      "ats": {
+        "title": "ATS Integraties",
+        "description": "Directe koppeling met je bestaande recruitment systeem"
+      },
+      "unlimited": {
+        "title": "Onbeperkte Optimalisaties",
+        "description": "Analyseer en optimaliseer zoveel vacatures als je wilt"
+      }
+    },
+    "cta": {
+      "question": "Wil je zien hoe dat werkt?",
+      "planDemo": "Plan een korte demo",
+      "noThanks": "Nee, bedankt"
+    },
+    "trust": {
+      "noSpam": "Geen spam",
+      "freeTrial": "Gratis proefperiode"
+    }
+  }
+}

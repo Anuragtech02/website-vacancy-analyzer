@@ -1,7 +1,91 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { getAnalyzerPrompt, OPTIMIZER_PROMPT } from "./prompts";
+import { google as googleAI } from "@ai-sdk/google";
+import { createVertex } from "@ai-sdk/google-vertex";
+import { generateText, type LanguageModel } from "ai";
+import { getAnalyzerPrompt, getOptimizerPrompt, type PromptLocale } from "./prompts";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+// ─── Provider selection ────────────────────────────────────────────────────
+// Prefer Vertex AI (service account credentials) when available.
+// Falls back to Google AI Studio API key (GOOGLE_GENERATIVE_AI_API_KEY) for dev.
+//
+// Auth (checked in order):
+//   1. GOOGLE_VERTEX_CREDENTIALS_B64 — base64-encoded service account JSON
+//   2. GOOGLE_VERTEX_CREDENTIALS     — inline service account JSON
+//   3. GOOGLE_APPLICATION_CREDENTIALS — path to service account file
+//
+// Preview models (gemini-3-*) require the GLOBAL endpoint on Vertex AI.
+// Stable models (gemini-2.5-*) use the regional endpoint.
+
+function parseVertexCredentials(): object | undefined {
+  const b64 = process.env.GOOGLE_VERTEX_CREDENTIALS_B64;
+  if (b64) {
+    try {
+      return JSON.parse(Buffer.from(b64, "base64").toString("utf-8"));
+    } catch (e) {
+      console.warn("GOOGLE_VERTEX_CREDENTIALS_B64 failed to parse", e);
+    }
+  }
+  const json = process.env.GOOGLE_VERTEX_CREDENTIALS;
+  if (json) {
+    try {
+      return JSON.parse(json);
+    } catch (e) {
+      console.warn("GOOGLE_VERTEX_CREDENTIALS failed to parse", e);
+    }
+  }
+  return undefined;
+}
+
+const vertexCredentials = parseVertexCredentials();
+const vertexCredentialsFile = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+const useVertex = Boolean(vertexCredentials || vertexCredentialsFile);
+const vertexProject = process.env.GOOGLE_VERTEX_PROJECT || "vacaturetovenaar-application";
+const vertexLocation = process.env.GOOGLE_VERTEX_LOCATION || "europe-west4";
+
+const googleAuthOptions = vertexCredentials
+  ? { credentials: vertexCredentials }
+  : undefined;
+
+const vertex = useVertex
+  ? createVertex({ project: vertexProject, location: vertexLocation, googleAuthOptions })
+  : null;
+
+const vertexGlobal = useVertex
+  ? createVertex({ project: vertexProject, location: "global", googleAuthOptions })
+  : null;
+
+const GLOBAL_MODELS = new Set([
+  "gemini-3-pro-preview",
+  "gemini-3-flash-preview",
+  "gemini-3.1-pro-preview",
+  "gemini-3.1-flash-preview",
+]);
+
+/** Route a model id to Vertex (global for previews, regional otherwise) or AI Studio. */
+function resolveModel(modelId: string): LanguageModel {
+  if (useVertex) {
+    if (GLOBAL_MODELS.has(modelId)) return vertexGlobal!(modelId);
+    return vertex!(modelId);
+  }
+  // Fallback: Google AI Studio. Ensure the env var name expected by @ai-sdk/google is set.
+  if (
+    !process.env.GOOGLE_GENERATIVE_AI_API_KEY &&
+    (process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GOOGLE_AI_API_KEY)
+  ) {
+    process.env.GOOGLE_GENERATIVE_AI_API_KEY =
+      process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GOOGLE_AI_API_KEY;
+  }
+  return googleAI(modelId);
+}
+
+if (typeof window === "undefined") {
+  if (useVertex) {
+    console.log("[lib/gemini] using Vertex AI", { project: vertexProject, location: vertexLocation, previewEndpoint: "global" });
+  } else {
+    console.log("[lib/gemini] using Google AI Studio (no Vertex credentials found)");
+  }
+}
+
+// ─── Types (unchanged from the previous @google/generative-ai implementation) ──
 
 export interface AnalysisResult {
   metadata: {
@@ -26,7 +110,7 @@ export interface AnalysisResult {
   summary: {
     total_score: number;
     weighted_score: number;
-    verdict: 'excellent' | 'good' | 'needs_work' | 'poor';
+    verdict: "excellent" | "good" | "needs_work" | "poor";
     top_strengths: string[];
     critical_weaknesses: string[];
     key_issues: Array<{
@@ -96,60 +180,93 @@ export interface OptimizationResult {
   };
 }
 
-export async function analyzeVacancy(vacancyText: string, category: string = "General"): Promise<AnalysisResult> {
-  if (!process.env.GEMINI_API_KEY) {
-    throw new Error("GEMINI_API_KEY is not set");
-  }
+// ─── Safety settings (matches chat-service baseline) ───────────────────────
 
-  const model = genAI.getGenerativeModel({ model: "gemini-3-pro-preview" });
+const GEMINI_SAFETY_SETTINGS = [
+  { category: "HARM_CATEGORY_HATE_SPEECH" as const, threshold: "BLOCK_MEDIUM_AND_ABOVE" as const },
+  { category: "HARM_CATEGORY_DANGEROUS_CONTENT" as const, threshold: "BLOCK_MEDIUM_AND_ABOVE" as const },
+  { category: "HARM_CATEGORY_HARASSMENT" as const, threshold: "BLOCK_MEDIUM_AND_ABOVE" as const },
+  { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT" as const, threshold: "BLOCK_MEDIUM_AND_ABOVE" as const },
+];
 
-  const result = await model.generateContent({
-    contents: [
-      {
-        role: "user",
-        parts: [
-          { text: getAnalyzerPrompt(category) },
-          { text: `Vacancy Text:\n${vacancyText}` }
-        ]
-      }
-    ],
-    generationConfig: {
-      responseMimeType: "application/json",
-    }
-  });
-
-  const response = result.response;
-  return JSON.parse(response.text()) as AnalysisResult;
+function googleProviderOptions(opts?: { thinkingLevel?: "minimal" | "low" | "medium" | "high" }) {
+  return {
+    google: {
+      safetySettings: GEMINI_SAFETY_SETTINGS,
+      ...(opts?.thinkingLevel != null && {
+        thinkingConfig: { thinkingLevel: opts.thinkingLevel },
+      }),
+      responseModalities: ["TEXT" as const],
+    },
+  };
 }
 
-export async function optimizeVacancy(vacancyText: string, analysis?: AnalysisResult): Promise<OptimizationResult> {
-  if (!process.env.GEMINI_API_KEY) {
-    throw new Error("GEMINI_API_KEY is not set");
+// ─── Helpers ───────────────────────────────────────────────────────────────
+
+/**
+ * Strip ```json fences the model sometimes adds, then JSON.parse.
+ * Throws a readable error with a slice of the output on failure.
+ */
+function parseJsonResponse<T>(raw: string, context: string): T {
+  let text = raw.trim();
+  if (text.startsWith("```")) {
+    text = text.replace(/^```(?:json)?\s*/i, "").replace(/\s*```\s*$/i, "");
   }
+  try {
+    return JSON.parse(text) as T;
+  } catch (e) {
+    const preview = text.length > 200 ? text.slice(0, 200) + "…" : text;
+    throw new Error(`${context}: model did not return valid JSON (got: ${preview})`);
+  }
+}
 
-  const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+// ─── Exports (same signatures as before) ───────────────────────────────────
 
-  const promptParts = [
-    { text: OPTIMIZER_PROMPT },
-    { text: `Original Vacancy Text:\n${vacancyText}` }
+export async function analyzeVacancy(
+  vacancyText: string,
+  category: string = "General",
+  locale: string = "nl"
+): Promise<AnalysisResult> {
+  const promptLocale: PromptLocale = locale === "en" ? "en" : "nl";
+
+  const { text } = await generateText({
+    model: resolveModel("gemini-3.1-pro-preview"),
+    messages: [
+      {
+        role: "user",
+        content: [
+          { type: "text", text: getAnalyzerPrompt(category, promptLocale) },
+          { type: "text", text: `Vacancy Text:\n${vacancyText}` },
+        ],
+      },
+    ],
+    providerOptions: googleProviderOptions({ thinkingLevel: "high" }),
+  });
+
+  return parseJsonResponse<AnalysisResult>(text, "analyzeVacancy");
+}
+
+export async function optimizeVacancy(
+  vacancyText: string,
+  analysis?: AnalysisResult,
+  locale: string = "nl"
+): Promise<OptimizationResult> {
+  const promptLocale: PromptLocale = locale === "en" ? "en" : "nl";
+
+  const parts: Array<{ type: "text"; text: string }> = [
+    { type: "text", text: getOptimizerPrompt(promptLocale) },
+    { type: "text", text: `Original Vacancy Text:\n${vacancyText}` },
   ];
 
   if (analysis) {
-    promptParts.push({ text: `Analysis Context:\n${JSON.stringify(analysis)}` });
+    parts.push({ type: "text", text: `Analysis Context:\n${JSON.stringify(analysis)}` });
   }
 
-  const result = await model.generateContent({
-    contents: [
-      {
-        role: "user",
-        parts: promptParts
-      }
-    ],
-    generationConfig: {
-      responseMimeType: "application/json",
-    }
+  const { text } = await generateText({
+    model: resolveModel("gemini-3.1-flash-preview"),
+    messages: [{ role: "user", content: parts }],
+    providerOptions: googleProviderOptions({ thinkingLevel: "medium" }),
   });
 
-  const response = result.response;
-  return JSON.parse(response.text()) as OptimizationResult;
+  return parseJsonResponse<OptimizationResult>(text, "optimizeVacancy");
 }

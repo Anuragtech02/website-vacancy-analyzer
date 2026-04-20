@@ -4,13 +4,16 @@ import { ReportView } from "@/components/report-view";
 import { ArrowLeft, Sparkles } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { getTranslations } from 'next-intl/server';
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 interface PageProps {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string; locale: string }>;
 }
 
 export default async function ReportPage({ params }: PageProps) {
-  const { id } = await params;
+  const { id, locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'report' });
 
   const report = await dbClient.getReport(id);
 
@@ -28,37 +31,40 @@ export default async function ReportPage({ params }: PageProps) {
           {/* Left side */}
           <div className="flex items-center gap-2 sm:gap-4 min-w-0">
             <Link
-              href="/"
+              href={`/${locale}`}
               className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground hover:text-foreground transition-colors shrink-0"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span className="font-medium text-sm hidden sm:inline">Nieuwe Analyse</span>
+              <span className="font-medium text-sm hidden sm:inline">{t('navigation.newAnalysis')}</span>
             </Link>
             <div className="h-5 w-[1px] bg-border hidden sm:block" />
             <div className="flex items-center gap-2 sm:gap-3">
               <Image
                 src="/logo-icon.png"
-                alt="Vacature Tovenaar"
+                alt={t('navigation.logo')}
                 width={32}
                 height={32}
                 className="w-8 h-8 rounded-lg shrink-0"
               />
               <div className="min-w-0">
                 <h1 className="font-bold text-sm text-foreground truncate">
-                  Vacature Tovenaar
+                  {t('navigation.logo')}
                 </h1>
                 <p className="text-xs text-muted-foreground hidden sm:block">
-                  De #1 Recruitment Software
+                  {t('navigation.tagline')}
                 </p>
               </div>
             </div>
           </div>
           {/* Right side */}
-          <div className="text-sm text-muted-foreground shrink-0">
-            <span className="hidden sm:inline">Rapport </span>
-            <span className="font-mono text-xs bg-muted px-1.5 sm:px-2 py-0.5 sm:py-1 rounded">
-              {id.slice(0, 8)}
-            </span>
+          <div className="flex items-center gap-4">
+            <LanguageSwitcher />
+            <div className="text-sm text-muted-foreground shrink-0">
+              <span className="hidden sm:inline">{t('navigation.reportLabel')} </span>
+              <span className="font-mono text-xs bg-muted px-1.5 sm:px-2 py-0.5 sm:py-1 rounded">
+                {id.slice(0, 8)}
+              </span>
+            </div>
           </div>
         </div>
       </header>
@@ -69,6 +75,7 @@ export default async function ReportPage({ params }: PageProps) {
           analysis={analysis}
           vacancyText={report.vacancy_text}
           reportId={id}
+          locale={locale}
         />
       </div>
 
@@ -76,20 +83,20 @@ export default async function ReportPage({ params }: PageProps) {
       <footer className="w-full border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 mt-auto">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
           <p>
-            © {new Date().getFullYear()} Vacature Tovenaar. All rights reserved.
+            {t('footer.copyright').replace('2025', new Date().getFullYear().toString())}
           </p>
           <div className="flex items-center gap-6">
             <a
-              href="/privacy"
+              href={`/${locale}/privacy`}
               className="hover:text-foreground transition-colors"
             >
-              Privacybeleid
+              {t('footer.privacy')}
             </a>
             <a
-              href="/terms"
+              href={`/${locale}/terms`}
               className="hover:text-foreground transition-colors"
             >
-              Algemene Voorwaarden
+              {t('footer.terms')}
             </a>
           </div>
         </div>

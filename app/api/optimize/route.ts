@@ -5,9 +5,12 @@ import { sendOptimizedVacancyEmail } from "@/lib/email";
 import { syncHubSpotContact } from "@/lib/hubspot";
 import { getClientIP } from "@/lib/fingerprint";
 
+// Gemini 3 Flash optimization + Puppeteer PDF + SES send. Budget 5 min.
+export const maxDuration = 300;
+
 export async function POST(req: NextRequest) {
   try {
-    const { email, reportId, fingerprint } = await req.json() as { email: string; reportId: string; fingerprint?: string };
+    const { email, reportId, fingerprint, locale } = await req.json() as { email: string; reportId: string; fingerprint?: string; locale?: string };
 
     if (!email || !reportId) {
       return NextResponse.json(
@@ -28,14 +31,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Check usage count by both identity (IP/fingerprint) and email
-    // Use the higher count to prevent bypass via incognito/different email
+    // Check usage count by fingerprint and email.
+    // IP is intentionally excluded — shared office/VPN IPs would cause
+    // colleagues to block each other. See lib/db.ts: countLeadsByFingerprint.
     // BYPASS_USAGE_LIMIT=true can be set in .env.local for development
     const bypassLimit = process.env.BYPASS_USAGE_LIMIT === 'true';
 
-    const identityUsageCount = await dbClient.countLeadsByIdentity(ipAddress, fingerprint);
+    const fingerprintUsageCount = await dbClient.countLeadsByFingerprint(fingerprint);
     const emailUsageCount = await dbClient.countLeadsByEmail(email);
-    const usageCount = Math.max(identityUsageCount, emailUsageCount);
+    const usageCount = Math.max(fingerprintUsageCount, emailUsageCount);
 
     // Phase 3: Lock State (Logic: If user ALREADY has 2 leads, this is the 3rd attempt -> Block)
     // Wait, if they have 0, this is 1st. If 1, this is 2nd. If 2, this is 3rd.
@@ -61,9 +65,9 @@ export async function POST(req: NextRequest) {
     // If usageCount was 1, we pass 2. (Phase 2)
     // If usageCount was 2, we mocked above.
     
-    // Generate optimization
+    // Generate optimization (pass locale for localized responses)
     const analysis = JSON.parse(report.analysis_json);
-    const optimizationResult = await optimizeVacancy(report.vacancy_text, analysis);
+    const optimizationResult = await optimizeVacancy(report.vacancy_text, analysis, locale || 'nl');
 
     // Sync to HubSpot (with proper error handling)
     const hubspotResult = await syncHubSpotContact(email, {
