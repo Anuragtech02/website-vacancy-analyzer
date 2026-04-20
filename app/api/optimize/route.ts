@@ -28,8 +28,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Check usage count by both identity (IP/fingerprint) and email
-    // Use the higher count to prevent bypass via incognito/different email
+    // Check usage count by fingerprint and email.
+    // IP is intentionally excluded — shared office/VPN IPs would cause
+    // colleagues to block each other. See lib/db.ts: countLeadsByFingerprint.
     // BYPASS_USAGE_LIMIT=true can be set in .env.local for development
     const bypassLimit = process.env.BYPASS_USAGE_LIMIT === 'true';
 
