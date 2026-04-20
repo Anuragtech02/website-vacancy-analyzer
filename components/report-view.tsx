@@ -300,6 +300,7 @@ export function ReportView({
 }: ReportViewProps) {
   const t = useTranslations('report');
   const tSuccess = useTranslations('report.successToast');
+  const tErrors = useTranslations('errors');
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showLimitModal, setShowLimitModal] = useState(false);
@@ -382,7 +383,7 @@ export function ReportView({
       // Show user-friendly error message
       const errMsg = error instanceof Error
         ? getErrorMessage(error, locale)
-        : (locale === 'en' ? 'An error occurred' : 'Er is een fout opgetreden');
+        : tErrors('generic');
       setBanner({ message: errMsg, variant: "error" });
       setStatus("error");
     }

@@ -16,6 +16,7 @@ export function StickyCTABanner({ onUnlockClick, isUnlocked, phase }: StickyCTAB
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
   const t = useTranslations('report.cta');
+  const tTrust = useTranslations('report.modal.email');
 
   useEffect(() => {
     if (isUnlocked || isDismissed) {
@@ -61,7 +62,7 @@ export function StickyCTABanner({ onUnlockClick, isUnlocked, phase }: StickyCTAB
                   {t('stickySubtitle')}
                 </h3>
                 <p className="text-sm text-slate-500 hidden sm:block">
-                  Onze software heeft de pijnpunten uit je tekst gehaald voor direct resultaat.
+                  {t('stickyDesc')}
                 </p>
               </div>
             </div>
@@ -92,11 +93,11 @@ export function StickyCTABanner({ onUnlockClick, isUnlocked, phase }: StickyCTAB
           <div className="flex items-center justify-center gap-4 mt-3 sm:hidden">
             <div className="flex items-center gap-1.5 text-xs text-slate-400">
               <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-              <span>Geen Spam</span>
+              <span>{tTrust('trustNoSpam')}</span>
             </div>
             <div className="flex items-center gap-1.5 text-xs text-slate-400">
               <Shield className="w-3 h-3" />
-              <span>Veilig</span>
+              <span>{tTrust('trustSecure')}</span>
             </div>
           </div>
         </div>

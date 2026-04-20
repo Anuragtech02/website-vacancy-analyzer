@@ -125,6 +125,15 @@
       "privacy": "Privacy Policy",
       "terms": "Terms & Conditions",
       "copyright": "© 2025 Vacancy Wizard. All rights reserved."
+    },
+    "emailCapture": {
+      "title": "Taking longer than expected?",
+      "body": "Enter your email to receive results when ready. You can close this tab.",
+      "placeholder": "your@email.com",
+      "continue": "Continue",
+      "estimatedTime": "Estimated time: 30-60 seconds ({elapsed}s elapsed)",
+      "emailRequired": "Please enter your email address",
+      "queuedMessage": "Your analysis has been queued. You will receive an email when it's ready."
     }
   },
   "report": {
@@ -206,6 +215,7 @@
       "optimized": "Optimized",
       "hoverHint": "Hover for result",
       "stickySubtitle": "Get the optimized version of this vacancy",
+      "stickyDesc": "Our software extracted the pain points from your text for immediate results.",
       "stickyCta": "View improved version"
     },
     "modal": {
@@ -287,7 +297,8 @@
   "errors": {
     "analysisFailed": "Something went wrong. Please try again.",
     "emptyVacancy": "Please enter a vacancy text.",
-    "networkError": "Network error. Check your internet connection."
+    "networkError": "Network error. Check your internet connection.",
+    "generic": "An error occurred"
   },
   "accessModal": {
     "title": "This was just a preview...",

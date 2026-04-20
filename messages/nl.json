@@ -125,6 +125,15 @@
       "privacy": "Privacybeleid",
       "terms": "Algemene Voorwaarden",
       "copyright": "© 2025 Vacature Tovenaar. Alle rechten voorbehouden."
+    },
+    "emailCapture": {
+      "title": "Duurt het langer dan verwacht?",
+      "body": "Vul je e-mailadres in om de resultaten te ontvangen zodra ze klaar zijn. Je kunt dit tabblad sluiten.",
+      "placeholder": "jouw@email.nl",
+      "continue": "Doorgaan",
+      "estimatedTime": "Geschatte tijd: 30-60 seconden ({elapsed}s verstreken)",
+      "emailRequired": "Voer je e-mailadres in",
+      "queuedMessage": "Je analyse is in de wachtrij geplaatst. Je ontvangt een email wanneer deze klaar is."
     }
   },
   "report": {
@@ -206,6 +215,7 @@
       "optimized": "Geoptimaliseerd",
       "hoverHint": "Hover voor resultaat",
       "stickySubtitle": "Krijg de geoptimaliseerde versie van deze vacature",
+      "stickyDesc": "Onze software heeft de pijnpunten uit je tekst gehaald voor direct resultaat.",
       "stickyCta": "Bekijk verbeterde versie"
     },
     "modal": {
@@ -287,7 +297,8 @@
   "errors": {
     "analysisFailed": "Er ging iets mis. Probeer het opnieuw.",
     "emptyVacancy": "Voer een vacaturetekst in.",
-    "networkError": "Netwerkfout. Controleer je internetverbinding."
+    "networkError": "Netwerkfout. Controleer je internetverbinding.",
+    "generic": "Er is een fout opgetreden"
   },
   "accessModal": {
     "title": "Dit was maar een voorproefje...",
