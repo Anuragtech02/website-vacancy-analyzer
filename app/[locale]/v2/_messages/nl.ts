@@ -199,7 +199,8 @@ Stuur je CV en motivatiebrief naar jobs@bedrijf.nl. We komen bij je terug als er
   },
   report: {
     header: {
-      title:        "Rapport · Senior Full-Stack Engineer",
+      title:        "Rapport",
+      titlePrefix:  "Rapport",
       generatedNow: "Zojuist gegenereerd",
       rewritesLeft: "{count} gratis herschrijvingen over",
       downloadPdf:  "Download PDF",

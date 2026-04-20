@@ -16,7 +16,11 @@ export function PillarGrid({ tokens, pillars }: PillarGridProps) {
   const m = useMotion(tokens);
   const t = useV2T();
 
-  const data = pillars ?? PILLAR_DATA;
+  // PILLAR_DATA is a dev-mode fallback (ReviewChip preview). In production the
+  // Report wrapper always passes a real array — empty means no analysis, and we
+  // render nothing rather than fake pillars.
+  const data = pillars ?? (process.env.NODE_ENV === 'development' ? PILLAR_DATA : []);
+  if (data.length === 0) return null;
 
   return (
     <section style={{ padding: "16px 48px 32px", maxWidth: 1360, margin: "0 auto" }}>

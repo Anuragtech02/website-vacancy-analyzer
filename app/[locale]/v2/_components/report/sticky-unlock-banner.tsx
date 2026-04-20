@@ -4,19 +4,22 @@ import { useLocale } from "next-intl";
 import { type Tokens } from "../theme";
 import { Button } from "../primitives";
 import { useV2T } from "../i18n-context";
+import { estimatePotentialScore } from "./estimate-potential";
 
 interface StickyUnlockBannerProps {
   tokens: Tokens;
   onOpenEmail: () => void;
+  currentScore: number;
   potentialScore?: number;
 }
 
-export function StickyUnlockBanner({ tokens, onOpenEmail, potentialScore }: StickyUnlockBannerProps) {
+export function StickyUnlockBanner({ tokens, onOpenEmail, currentScore, potentialScore }: StickyUnlockBannerProps) {
   const t = useV2T();
   const locale = useLocale();
-  const scoreDisplay = potentialScore != null
-    ? potentialScore.toLocaleString(locale, { maximumFractionDigits: 1 })
-    : locale === 'nl' ? "8,2" : "8.2";
+  // Real optimization score when available, otherwise an estimate keyed off the
+  // user's actual current score (never a fixed "8.2" that reads as mock).
+  const resolved = potentialScore ?? estimatePotentialScore(currentScore);
+  const scoreDisplay = resolved.toLocaleString(locale, { maximumFractionDigits: 1 });
   return (
     <div style={{
       position: "fixed", bottom: 20, left: "50%", transform: "translateX(-50%)",

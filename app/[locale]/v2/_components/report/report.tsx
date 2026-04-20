@@ -65,12 +65,20 @@ export function Report({
 }: ReportProps) {
   const t = useV2T();
 
+  // PILLAR_DATA is a dev-mode fallback for the ReviewChip jump flow only. In
+  // production we should never show it — a report with no analysis means a
+  // routing/hydration bug, and a blank state is better than fake numbers.
   const pillarData = useMemo(
-    () => (analysis ? mapAnalysisToPillarData(analysis) : PILLAR_DATA),
+    () => {
+      if (analysis) return mapAnalysisToPillarData(analysis);
+      if (process.env.NODE_ENV === 'development') return PILLAR_DATA;
+      return [];
+    },
     [analysis],
   );
 
   const overall = useMemo(() => {
+    if (pillarData.length === 0) return 0;
     const avg = pillarData.reduce((s, p) => s + p.score, 0) / pillarData.length;
     return Math.round(avg * 10) / 10;
   }, [pillarData]);
@@ -85,7 +93,7 @@ export function Report({
 
   return (
     <div style={{ width: "100%" }}>
-      <ReportHeader tokens={tokens} usesLeft={usesLeft} unlocked={unlocked} />
+      <ReportHeader tokens={tokens} usesLeft={usesLeft} unlocked={unlocked} jobTitle={analysis?.metadata.job_title} />
 
       {/* TOP: score + gate/critical */}
       <section style={{
@@ -141,6 +149,7 @@ export function Report({
         <StickyUnlockBanner
           tokens={tokens}
           onOpenEmail={onOpenEmail}
+          currentScore={overall}
           potentialScore={potentialScore}
         />
       )}

@@ -127,51 +127,58 @@ export default function V2Page() {
   }, []);
 
   // ---- localStorage hydration (SSR-safe: only inside useEffect) ----
+  // Single pass so we can cross-validate: never restore "report" without a
+  // valid analysis payload — otherwise the Report component's PILLAR_DATA
+  // fallback would paint the mock view on return visits.
   useEffect(() => {
-    const saved = localStorage.getItem("va2_screen");
-    // Never rehydrate "loading" — if the user closed the tab mid-fetch,
-    // the in-flight analysis is gone. Restart from landing.
-    if (saved === "landing" || saved === "report") {
-      setScreen(saved);
-    }
-  }, []);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("va2_unlocked");
-    if (saved === "true") setUnlocked(true);
-  }, []);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("va2_uses");
-    const parsed = parseInt(saved ?? "", 10);
-    if (!isNaN(parsed)) setUsesLeft(Math.max(0, parsed));
-  }, []);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("va2_submitted_text");
-    if (saved) setSubmittedText(saved);
-  }, []);
-
-  useEffect(() => {
+    // Parse analysis first — determines whether "report" is even legal.
+    let parsedAnalysis: AnalysisResult | null = null;
     try {
-      const saved = localStorage.getItem("va2_analysis");
-      if (saved) setAnalysis(JSON.parse(saved) as AnalysisResult);
+      const rawAnalysis = localStorage.getItem("va2_analysis");
+      if (rawAnalysis) {
+        const candidate = JSON.parse(rawAnalysis) as AnalysisResult;
+        // Minimal shape check — prevents old/incompatible payloads from
+        // crashing mapAnalysisToPillarData.
+        if (candidate?.pillars && candidate?.metadata && candidate?.summary) {
+          parsedAnalysis = candidate;
+        } else {
+          localStorage.removeItem("va2_analysis");
+        }
+      }
     } catch {
-      // ignore parse errors
+      localStorage.removeItem("va2_analysis");
     }
-  }, []);
 
-  useEffect(() => {
-    const saved = localStorage.getItem("va2_report_id");
-    if (saved) setReportId(saved);
-  }, []);
+    const savedScreen = localStorage.getItem("va2_screen");
+    if (savedScreen === "report" && parsedAnalysis) {
+      setScreen("report");
+      setAnalysis(parsedAnalysis);
+    } else if (savedScreen === "landing") {
+      setScreen("landing");
+    } else if (savedScreen === "report" && !parsedAnalysis) {
+      // Stale "report" state with no analysis — force back to landing so the
+      // user doesn't see mock PILLAR_DATA.
+      setScreen("landing");
+      localStorage.setItem("va2_screen", "landing");
+    }
+    // "loading" is filtered by omission — in-flight analysis is gone after reload.
 
-  useEffect(() => {
+    if (localStorage.getItem("va2_unlocked") === "true") setUnlocked(true);
+
+    const parsedUses = parseInt(localStorage.getItem("va2_uses") ?? "", 10);
+    if (!isNaN(parsedUses)) setUsesLeft(Math.max(0, parsedUses));
+
+    const savedText = localStorage.getItem("va2_submitted_text");
+    if (savedText) setSubmittedText(savedText);
+
+    const savedReportId = localStorage.getItem("va2_report_id");
+    if (savedReportId) setReportId(savedReportId);
+
     try {
-      const saved = localStorage.getItem("va2_optimization");
-      if (saved) setOptimization(JSON.parse(saved) as OptimizationResult);
+      const savedOpt = localStorage.getItem("va2_optimization");
+      if (savedOpt) setOptimization(JSON.parse(savedOpt) as OptimizationResult);
     } catch {
-      // ignore parse errors
+      localStorage.removeItem("va2_optimization");
     }
   }, []);
 

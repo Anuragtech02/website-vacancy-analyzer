@@ -3,6 +3,7 @@
 import { type Tokens } from "../theme";
 import { Card, Button, Eyebrow } from "../primitives";
 import { useV2T } from "../i18n-context";
+import { estimatePotentialScore } from "./estimate-potential";
 
 interface GateCardProps {
   tokens: Tokens;
@@ -12,7 +13,9 @@ interface GateCardProps {
 }
 
 export function GateCard({ tokens, currentScore, potentialScore, onUnlock }: GateCardProps) {
-  const displayPotential = potentialScore ?? 8.2;
+  // Real optimization score when available, otherwise an estimate keyed off the
+  // user's actual current score (never the fixed "8.2" that reads as mock).
+  const displayPotential = potentialScore ?? estimatePotentialScore(currentScore);
   const t = useV2T();
   return (
     <Card

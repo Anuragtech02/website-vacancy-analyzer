@@ -13,9 +13,13 @@ interface CriticalPointsProps {
 export function CriticalPoints({ tokens, issues }: CriticalPointsProps) {
   const t = useV2T();
 
+  // CRITICAL_POINTS is a dev-mode fallback (ReviewChip preview). In production
+  // we only render real issues from the analysis.
   const items = issues && issues.length > 0
     ? issues.slice(0, 5).map((i) => ({ title: i.problem, detail: i.why_it_matters }))
-    : CRITICAL_POINTS;
+    : (process.env.NODE_ENV === 'development' ? CRITICAL_POINTS : []);
+
+  if (items.length === 0) return null;
 
   return (
     <Card

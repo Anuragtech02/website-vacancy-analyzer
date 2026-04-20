@@ -198,7 +198,8 @@ Send your CV and motivation letter to jobs@company.example. We will come back to
   },
   report: {
     header: {
-      title:         "Report · Senior Full-Stack Engineer",
+      title:         "Report",
+      titlePrefix:   "Report",
       generatedNow:  "Generated just now",
       rewritesLeft:  "{count} free rewrites left",
       downloadPdf:   "Download PDF",
