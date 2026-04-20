@@ -153,7 +153,8 @@
       "allGood": "Uitstekend werk!",
       "noIssues": "Geen kritieke problemen gedetecteerd.",
       "showAllIssues": "Toon alle {count} punten",
-      "showFewerIssues": "Toon minder"
+      "showFewerIssues": "Toon minder",
+      "planDemoSecondary": "Of plan een demo"
     },
     "pillars": {
       "title": "Score Verdeling",

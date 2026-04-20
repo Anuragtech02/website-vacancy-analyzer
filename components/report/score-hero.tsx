@@ -36,6 +36,7 @@ interface ScoreHeroProps {
   submittedEmail?: string;
   estimatedScore?: number;
   issues?: Issue[];
+  onPlanDemo: () => void;
 }
 
 const verdictStyle: Record<'excellent' | 'good' | 'needs_work' | 'poor', { bgColor: string; textColor: string }> = {
@@ -63,6 +64,7 @@ export function ScoreHero({
   onUnlockClick,
   isUnlocked,
   issues = [],
+  onPlanDemo,
 }: ScoreHeroProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showAllIssues, setShowAllIssues] = useState(false);
@@ -192,7 +194,18 @@ export function ScoreHero({
       {/* RIGHT COLUMN: Critical Issues */}
       <div className="lg:col-span-3 flex flex-col h-full">
          {!isUnlocked ? (
-             <PeelCTA onUnlock={onUnlockClick} currentScore={score} />
+           <div className="flex flex-col h-full gap-2">
+             <div className="flex-1">
+               <PeelCTA onUnlock={onUnlockClick} currentScore={score} />
+             </div>
+             <button
+               type="button"
+               onClick={onPlanDemo}
+               className="text-xs text-slate-500 hover:text-slate-900 py-2 underline decoration-slate-300 underline-offset-2 transition-colors"
+             >
+               {tHero('planDemoSecondary')}
+             </button>
+           </div>
          ) : (
              <Card variant="filled" className="h-full bg-red-50/50 border-red-100 flex flex-col">
                 <div className="p-5 border-b border-red-100 flex items-center gap-2 bg-red-50">

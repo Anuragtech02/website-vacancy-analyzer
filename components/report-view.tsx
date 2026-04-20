@@ -445,6 +445,7 @@ export function ReportView({
             isUnlocked={isUnlocked}
             submittedEmail={submittedEmail}
             issues={summary.key_issues || []}
+            onPlanDemo={() => setShowAccessModal(true)}
             />
         </div>
 
