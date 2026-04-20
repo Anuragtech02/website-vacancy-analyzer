@@ -293,13 +293,17 @@ export default function Home() {
                               <h3 className="text-sm font-bold text-slate-900 mb-4 text-center">
                                 {t('hero.howItWorks.title')}
                               </h3>
-                              <div className="grid grid-cols-3 gap-2 sm:gap-4">
+                              <div className="relative grid grid-cols-3 gap-3 sm:gap-4">
+                                {/* Connecting line behind icons (desktop only) */}
+                                <div className="hidden sm:block absolute top-5 left-[16.66%] right-[16.66%] h-px bg-slate-200" aria-hidden="true" />
+
                                 {/* Step 1 */}
-                                <div className="flex flex-col items-center text-center">
-                                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
-                                    <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                                <div className="relative flex flex-col items-center text-center">
+                                  <div className="relative z-10 w-10 h-10 rounded-full bg-primary/10 ring-4 ring-white flex items-center justify-center mb-2">
+                                    <FileText className="w-5 h-5 text-primary" />
+                                    <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-primary text-white text-[9px] font-bold flex items-center justify-center">1</span>
                                   </div>
-                                  <div className="font-bold text-xs sm:text-sm text-slate-900 mb-1">
+                                  <div className="font-bold text-xs sm:text-sm text-slate-900 mb-0.5">
                                     {t('hero.howItWorks.step1Title')}
                                   </div>
                                   <div className="text-[10px] sm:text-xs text-slate-500 leading-tight">
@@ -307,17 +311,13 @@ export default function Home() {
                                   </div>
                                 </div>
 
-                                {/* Arrow */}
-                                <div className="flex items-center justify-center pt-6">
-                                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-slate-300" />
-                                </div>
-
                                 {/* Step 2 */}
-                                <div className="flex flex-col items-center text-center">
-                                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
-                                    <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                                <div className="relative flex flex-col items-center text-center">
+                                  <div className="relative z-10 w-10 h-10 rounded-full bg-primary/10 ring-4 ring-white flex items-center justify-center mb-2">
+                                    <Sparkles className="w-5 h-5 text-primary" />
+                                    <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-primary text-white text-[9px] font-bold flex items-center justify-center">2</span>
                                   </div>
-                                  <div className="font-bold text-xs sm:text-sm text-slate-900 mb-1">
+                                  <div className="font-bold text-xs sm:text-sm text-slate-900 mb-0.5">
                                     {t('hero.howItWorks.step2Title')}
                                   </div>
                                   <div className="text-[10px] sm:text-xs text-slate-500 leading-tight">
@@ -325,17 +325,13 @@ export default function Home() {
                                   </div>
                                 </div>
 
-                                {/* Arrow */}
-                                <div className="flex items-center justify-center pt-6">
-                                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-slate-300" />
-                                </div>
-
                                 {/* Step 3 */}
-                                <div className="flex flex-col items-center text-center">
-                                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-emerald-100 flex items-center justify-center mb-2">
-                                    <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
+                                <div className="relative flex flex-col items-center text-center">
+                                  <div className="relative z-10 w-10 h-10 rounded-full bg-emerald-100 ring-4 ring-white flex items-center justify-center mb-2">
+                                    <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                                    <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-emerald-600 text-white text-[9px] font-bold flex items-center justify-center">3</span>
                                   </div>
-                                  <div className="font-bold text-xs sm:text-sm text-slate-900 mb-1">
+                                  <div className="font-bold text-xs sm:text-sm text-slate-900 mb-0.5">
                                     {t('hero.howItWorks.step3Title')}
                                   </div>
                                   <div className="text-[10px] sm:text-xs text-slate-500 leading-tight">
