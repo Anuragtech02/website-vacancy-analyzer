@@ -38,22 +38,23 @@ export default async function ReportPage({ params }: PageProps) {
               <span className="font-medium text-sm hidden sm:inline">{t('navigation.newAnalysis')}</span>
             </Link>
             <div className="h-5 w-[1px] bg-border hidden sm:block" />
-            <div className="flex items-center gap-2 sm:gap-3">
+            {/*
+              Brand mark — use the SVG asset as-is (icon + stacked wordmark
+              in one file). Don't pair it with a separate <h1> text node,
+              the wordmark is already inside the image. Tagline remains
+              alongside as a small descriptor.
+            */}
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
               <Image
-                src="/logo-icon.png"
+                src="/vt-dark.svg"
                 alt={t('navigation.logo')}
-                width={32}
-                height={32}
-                className="w-8 h-8 rounded-lg shrink-0"
+                width={107}
+                height={40}
+                className="h-9 sm:h-10 w-auto shrink-0"
               />
-              <div className="min-w-0">
-                <h1 className="font-bold text-sm text-foreground truncate">
-                  {t('navigation.logo')}
-                </h1>
-                <p className="text-xs text-muted-foreground hidden sm:block">
-                  {t('navigation.tagline')}
-                </p>
-              </div>
+              <p className="text-xs text-muted-foreground hidden md:block">
+                {t('navigation.tagline')}
+              </p>
             </div>
           </div>
           {/* Right side */}

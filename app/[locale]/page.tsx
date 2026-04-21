@@ -249,17 +249,20 @@ export default function Home() {
       {/* Header / Top Bar */}
       <header className="w-full fixed top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-white/20 shadow-sm">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-          <a href="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
+          <a href="/" className="flex items-center hover:opacity-90 transition-opacity" aria-label={t('footer.brandName')}>
+            {/*
+              Brand asset includes icon + stacked "Vacature Tovenaar" text.
+              vt-dark on this light header; native aspect ratio 1172×441
+              so we size by height and let width compute from aspect.
+            */}
             <Image
-              src="/logo-icon.png"
+              src="/vt-dark.svg"
               alt={t('footer.brandName')}
-              width={40}
-              height={40}
-              className="w-10 h-10"
+              width={128}
+              height={48}
+              priority
+              className="h-11 w-auto sm:h-12"
             />
-            <span className="font-bold text-lg text-slate-800 tracking-tight hidden sm:block">
-              {t('hero.navTitle')}
-            </span>
           </a>
           <div className="flex items-center gap-4 sm:gap-6">
             <a
@@ -774,17 +777,18 @@ export default function Home() {
       <footer className="w-full bg-slate-950 py-10 sm:py-12 border-t border-slate-900 relative z-10">
           <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 sm:gap-8 mb-10 sm:mb-12">
-                  {/* Brand & Mission */}
+                  {/* Brand & Mission — dark section, so use vt-light.svg
+                      (light-on-dark variant). The asset already contains
+                      the icon + stacked wordmark, so no separate text. */}
                   <div className="max-w-md">
-                      <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                      <div className="mb-3 sm:mb-4">
                           <Image
-                            src="/logo-icon.png"
+                            src="/vt-light.svg"
                             alt={t('footer.brandName')}
-                            width={32}
-                            height={32}
-                            className="w-8 h-8 brightness-0 invert"
+                            width={128}
+                            height={48}
+                            className="h-11 sm:h-12 w-auto"
                           />
-                          <span className="text-lg sm:text-xl font-bold text-white tracking-tight">{t('footer.brandName')}</span>
                       </div>
                       <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
                           {t('footer.tagline')}

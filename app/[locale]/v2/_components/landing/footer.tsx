@@ -49,29 +49,28 @@ export function Footer({ tokens }: FooterProps) {
         display: "flex", justifyContent: "space-between", alignItems: "center",
         flexWrap: "wrap", gap: 20,
       }}>
-        {/* Left: wordmark (identical treatment to the navbar — logo + "Vacature
-            Tovenaar" text, no tile, no box). Tagline sits beneath. */}
+        {/* Left: wordmark — use the brand asset as-is. vt-dark.svg already
+            contains the icon + stacked "Vacature Tovenaar" text; pairing it
+            with a separate text node (as before) made the wordmark render
+            inline, which isn't the brand layout. Light-surface → dark
+            asset. */}
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: mobile ? 8 : 10 }}>
-            <Image
-              src="/logo-icon.png"
-              alt="Vacature Tovenaar logo"
-              width={mobile ? 28 : 32}
-              height={mobile ? 28 : 32}
-            />
-            <span style={{
-              fontFamily: tokens.displayFont,
-              fontWeight: tokens.displayWeight,
-              color: tokens.ink,
-              fontSize: mobile ? 16 : 18,
-              letterSpacing: "-0.02em",
-            }}>
-              Vacature Tovenaar
-            </span>
-          </div>
+          {(() => {
+            const height = mobile ? 40 : 52;
+            const width = Math.round(height * (1172 / 441));
+            return (
+              <Image
+                src="/vt-dark.svg"
+                alt="Vacature Tovenaar"
+                width={width}
+                height={height}
+                style={{ display: "block", height, width: "auto" }}
+              />
+            );
+          })()}
           <div style={{
             fontFamily: tokens.bodyFont, fontSize: 13, color: tokens.inkMute,
-            marginTop: 10, maxWidth: 420, lineHeight: 1.5,
+            marginTop: 14, maxWidth: 420, lineHeight: 1.5,
           }}>
             {t.footer.tagline}
           </div>

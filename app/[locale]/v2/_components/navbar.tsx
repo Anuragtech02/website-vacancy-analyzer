@@ -17,25 +17,31 @@ import { openDemoCalendar } from "./demo-link";
 // Wordmark (internal)
 // ---------------------------------------------------------------------------
 
-function Wordmark({ tokens, onHome, compact }: { tokens: Tokens; onHome: () => void; compact?: boolean }) {
+function Wordmark({ tokens: _tokens, onHome, compact }: { tokens: Tokens; onHome: () => void; compact?: boolean }) {
+  // Brand mark is the vt-dark.svg asset as-is — it already contains the
+  // icon AND the "Vacature Tovenaar" wordmark stacked in the layout the
+  // brand team shipped. Don't pair it with a separate text node; that was
+  // the "wordmark shows up inline instead of stacked" bug.
+  // Native aspect ratio: 1172×441 (~2.66:1).
+  const height = compact ? 36 : 44;
+  const width = Math.round(height * (1172 / 441));
   return (
     <button
       onClick={onHome}
+      aria-label="Vacature Tovenaar — home"
       style={{
-        display: "flex", alignItems: "center", gap: compact ? 8 : 10,
+        display: "flex", alignItems: "center",
         background: "none", border: "none", padding: 0, cursor: "pointer",
       }}
     >
-      <Image src="/logo-icon.png" alt="Vacature Tovenaar logo" width={compact ? 28 : 32} height={compact ? 28 : 32} />
-      <span style={{
-        fontFamily: tokens.displayFont,
-        fontWeight: tokens.displayWeight,
-        color: tokens.ink,
-        fontSize: compact ? 16 : 18,
-        letterSpacing: "-0.02em",
-      }}>
-        Vacature Tovenaar
-      </span>
+      <Image
+        src="/vt-dark.svg"
+        alt="Vacature Tovenaar"
+        width={width}
+        height={height}
+        style={{ display: "block", height, width: "auto" }}
+        priority
+      />
     </button>
   );
 }
