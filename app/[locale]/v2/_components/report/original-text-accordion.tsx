@@ -4,6 +4,7 @@ import { useState } from "react";
 import { type Tokens } from "../theme";
 import { Card } from "../primitives";
 import { useV2T } from "../i18n-context";
+import { useBreakpoint, isMobile } from "../use-breakpoint";
 
 interface OriginalTextAccordionProps {
   tokens: Tokens;
@@ -13,17 +14,26 @@ interface OriginalTextAccordionProps {
 export function OriginalTextAccordion({ tokens, text }: OriginalTextAccordionProps) {
   const [textOpen, setTextOpen] = useState(false);
   const t = useV2T();
+  const bp = useBreakpoint();
+  const mobile = isMobile(bp);
+
+  const sectionPadding = mobile ? "16px" : "16px 48px 32px";
+  const buttonPadding = mobile ? "16px" : "18px 22px";
+  const bodyPaddingHorizontal = mobile ? 16 : 22;
+  const buttonFontSize = mobile ? 14 : 15;
+  const bodyFontSize = mobile ? 12 : 13;
 
   return (
-    <section style={{ padding: "16px 48px 32px", maxWidth: 1360, margin: "0 auto" }}>
+    <section style={{ padding: sectionPadding, maxWidth: 1360, margin: "0 auto" }}>
       <Card tokens={tokens} pad={0}>
         <button
           onClick={() => setTextOpen(!textOpen)}
           style={{
             width: "100%", background: "none", border: "none",
-            padding: "18px 22px", cursor: "pointer", textAlign: "left",
+            padding: buttonPadding, cursor: "pointer", textAlign: "left",
             display: "flex", justifyContent: "space-between", alignItems: "center",
-            fontFamily: tokens.bodyFont, fontSize: 15, color: tokens.ink, fontWeight: 500,
+            fontFamily: tokens.bodyFont, fontSize: buttonFontSize, color: tokens.ink, fontWeight: 500,
+            gap: 12,
           }}
         >
           <span>{t.report.accordion.show}</span>
@@ -33,8 +43,8 @@ export function OriginalTextAccordion({ tokens, text }: OriginalTextAccordionPro
         </button>
         {textOpen && (
           <div style={{
-            padding: "0 22px 22px",
-            fontFamily: tokens.monoFont, fontSize: 13, lineHeight: 1.6,
+            padding: `0 ${bodyPaddingHorizontal}px ${bodyPaddingHorizontal}px`,
+            fontFamily: tokens.monoFont, fontSize: bodyFontSize, lineHeight: 1.6,
             color: tokens.inkSoft, whiteSpace: "pre-wrap",
             borderTop: `1px dashed ${tokens.line}`, paddingTop: 18,
           }}>

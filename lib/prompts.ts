@@ -227,8 +227,12 @@ Focus on support, not just coordination. Show concrete team support without usin
 * **Good approach:** Emphasize concrete support, problem-solving together, and team backup using ORIGINAL phrasing that fits the company culture
 
 ### 4. Sentence Variation
-* It is **forbidden** to start every bullet point with "Je".
-* Start sentences with a Goal ("Om te..."), a Method ("Door..."), or Collaboration ("Samen met...").
+* Vary sentence openers throughout the document; do not let the same
+  second-person pronoun or any single word dominate consecutive bullets.
+* Mix in purpose-framed openers (why this work matters), method-framed
+  openers (how the work gets done), and team-framed openers (who it's
+  done with). Express each in natural ${lang} without borrowing fixed
+  stock phrases.
 
 ### 5. The 'Why' Factor
 Connect tasks to human impact by adding purpose and meaning.
@@ -265,19 +269,24 @@ Connect tasks to human impact by adding purpose and meaning.
 
 ### 2. Persona-Fit
 - Answer "What's In It For Me?" throughout
-- Lead with benefits ("Jij krijgt..."), not just demands
+- Lead with benefits to the candidate, not with demands from the company
 - Address internal drivers (Autonomy, Growth, Safety)
-- Use "Jij/Je" > "Wij/We"
+- Address the reader directly (second person) more often than the company
+  describes itself (first-person plural); the exact pronouns are whatever
+  reads naturally in ${lang}
 
 ### 3. EVP & Brand Experience
 - Inject unique company DNA and distinctive language
 - Make the culture tangible and specific with anecdotes
-- Replace generic phrases ("dynamisch team", "marktleider") with evidence
+- Replace vague team-quality descriptors and corporate superlatives with
+  concrete evidence (what the team actually does, scale, results, who
+  they serve), phrased in natural ${lang}
 
 ### 4. Tone-of-Voice
-- Active Voice consistently ("Je bouwt", "Wij bieden")
+- Active voice consistently; the subject (the candidate, or the company)
+  performs the verb, never the passive "shall be performed" style
 - Direct, engaging, conversational
-- Plain language - eliminate bureaucracy completely
+- Plain language — eliminate bureaucracy completely
 
 ### 5. Inclusion & Bias
 - Remove all gender-coded language

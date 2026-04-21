@@ -9,15 +9,17 @@ const nl = {
     dismiss: "Sluiten",
   },
   errors: {
-    analysisFailed: "Analyse mislukt — probeer het opnieuw.",
+    analysisFailed: "Analyse mislukt. Probeer het opnieuw.",
     analysisTimeout: "De analyse duurt langer dan verwacht. Probeer opnieuw of laat het resultaat mailen.",
     optimizeFailed: "Het lukte niet om de herschrijving te genereren. Probeer het opnieuw.",
-    reportNotAvailable: "Rapport niet beschikbaar — voer de analyse opnieuw uit.",
+    reportNotAvailable: "Rapport niet beschikbaar. Voer de analyse opnieuw uit.",
     rateLimited: "Je hebt je gratis herschrijvingen voor deze browser opgebruikt.",
     networkError: "Netwerkfout. Controleer je verbinding en probeer opnieuw.",
   },
   nav: {
     analyzeVacancy: "Analyseer vacature",
+    newAnalysis:    "Nieuwe analyse",
+    bookDemo: "Plan een demo",
     langEn: "EN",
     langNl: "NL",
     freeLeft: "{count} gratis over",
@@ -29,7 +31,7 @@ const nl = {
       part2: " mensen niet solliciteren.",
     },
     subtitle:
-      "Plak je vacature. In minder dan een minuut beoordeelt ons model hem op acht dimensies en vertelt je exact wat er beter moet — inclusief een herschreven versie die je direct kunt publiceren.",
+      "Plak je vacature. In minder dan een minuut beoordeelt ons model hem op acht dimensies en vertelt je exact wat er beter moet, inclusief een herschreven versie die je direct kunt publiceren.",
     bullets: [
       {
         title: "Achtpuntsdiagnose",
@@ -41,7 +43,7 @@ const nl = {
       },
       {
         title: "Een herschreven versie, klaar voor publicatie",
-        desc: "Geen suggestie — een afgeronde tekst die je direct kunt gebruiken.",
+        desc: "Geen suggestie, maar een afgeronde tekst die je direct kunt gebruiken.",
       },
     ],
   },
@@ -55,10 +57,20 @@ const nl = {
       { title: "Ontvangen",  desc: "Score + herschreven versie" },
     ],
     placeholder:
-      "Plak hier je vacature — platte tekst is prima. We behouden de structuur.",
+      "Plak hier je vacature. Platte tekst is prima; we behouden de structuur.",
     trySample: "Probeer met een voorbeeldvacature",
-    charsCount: "{count} / {min} tekens",
+    charsCount: "{count} / {max} tekens",
+    overLimit: "limiet overschreden",
     submit: "Analyseer vacature",
+    category: {
+      label:               "Functiecategorie",
+      general:             "Algemeen (Standaard)",
+      government:          "Overheid / Publiek",
+      tech:                "Tech / IT",
+      healthcareEducation: "Zorg / Onderwijs",
+      legalCorporate:      "Zakelijk / Corporate",
+      blueCollar:          "Bouw / Techniek",
+    },
     sampleVacancy: `Senior Full-Stack Engineer (m/v/x)
 Amsterdam · Hybride · Vast contract
 
@@ -164,6 +176,7 @@ Stuur je CV en motivatiebrief naar jobs@bedrijf.nl. We komen bij je terug als er
     header: {
       working: "Onze software is aan het werk",
       elapsed: "{seconds}s verstreken",
+      eta:     "Duurt meestal zo'n minuut",
     },
     stepCounter: "Stap {current} van {total}",
     steps: {
@@ -193,17 +206,30 @@ Stuur je CV en motivatiebrief naar jobs@bedrijf.nl. We komen bij je terug als er
       },
     },
     slowBanner: {
-      text: "Duurt het langer dan gewoonlijk? We kunnen het volledige rapport mailen zodra het klaar is — je hoeft niet te wachten.",
+      text: "Duurt het langer dan gewoonlijk? We kunnen het volledige rapport mailen zodra het klaar is. Je hoeft niet te wachten.",
       cta:  "Mail het naar me",
+    },
+    emailWhenReady: {
+      eyebrow:    "Mail me zodra het klaar is",
+      title:      "We analyseren rustig verder op de achtergrond",
+      body:       "Laat je e-mailadres achter en sluit gerust dit tabblad. Zodra de analyse klaar is, ontvang je het volledige rapport in je inbox.",
+      fieldLabel: "Zakelijk e-mailadres",
+      placeholder:"naam@bedrijf.nl",
+      submit:     "Mail het rapport",
+      submitting: "Analyse in de wachtrij zetten…",
+      done:       "Goed. We mailen je zodra het rapport klaar is.",
+      error:      "Dat lukte nu niet. Probeer het zo nog eens.",
+      disabledHint: "Achtergrond-levering staat in deze omgeving nog niet aan. Je analyse blijft op deze pagina doorlopen.",
     },
   },
   report: {
     header: {
-      title:        "Rapport · Senior Full-Stack Engineer",
+      title:        "Rapport",
+      titlePrefix:  "Rapport",
       generatedNow: "Zojuist gegenereerd",
       rewritesLeft: "{count} gratis herschrijvingen over",
       downloadPdf:  "Download PDF",
-      pdfSentInfo:  "Je rapport is als PDF gemaild toen je ontgrendelde — bekijk je inbox (en spam folder).",
+      pdfSentInfo:  "Je rapport is als PDF gemaild toen je ontgrendelde. Bekijk je inbox (en spam folder).",
     },
     scoreCard: {
       eyebrow: "Oordeel",
@@ -214,7 +240,7 @@ Stuur je CV en motivatiebrief naar jobs@bedrijf.nl. We komen bij je terug als er
         weak:             "Zwak",
       },
       summary:
-        "Een capabele vacature die wordt tegengehouden door twee kritieke zwaktes: per ongeluk uitsluitende taal en een voorwaardensectie die als bijzaak leest. De toon en cultuursignalen zijn echt sterk — verlies die niet in de herschrijving.",
+        "Een capabele vacature die wordt tegengehouden door twee kritieke zwaktes: per ongeluk uitsluitende taal en een voorwaardensectie die als bijzaak leest. De toon en cultuursignalen zijn echt sterk; verlies die niet in de herschrijving.",
       stats: {
         words:       "Woorden",
         readTime:    "Leestijd",
@@ -232,7 +258,7 @@ Stuur je CV en motivatiebrief naar jobs@bedrijf.nl. We komen bij je terug als er
       },
       currentLabel:   "Huidig",
       potentialLabel: "Potentieel",
-      unlockButton:   "Ontgrendel verbeterde versie",
+      unlockButton:   "Bekijk verbeterde versie",
       trust: {
         noSpam:      "Geen spam",
         gdpr:        "AVG-proof",
@@ -278,7 +304,8 @@ Stuur je CV en motivatiebrief naar jobs@bedrijf.nl. We komen bij je terug als er
       },
     },
     rewrite: {
-      badge:   "Herschreven · +2,4 pt",
+      badgePrefix: "Herschreven",
+      badgeUnit:   "pt",
       projected: {
         prefix: "Voorspelde totaalscore na herschrijving: ",
         score:  "8,2 / 10",
@@ -301,9 +328,9 @@ Stuur je CV en motivatiebrief naar jobs@bedrijf.nl. We komen bij je terug als er
     disclaimer:
       "Scores worden gegenereerd door een taalmodel dat is afgestemd op 14.000 geanonimiseerde vacatures en sollicitatieresultaten. Behandel ze als second opinion, niet als uitspraak. Jouw vakkennis wint altijd.",
     stickyBanner: {
-      title:    "De herschrijving is klaar — voorspelling {score} / 10",
+      title:    "De herschrijving is klaar. Voorspelling {score} / 10",
       subtitle: "Voer je e-mail in om te ontgrendelen. Geen marketingmail, altijd uitschrijven.",
-      cta:      "Ontgrendel herschrijving →",
+      cta:      "Bekijk verbeterde versie →",
     },
   },
   modals: {
@@ -330,7 +357,7 @@ Stuur je CV en motivatiebrief naar jobs@bedrijf.nl. We komen bij je terug als er
         "De call to action aanscherpen…",
         "De tone of voice bijslijpen…",
       ],
-      busyHint: "Duurt ongeveer 3 seconden — even geduld.",
+      busyHint: "Duurt ongeveer 3 seconden. Even geduld.",
     },
     limit: {
       eyebrow: "Limiet gratis versie",
@@ -339,7 +366,7 @@ Stuur je CV en motivatiebrief naar jobs@bedrijf.nl. We komen bij je terug als er
         highlight: "beet",
         part2:     "?",
       },
-      body:    "Je hebt beide gratis herschrijvingen gebruikt. Teams die de tool fijn vinden, willen meestal onbeperkte herschrijvingen, opgeslagen vacatures en ATS-koppeling — dat is wat de betaalde versie biedt.",
+      body:    "Je hebt beide gratis herschrijvingen gebruikt. Teams die de tool fijn vinden, willen meestal onbeperkte herschrijvingen, opgeslagen vacatures en ATS-koppeling; dat is wat de betaalde versie biedt.",
       seeDemo: "Bekijk wat je zou krijgen",
       later:   "Misschien later",
     },
@@ -350,7 +377,7 @@ Stuur je CV en motivatiebrief naar jobs@bedrijf.nl. We komen bij je terug als er
       features: [
         {
           title: "Onbeperkte herschrijvingen",
-          desc:  "Geen daglimieten — herschrijf elke vacature die je team uitbrengt.",
+          desc:  "Geen daglimieten; herschrijf elke vacature die je team uitbrengt.",
         },
         {
           title: "Persona matching",

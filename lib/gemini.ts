@@ -1,6 +1,6 @@
 import { google as googleAI } from "@ai-sdk/google";
 import { createVertex } from "@ai-sdk/google-vertex";
-import { generateText, type LanguageModel } from "ai";
+import { generateText, streamText, type LanguageModel } from "ai";
 import { getAnalyzerPrompt, getOptimizerPrompt, type PromptLocale } from "./prompts";
 
 // ─── Provider selection ────────────────────────────────────────────────────
@@ -264,6 +264,53 @@ export async function analyzeVacancy(
   return parseJsonResponse<AnalysisResult>(text, "analyzeVacancy");
 }
 
+/**
+ * Streaming variant of analyzeVacancy. Yields token-count progress via the
+ * `onProgress` callback as the model emits chunks, then resolves with the
+ * fully-parsed AnalysisResult when the stream closes. Used by the SSE
+ * endpoint to drive the v2 loading screen with real backend progress
+ * instead of a client-side timer.
+ *
+ * `onProgress` receives (charsSoFar, roughlyExpectedChars). The "roughly
+ * expected" figure is an empirical estimate of the analyzer's JSON output
+ * size (~12-16KB of text); we clamp the progress percentage at 95% so the
+ * bar never reaches 100% until the stream actually closes, matching the
+ * "hold on last step" behaviour the v2 Loading component uses.
+ */
+export async function analyzeVacancyStreaming(
+  vacancyText: string,
+  category: string = "General",
+  locale: string = "nl",
+  onProgress?: (charsSoFar: number, expectedChars: number) => void,
+): Promise<AnalysisResult> {
+  const promptLocale: PromptLocale = locale === "en" ? "en" : "nl";
+  // Empirical: analyzer output is ~12-16KB of JSON text. Use the midpoint
+  // as the denominator for progress estimation.
+  const EXPECTED_CHARS = 14000;
+
+  const { textStream } = streamText({
+    model: resolveModel("gemini-3.1-pro-preview"),
+    messages: [
+      {
+        role: "user",
+        content: [
+          { type: "text", text: getAnalyzerPrompt(category, promptLocale) },
+          { type: "text", text: `Vacancy Text:\n${vacancyText}` },
+        ],
+      },
+    ],
+    providerOptions: googleProviderOptions({ thinkingLevel: "high" }),
+  });
+
+  let text = "";
+  for await (const chunk of textStream) {
+    text += chunk;
+    onProgress?.(text.length, EXPECTED_CHARS);
+  }
+
+  return parseJsonResponse<AnalysisResult>(text, "analyzeVacancyStreaming");
+}
+
 export async function optimizeVacancy(
   vacancyText: string,
   analysis?: AnalysisResult,
@@ -281,7 +328,11 @@ export async function optimizeVacancy(
   }
 
   const { text } = await generateText({
-    model: resolveModel("gemini-3.1-flash-preview"),
+    // NOTE: gemini-3.1-flash-preview does not yet exist on Vertex AI (as of
+    // 2026-04) — "NOT_FOUND" at the publisher level. The optimizer stays on
+    // 3.0 Flash preview; swap this to 3.1 the day it lands. The routing in
+    // GLOBAL_MODELS is already prepared for both.
+    model: resolveModel("gemini-3-flash-preview"),
     messages: [{ role: "user", content: parts }],
     providerOptions: googleProviderOptions({ thinkingLevel: "medium" }),
   });

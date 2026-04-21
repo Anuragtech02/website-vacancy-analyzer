@@ -1,15 +1,19 @@
+import { readFileSync } from "fs";
+import path from "path";
 import { OptimizationResult } from "./gemini";
 
-function getOrgInitials(org: string | null): string {
-  if (!org) return "VT";
-  const words = org.split(" ").filter((w) => w.length > 0);
-  if (words.length === 1) return words[0].substring(0, 2).toUpperCase();
-  return words
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase();
-}
+// Logo is inlined as a data URL so Puppeteer never has to network-fetch it.
+// Read once at module load (~46KB). Falls back to empty string in the rare
+// case the file is missing so the template still renders.
+const LOGO_DATA_URL = (() => {
+  try {
+    const logoPath = path.join(process.cwd(), "public", "logo-icon.png");
+    const bytes = readFileSync(logoPath);
+    return `data:image/png;base64,${bytes.toString("base64")}`;
+  } catch {
+    return "";
+  }
+})();
 
 function convertMarkdownToHTML(markdown: string): string {
   // First pass: process inline formatting
@@ -92,7 +96,6 @@ export function generateVacancyHTML(optimization: OptimizationResult): string {
   const { metadata, strategy_notes } = optimization;
 
   const orgName = metadata.organization || "Organisatie";
-  const orgInitials = getOrgInitials(metadata.organization);
   const jobTitle = metadata.job_title;
   const location = metadata.location || "";
 
@@ -154,6 +157,20 @@ export function generateVacancyHTML(optimization: OptimizationResult): string {
     html, body { margin: 0; padding: 0; }
     * { box-sizing: border-box; }
 
+    /* Keep cards that read as a single unit together across page breaks.
+       Puppeteer honours both the legacy and the modern property. */
+    .impact-forecast,
+    .strategy-note,
+    .editor-content h3,
+    .editor-content li {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    .editor-content h3 {
+      break-after: avoid;
+      page-break-after: avoid;
+    }
+
     @media print {
       body { background-color: white; }
     }
@@ -170,8 +187,11 @@ export function generateVacancyHTML(optimization: OptimizationResult): string {
   <div class="client-primary text-white relative overflow-hidden">
     <div class="flex items-center p-8">
       <!-- Logo and title -->
-      <div class="bg-white h-16 w-16 rounded flex items-center justify-center shadow-lg flex-shrink-0">
-        <span class="text-2xl font-black client-text tracking-tighter">${escapeHtml(orgInitials)}</span>
+      <div class="bg-white h-16 w-16 rounded flex items-center justify-center shadow-lg flex-shrink-0 p-2">
+        ${LOGO_DATA_URL
+          ? `<img src="${LOGO_DATA_URL}" alt="Vacature Tovenaar" style="max-height: 100%; max-width: 100%; object-fit: contain; display: block;" />`
+          : `<span class="text-2xl font-black client-text tracking-tighter">VT</span>`
+        }
       </div>
       <div class="ml-5 min-w-0 flex-grow">
         <span class="bg-yellow-400 text-amber-900 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider inline-block">Geoptimaliseerde Versie</span>
@@ -216,7 +236,7 @@ export function generateVacancyHTML(optimization: OptimizationResult): string {
     <div class="w-full lg:w-1/3 bg-gray-50 border-l border-gray-200 p-8">
       
       <!-- Impact Forecast (New) -->
-      <div class="bg-[#1F1B16] rounded-xl p-6 text-white mb-8 shadow-lg relative overflow-hidden">
+      <div class="impact-forecast bg-[#1F1B16] rounded-xl p-6 text-white mb-8 shadow-lg relative overflow-hidden">
          <div class="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
          <h3 class="text-xs font-bold text-orange-300 uppercase tracking-widest mb-4">Impact Forecast</h3>
          
@@ -249,12 +269,15 @@ export function generateVacancyHTML(optimization: OptimizationResult): string {
   <!-- Footer -->
   <div class="wizard-bg p-6 sm:p-8 flex flex-col sm:flex-row justify-between items-center text-gray-300 gap-4">
     <div class="flex items-center gap-3">
-      <div class="bg-[#FF6B35] p-2 rounded-lg">
-        <i data-lucide="wand-2" class="text-white w-5 h-5"></i>
+      <div class="bg-white rounded-lg flex items-center justify-center" style="width: 40px; height: 40px; padding: 4px;">
+        ${LOGO_DATA_URL
+          ? `<img src="${LOGO_DATA_URL}" alt="Vacature Tovenaar" style="max-height: 100%; max-width: 100%; object-fit: contain; display: block;" />`
+          : `<i data-lucide="wand-2" class="text-[#FF6B35] w-5 h-5"></i>`
+        }
       </div>
       <div>
         <span class="block text-white font-bold text-sm tracking-wide">VACATURE TOVENAAR</span>
-        <span class="block text-xs text-gray-400">Recruitment Marketing & Optimalisatie</span>
+        <span class="block text-xs text-gray-400">Recruitment Marketing &amp; Optimalisatie</span>
       </div>
     </div>
 

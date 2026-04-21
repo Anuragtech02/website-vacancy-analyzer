@@ -1,398 +1,273 @@
 "use client";
 
-// page.tsx — /v2 entry page (localized: /en/v2 and /nl/v2).
-// Manages the full screen state machine: landing → loading → report.
+// page.tsx — /v2 landing (localized: /en/v2 and /nl/v2).
+// State machine is just landing → loading. When /api/analyze resolves we
+// navigate to /v2/report/[id] instead of swapping screens in-place — every
+// report is now a real, shareable URL (matches v1 behaviour).
 
 import { useState, useEffect, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import { buildTokens, DEFAULT_TWEAKS } from "./_components/theme";
 import { PageShaderBackdrop } from "./_components/shader";
 import { Navbar } from "./_components/navbar";
 import { Landing } from "./_components/landing";
 import { Loading } from "./_components/loading";
-import { Report } from "./_components/report";
-import { EmailModal, LimitModal, DemoModal } from "./_components/modals";
+import { EmailModal, LimitModal, DemoModal, EmailWhenReadyModal } from "./_components/modals";
 import { V2MessagesProvider } from "./_components/i18n-context";
 import { BannerProvider, type BannerState } from "./_components/banner-context";
-import { InlineBanner } from "./_components/inline-banner";
+import { BannerOverlay } from "./_components/banner-overlay";
 import { getV2Messages } from "./_messages";
-import { fetchWithTimeout, getErrorMessage } from "@/lib/fetch-with-timeout";
+import { getErrorMessage } from "@/lib/fetch-with-timeout";
 import { generateFingerprint } from "@/lib/fingerprint";
-import type { AnalysisResult, OptimizationResult } from "@/lib/gemini";
+import type { OptimizationResult } from "@/lib/gemini";
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
-type Screen = "landing" | "loading" | "report";
-type Modal = "email" | "limit" | "demo" | null;
-
-// ---------------------------------------------------------------------------
-// ReviewChip — bottom-left navigator for internal UX stakeholders.
-// Allows jumping between screen states without going through the full flow.
-// ---------------------------------------------------------------------------
-
-interface ReviewChipProps {
-  screen: Screen;
-  unlocked: boolean;
-  onJump: (key: "landing" | "loading" | "report" | "unlocked") => void;
-}
-
-function ReviewChip({ screen, unlocked, onJump }: ReviewChipProps) {
-  const pills: Array<{
-    key: "landing" | "loading" | "report" | "unlocked";
-    label: string;
-    active: boolean;
-  }> = [
-    { key: "landing",  label: "Landing",  active: screen === "landing" },
-    { key: "loading",  label: "Loading",  active: screen === "loading" },
-    { key: "report",   label: "Report",   active: screen === "report" && !unlocked },
-    { key: "unlocked", label: "Unlocked", active: screen === "report" && unlocked },
-  ];
-
-  return (
-    <div
-      style={{
-        position: "fixed",
-        bottom: 20,
-        left: 20,
-        zIndex: 9000,
-        display: "flex",
-        gap: 6,
-        padding: "6px 8px",
-        background: "oklch(0.18 0.02 240 / 0.85)",
-        backdropFilter: "blur(10px)",
-        WebkitBackdropFilter: "blur(10px)",
-        borderRadius: 999,
-        border: "1px solid oklch(0.35 0.02 240 / 0.5)",
-        boxShadow: "0 4px 16px oklch(0 0 0 / 0.35)",
-      }}
-    >
-      {pills.map((p) => (
-        <button
-          key={p.key}
-          onClick={() => onJump(p.key)}
-          style={{
-            padding: "5px 12px",
-            borderRadius: 999,
-            border: "none",
-            cursor: "pointer",
-            fontFamily: "system-ui, sans-serif",
-            fontSize: 11,
-            fontWeight: 600,
-            letterSpacing: "0.04em",
-            background: p.active
-              ? "oklch(0.70 0.17 42)"
-              : "oklch(0.28 0.02 240 / 0.7)",
-            color: p.active ? "#fff" : "oklch(0.75 0.02 240)",
-            transition: "background 0.15s ease, color 0.15s ease",
-          }}
-        >
-          {p.label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// V2Page
-// ---------------------------------------------------------------------------
+type Screen = "landing" | "loading";
+type Modal = "email" | "limit" | "demo" | "emailWhenReady" | null;
 
 export default function V2Page() {
-  // Tokens are fixed to the default aesthetic — no Tweaks panel in production.
   const tokens = useMemo(() => buildTokens(DEFAULT_TWEAKS), []);
-
-  // i18n — resolve messages based on URL locale
   const locale = useLocale();
+  const router = useRouter();
   const v2messages = useMemo(() => getV2Messages(locale), [locale]);
 
-  // ---- State (hydrated from localStorage via effects below) ----
-  const [screen, setScreen]       = useState<Screen>("landing");
-  const [unlocked, setUnlocked]   = useState<boolean>(false);
-  const [usesLeft, setUsesLeft]   = useState<number>(2);
-  const [modal, setModal]         = useState<Modal>(null);
-  const [submittedText, setSubmittedText] = useState<string>("");
-  const [banner, setBanner]       = useState<BannerState | null>(null);
+  const [screen, setScreen]                 = useState<Screen>("landing");
+  const [usesLeft, setUsesLeft]             = useState<number>(2);
+  const [modal, setModal]                   = useState<Modal>(null);
+  const [banner, setBanner]                 = useState<BannerState | null>(null);
+  const [fingerprint, setFingerprint]       = useState<string>("");
 
-  // Real API data
-  const [analysis, setAnalysis]         = useState<AnalysisResult | null>(null);
-  const [reportId, setReportId]         = useState<string | null>(null);
-  const [optimization, setOptimization] = useState<OptimizationResult | null>(null);
-  const [fingerprint, setFingerprint]   = useState<string>("");
+  // Remember the current analyze input while we're on the Loading screen so
+  // the EmailWhenReadyModal can re-POST it to /api/analyze with an email
+  // attached (which triggers the background-queue path on the server).
+  const [pendingText, setPendingText]         = useState<string>("");
+  const [pendingCategory, setPendingCategory] = useState<string>("General");
 
-  // ---- Fingerprint on mount ----
+  // Backend-driven progress. Populated from SSE events. When stageIdx is
+  // undefined the Loading screen falls back to its own timer animation
+  // (happens during the initial "started" → first "progress" gap, or if
+  // streaming fails outright).
+  const [stageIdx, setStageIdx]         = useState<number | undefined>(undefined);
+  const [progressPct, setProgressPct]   = useState<number | undefined>(undefined);
+
+  // EmailModal on this page is only used from the async-queued branch
+  // (reportId is null since we don't have one yet). If a user opens the
+  // email modal here we treat it as "email me when done" — not the unlock
+  // flow. The unlock flow lives on /v2/report/[id].
+  const [pendingReportId, _setPendingReportId] = useState<string | null>(null);
+
+  useEffect(() => { setFingerprint(generateFingerprint()); }, []);
+
+  // Uses-count is the only thing we still persist on the landing page.
+  // Report-specific state (analysis/optimization/unlocked) moved to
+  // /v2/report/[id] and is keyed per-report there.
   useEffect(() => {
-    setFingerprint(generateFingerprint());
+    const parsedUses = parseInt(localStorage.getItem("va2_uses") ?? "", 10);
+    if (!isNaN(parsedUses)) setUsesLeft(Math.max(0, parsedUses));
   }, []);
-
-  // ---- localStorage hydration (SSR-safe: only inside useEffect) ----
-  useEffect(() => {
-    const saved = localStorage.getItem("va2_screen");
-    // Never rehydrate "loading" — if the user closed the tab mid-fetch,
-    // the in-flight analysis is gone. Restart from landing.
-    if (saved === "landing" || saved === "report") {
-      setScreen(saved);
-    }
-  }, []);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("va2_unlocked");
-    if (saved === "true") setUnlocked(true);
-  }, []);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("va2_uses");
-    const parsed = parseInt(saved ?? "", 10);
-    if (!isNaN(parsed)) setUsesLeft(Math.max(0, parsed));
-  }, []);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("va2_submitted_text");
-    if (saved) setSubmittedText(saved);
-  }, []);
-
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("va2_analysis");
-      if (saved) setAnalysis(JSON.parse(saved) as AnalysisResult);
-    } catch {
-      // ignore parse errors
-    }
-  }, []);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("va2_report_id");
-    if (saved) setReportId(saved);
-  }, []);
-
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("va2_optimization");
-      if (saved) setOptimization(JSON.parse(saved) as OptimizationResult);
-    } catch {
-      // ignore parse errors
-    }
-  }, []);
-
-  // ---- Persist changes back to localStorage ----
-  useEffect(() => {
-    localStorage.setItem("va2_screen", screen);
-  }, [screen]);
-
-  useEffect(() => {
-    localStorage.setItem("va2_unlocked", String(unlocked));
-  }, [unlocked]);
 
   useEffect(() => {
     localStorage.setItem("va2_uses", String(usesLeft));
   }, [usesLeft]);
 
+  // One-time cleanup of the old localStorage keys from before the route
+  // split. Safe to delete this block after a couple of releases once no
+  // browser still has these.
   useEffect(() => {
-    localStorage.setItem("va2_submitted_text", submittedText);
-  }, [submittedText]);
+    ["va2_screen", "va2_analysis", "va2_report_id", "va2_optimization",
+     "va2_unlocked", "va2_submitted_text"].forEach((k) => localStorage.removeItem(k));
+  }, []);
 
-  useEffect(() => {
-    if (analysis) {
-      localStorage.setItem("va2_analysis", JSON.stringify(analysis));
-    }
-  }, [analysis]);
-
-  useEffect(() => {
-    if (reportId) {
-      localStorage.setItem("va2_report_id", reportId);
-    }
-  }, [reportId]);
-
-  useEffect(() => {
-    if (optimization) {
-      localStorage.setItem("va2_optimization", JSON.stringify(optimization));
-    }
-  }, [optimization]);
-
-  // ---- Handlers ----
-
-  // Called from Landing's AnalyzerCard submit.
-  // Starts the loading animation and fires POST /api/analyze.
-  // When the fetch resolves (faster or slower than the animation),
-  // the screen flips to "report".
-  const startAnalyze = async (text: string) => {
-    setSubmittedText(text);
-    setAnalysis(null);
-    setOptimization(null);
-    setReportId(null);
-    setUnlocked(false);
+  const startAnalyze = async (text: string, category: string) => {
+    setPendingText(text);
+    setPendingCategory(category);
+    // Start externally-driven at step 0 / 0% immediately. If we left
+    // these undefined the Loading component would fall back to its
+    // internal timer — which would race the SSE events and cause the
+    // loader to visibly rewind when the first real "progress" arrived
+    // with a lower stage index. Externally-driven from the start means
+    // the progress only ever moves forward.
+    setStageIdx(0);
+    setProgressPct(0);
     setScreen("loading");
 
+    // SSE request. Consumes the ReadableStream from /api/analyze/stream,
+    // parses `data: ...\n\n` frames, and drives the Loading UI from real
+    // backend progress events instead of a client timer.
+    let response: Response;
     try {
-      const response = await fetchWithTimeout("/api/analyze", {
+      response = await fetch("/api/analyze/stream", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          vacancyText: text,
-          category: "General",
-          locale,
-        }),
-        timeout: 120000,
-        retries: 1,
+        body: JSON.stringify({ vacancyText: text, category, locale }),
       });
-
-      if (!response.ok) throw new Error("Analysis failed");
-
-      const data = await response.json();
-
-      if (data.async) {
-        setBanner({ message: data.message ?? "Queued for email delivery.", variant: "info" });
-        setScreen("landing");
-        return;
-      }
-
-      if (data.reportId && data.analysis) {
-        setReportId(data.reportId);
-        setAnalysis(data.analysis as AnalysisResult);
-        setScreen("report");
-      } else {
-        throw new Error("Unexpected analysis response");
-      }
-    } catch (error) {
-      console.error("Analyze error:", error);
-      const msg = error instanceof Error
-        ? getErrorMessage(error, locale)
-        : v2messages.errors.analysisFailed;
+    } catch (err) {
+      console.error("Analyze SSE connect error:", err);
+      const msg = err instanceof Error ? getErrorMessage(err, locale) : v2messages.errors.analysisFailed;
       setBanner({ message: msg, variant: "error" });
+      setScreen("landing");
+      return;
+    }
+
+    if (!response.ok || !response.body) {
+      setBanner({ message: v2messages.errors.analysisFailed, variant: "error" });
+      setScreen("landing");
+      return;
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let settled = false;
+
+    try {
+      while (!settled) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        // SSE events are delimited by a blank line (`\n\n`).
+        const chunks = buffer.split("\n\n");
+        buffer = chunks.pop() ?? "";
+        for (const chunk of chunks) {
+          const line = chunk.split("\n").find((l) => l.startsWith("data: "));
+          if (!line) continue;
+          let evt: { event?: string; stageIdx?: number; pct?: number; reportId?: string; message?: string };
+          try {
+            evt = JSON.parse(line.slice("data: ".length));
+          } catch {
+            continue;
+          }
+
+          if (evt.event === "started") {
+            // no-op; next progress event will populate the UI
+          } else if (evt.event === "progress") {
+            // Monotonic — never move the bar or the step index backward
+            // mid-stream. stageFromPct on the server clamps correctly, but
+            // if two events race (e.g. a reconnect) we still want to pin
+            // forward-only motion for the visual.
+            if (typeof evt.stageIdx === "number") {
+              setStageIdx((prev) => Math.max(prev ?? 0, evt.stageIdx as number));
+            }
+            if (typeof evt.pct === "number") {
+              setProgressPct((prev) => Math.max(prev ?? 0, evt.pct as number));
+            }
+          } else if (evt.event === "done") {
+            settled = true;
+            if (evt.reportId) {
+              router.push(`/${locale}/v2/report/${evt.reportId}`);
+            } else {
+              setBanner({ message: v2messages.errors.analysisFailed, variant: "error" });
+              setScreen("landing");
+            }
+          } else if (evt.event === "error") {
+            settled = true;
+            setBanner({ message: evt.message ?? v2messages.errors.analysisFailed, variant: "error" });
+            setScreen("landing");
+          }
+        }
+      }
+    } catch (err) {
+      console.error("Analyze SSE read error:", err);
+      setBanner({ message: v2messages.errors.analysisFailed, variant: "error" });
       setScreen("landing");
     }
   };
 
-  // Fallback: called from Loading's onComplete timer if fetch already resolved
-  // and screen was set to "report" — no-op in that case.
-  const analyzeDone = () => {
-    // Only flip if still loading (fetch hasn't resolved yet / no-op if already on report)
-    setScreen((s) => (s === "loading" ? "report" : s));
-  };
+  const goHome = () => setScreen("landing");
 
-  const handleUnlock = (optim: OptimizationResult, _email: string) => {
-    setOptimization(optim);
-    setUnlocked(true);
-    setUsesLeft((n) => Math.max(0, n - 1));
+  // Unused on this page (we navigate away before ever opening the email
+  // modal as an unlock step) — but kept wired so the Loading screen's
+  // "email it to me" slow-banner CTA still does something sensible.
+  const handleUnlockNoop = (_optim: OptimizationResult, _email: string) => {
     setModal(null);
   };
 
-  // Opens email modal if uses remain (or already unlocked), limit modal otherwise.
-  const openEmailOrLimit = () => {
-    if (usesLeft <= 0 && !unlocked) {
-      setModal("limit");
-    } else {
-      setModal("email");
-    }
-  };
-
-  // ReviewChip jump handler.
-  const jumpTo = (key: "landing" | "loading" | "report" | "unlocked") => {
-    if (key === "unlocked") {
-      setScreen("report");
-      setUnlocked(true);
-    } else {
-      setScreen(key as Screen);
-    }
-  };
-
-  // ---- Render ----
   return (
     <V2MessagesProvider messages={v2messages}>
       <BannerProvider setBanner={setBanner}>
-      <div
-        style={{
+        <div style={{
           minHeight: "100vh",
           background: tokens.bgBase,
           color: tokens.ink,
           fontFamily: tokens.bodyFont,
           position: "relative",
-        }}
-      >
-        <PageShaderBackdrop tokens={tokens} />
+        }}>
+          <PageShaderBackdrop tokens={tokens} />
 
-        <div style={{ position: "relative", zIndex: 1 }}>
-          <Navbar
-            tokens={tokens}
-            onHome={() => jumpTo("landing")}
-            usesLeft={usesLeft}
-            screen={screen}
-          />
+          <div style={{ position: "relative", zIndex: 1 }}>
+            <Navbar
+              tokens={tokens}
+              onHome={goHome}
+              usesLeft={usesLeft}
+              screen={screen === "loading" ? "loading" : "landing"}
+            />
 
-          {banner && (
-            <div style={{
-              position: "fixed", top: 80, left: "50%", transform: "translateX(-50%)",
-              zIndex: 50, maxWidth: 520, width: "calc(100% - 32px)",
-            }}>
-              <InlineBanner
+            {banner && (
+              <BannerOverlay
+                banner={banner}
                 tokens={tokens}
-                message={banner.message}
-                variant={banner.variant}
                 onDismiss={() => setBanner(null)}
               />
-            </div>
-          )}
+            )}
 
-          {screen === "landing" && (
-            <Landing tokens={tokens} onAnalyze={startAnalyze} />
-          )}
+            {screen === "landing" && (
+              <Landing tokens={tokens} onAnalyze={startAnalyze} />
+            )}
 
-          {screen === "loading" && (
-            <Loading
-              tokens={tokens}
-              onComplete={analyzeDone}
-              onSkipToEmail={() => setModal("email")}
-            />
-          )}
+            {screen === "loading" && (
+              <Loading
+                tokens={tokens}
+                onSkipToEmail={() => setModal("emailWhenReady")}
+                stageIdx={stageIdx}
+                progressPct={progressPct}
+              />
+            )}
 
-          {screen === "report" && (
-            <Report
-              tokens={tokens}
-              unlocked={unlocked}
-              usesLeft={usesLeft}
-              submittedText={submittedText}
-              analysis={analysis}
-              optimization={optimization}
-              onOpenEmail={openEmailOrLimit}
-              onOpenLimit={() => setModal("limit")}
-              onOpenDemo={() => setModal("demo")}
-            />
-          )}
+            {modal === "emailWhenReady" && (
+              <EmailWhenReadyModal
+                tokens={tokens}
+                vacancyText={pendingText}
+                category={pendingCategory}
+                locale={locale}
+                onClose={() => setModal(null)}
+                onQueued={(msg) => {
+                  setBanner({ message: msg, variant: "success" });
+                  setScreen("landing");
+                }}
+                onError={(msg) => setBanner({ message: msg, variant: "error" })}
+              />
+            )}
 
-          {modal === "email" && (
-            <EmailModal
-              tokens={tokens}
-              reportId={reportId}
-              fingerprint={fingerprint}
-              locale={locale}
-              onClose={() => setModal(null)}
-              onUnlock={handleUnlock}
-              onLimit={() => setModal("limit")}
-              onError={(msg) => setBanner({ message: msg, variant: "error" })}
-            />
-          )}
+            {modal === "email" && (
+              <EmailModal
+                tokens={tokens}
+                reportId={pendingReportId}
+                fingerprint={fingerprint}
+                locale={locale}
+                onClose={() => setModal(null)}
+                onUnlock={handleUnlockNoop}
+                onLimit={() => setModal("limit")}
+                onError={(msg) => setBanner({ message: msg, variant: "error" })}
+              />
+            )}
 
-          {modal === "limit" && (
-            <LimitModal
-              tokens={tokens}
-              onClose={() => setModal(null)}
-              onSeeDemo={() => setModal("demo")}
-            />
-          )}
+            {modal === "limit" && (
+              <LimitModal
+                tokens={tokens}
+                onClose={() => setModal(null)}
+                onSeeDemo={() => setModal("demo")}
+              />
+            )}
 
-          {modal === "demo" && (
-            <DemoModal
-              tokens={tokens}
-              onClose={() => setModal(null)}
-            />
-          )}
+            {modal === "demo" && (
+              <DemoModal
+                tokens={tokens}
+                onClose={() => setModal(null)}
+              />
+            )}
+          </div>
         </div>
-
-        {process.env.NODE_ENV === 'development' && (
-          <ReviewChip screen={screen} unlocked={unlocked} onJump={jumpTo} />
-        )}
-      </div>
       </BannerProvider>
     </V2MessagesProvider>
   );

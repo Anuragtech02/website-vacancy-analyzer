@@ -3,6 +3,7 @@
 import { type Tokens } from "../theme";
 import { Card, Eyebrow, ScoreRing } from "../primitives";
 import { useV2T } from "../i18n-context";
+import { useBreakpoint, isMobile, isTablet, isNarrow } from "../use-breakpoint";
 
 interface ScoreCardProps {
   tokens: Tokens;
@@ -14,6 +15,11 @@ interface ScoreCardProps {
 
 export function ScoreCard({ tokens, overall, verdictLabel, executiveSummary, wordCount }: ScoreCardProps) {
   const t = useV2T();
+  const bp = useBreakpoint();
+  const mobile = isMobile(bp);
+  const tablet = isTablet(bp);
+  const narrow = isNarrow(bp);
+
   const wordsDisplay = wordCount != null ? String(wordCount) : "148";
 
   // Derive read time from word count (~200 WPM)
@@ -22,16 +28,43 @@ export function ScoreCard({ tokens, overall, verdictLabel, executiveSummary, wor
         const secs = Math.max(5, Math.round((wordCount / 200) * 60));
         return secs < 60 ? `${secs}s` : `${Math.round(secs / 60)}m`;
       })()
-    : "—";
+    : "–";
+
+  const ringSize = mobile ? 160 : tablet ? 180 : 220;
+  const verdictFontSize = mobile ? 32 : tablet ? 40 : 48;
+  const cardPad = mobile ? 24 : 36;
+  const gridGap = mobile ? 24 : 36;
+  const gridColumns = narrow ? "1fr" : "240px 1fr";
 
   return (
-    <Card tokens={tokens} pad={36}>
-      <div style={{ display: "grid", gridTemplateColumns: "240px 1fr", gap: 36, alignItems: "center" }}>
-        <ScoreRing tokens={tokens} value={overall} size={220} label={t.report.scoreCard.scoreRingLabel} />
+    <Card tokens={tokens} pad={cardPad} style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+      <div style={{
+        display: "grid", gridTemplateColumns: gridColumns, gap: gridGap,
+        alignItems: narrow ? "center" : "start", flex: 1,
+      }}>
+        {/* Left column: score ring + word/read-time stats directly beneath */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 28 }}>
+          <ScoreRing tokens={tokens} value={overall} size={ringSize} label={t.report.scoreCard.scoreRingLabel} />
+          <div style={{ display: "flex", gap: 32, justifyContent: "center" }}>
+            {(
+              [
+                [t.report.scoreCard.stats.words,    wordsDisplay],
+                [t.report.scoreCard.stats.readTime, readTimeDisplay],
+              ] as const
+            ).map(([k, v]) => (
+              <div key={k} style={{ textAlign: "center" }}>
+                <div style={{ fontFamily: tokens.displayFont, fontSize: 24, fontWeight: tokens.displayWeight, color: tokens.ink, letterSpacing: "-0.02em" }}>{v}</div>
+                <div style={{ fontFamily: tokens.monoFont, fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: tokens.inkMute, marginTop: 2 }}>{k}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Right column: verdict + executive summary, uncluttered */}
         <div>
           <Eyebrow tokens={tokens}>{t.report.scoreCard.eyebrow}</Eyebrow>
           <div style={{
-            fontFamily: tokens.displayFont, fontSize: 48, lineHeight: 1.05,
+            fontFamily: tokens.displayFont, fontSize: verdictFontSize, lineHeight: 1.05,
             fontWeight: tokens.displayWeight, letterSpacing: "-0.03em",
             color: tokens.ink, marginTop: 14,
           }}>
@@ -43,19 +76,6 @@ export function ScoreCard({ tokens, overall, verdictLabel, executiveSummary, wor
           }}>
             {executiveSummary ?? t.report.scoreCard.summary}
           </p>
-          <div style={{ display: "flex", gap: 20, marginTop: 22, flexWrap: "wrap" }}>
-            {(
-              [
-                [t.report.scoreCard.stats.words,    wordsDisplay],
-                [t.report.scoreCard.stats.readTime,  readTimeDisplay],
-              ] as const
-            ).map(([k, v]) => (
-              <div key={k}>
-                <div style={{ fontFamily: tokens.displayFont, fontSize: 24, fontWeight: tokens.displayWeight, color: tokens.ink, letterSpacing: "-0.02em" }}>{v}</div>
-                <div style={{ fontFamily: tokens.monoFont, fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: tokens.inkMute, marginTop: 2 }}>{k}</div>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </Card>

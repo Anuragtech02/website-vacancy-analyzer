@@ -2,8 +2,9 @@
 
 import { useMemo } from "react";
 import { type Tokens, type PillarKey } from "../theme";
-import { type PillarDatum, type PillarLabelKey, PILLAR_DATA } from "./pillar-data";
+import { type PillarDatum, type PillarLabelKey } from "./pillar-data";
 import { useV2T } from "../i18n-context";
+import { useBreakpoint, isMobile, isNarrow } from "../use-breakpoint";
 import { ReportHeader } from "./report-header";
 import { ScoreCard } from "./score-card";
 import { GateCard } from "./gate-card";
@@ -64,13 +65,20 @@ export function Report({
   onOpenDemo: _onOpenDemo,
 }: ReportProps) {
   const t = useV2T();
+  const bp = useBreakpoint();
+  const narrow = isNarrow(bp);
+  const mobile = isMobile(bp);
 
+  // Pillar data always comes from the real analysis. When it's missing (stale
+  // hydration, bug) we render an empty array — the page hydration guard should
+  // already have bounced users back to landing before they see this state.
   const pillarData = useMemo(
-    () => (analysis ? mapAnalysisToPillarData(analysis) : PILLAR_DATA),
+    () => (analysis ? mapAnalysisToPillarData(analysis) : []),
     [analysis],
   );
 
   const overall = useMemo(() => {
+    if (pillarData.length === 0) return 0;
     const avg = pillarData.reduce((s, p) => s + p.score, 0) / pillarData.length;
     return Math.round(avg * 10) / 10;
   }, [pillarData]);
@@ -83,14 +91,20 @@ export function Report({
 
   const potentialScore = optimization?.estimated_scores?.total_score ?? undefined;
 
+  const topPadding = mobile ? "24px 16px 20px" : "48px 48px 32px";
+  const topGap = mobile ? 20 : 32;
+  const topColumns = narrow ? "1fr" : "1.35fr 1fr";
+
+  const disclaimerPadding = mobile ? "16px 16px 24px" : "16px 48px 48px";
+
   return (
     <div style={{ width: "100%" }}>
-      <ReportHeader tokens={tokens} usesLeft={usesLeft} unlocked={unlocked} />
+      <ReportHeader tokens={tokens} usesLeft={usesLeft} unlocked={unlocked} jobTitle={analysis?.metadata.job_title} />
 
-      {/* TOP: score + gate/critical */}
+      {/* TOP: score + gate/critical — stretch so both cards share the row height */}
       <section style={{
-        padding: "48px 48px 32px", maxWidth: 1360, margin: "0 auto",
-        display: "grid", gridTemplateColumns: "1.35fr 1fr", gap: 32, alignItems: "start",
+        padding: topPadding, maxWidth: 1360, margin: "0 auto",
+        display: "grid", gridTemplateColumns: topColumns, gap: topGap, alignItems: "stretch",
       }}>
         <ScoreCard
           tokens={tokens}
@@ -122,13 +136,14 @@ export function Report({
           tokens={tokens}
           rewrittenText={optimization?.full_text_plain}
           projectedScore={potentialScore}
+          currentScore={overall}
         />
       )}
 
       <OriginalTextAccordion tokens={tokens} text={submittedText} />
 
       {/* Disclaimer */}
-      <section style={{ padding: "16px 48px 48px", maxWidth: 1360, margin: "0 auto" }}>
+      <section style={{ padding: disclaimerPadding, maxWidth: 1360, margin: "0 auto" }}>
         <div style={{
           fontFamily: tokens.bodyFont, fontSize: 13, color: tokens.inkMute,
           maxWidth: 720, lineHeight: 1.5,
@@ -141,6 +156,7 @@ export function Report({
         <StickyUnlockBanner
           tokens={tokens}
           onOpenEmail={onOpenEmail}
+          currentScore={overall}
           potentialScore={potentialScore}
         />
       )}

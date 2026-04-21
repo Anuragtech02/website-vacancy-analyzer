@@ -34,9 +34,16 @@ export async function POST(req: NextRequest) {
     // Check + insert atomically to prevent double-click / fetch-retry races.
     // IP is intentionally excluded from the count — shared office/VPN IPs would
     // cause colleagues to block each other. See lib/db.ts: countLeadsByFingerprint.
-    // BYPASS_USAGE_LIMIT=true can be set in .env.local for development.
+    //
+    // Limit resolution, in order of precedence:
+    //   1. BYPASS_USAGE_LIMIT=true           → unlimited (dev/local)
+    //   2. ANALYZER_USAGE_LIMIT=<n>          → explicit override (UAT/tester)
+    //   3. default                           → 2 rewrites per user (prod)
     const bypassLimit = process.env.BYPASS_USAGE_LIMIT === 'true';
-    const effectiveLimit = bypassLimit ? Number.MAX_SAFE_INTEGER : 2;
+    const configuredLimit = parseInt(process.env.ANALYZER_USAGE_LIMIT ?? '', 10);
+    const effectiveLimit = bypassLimit
+      ? Number.MAX_SAFE_INTEGER
+      : (Number.isFinite(configuredLimit) && configuredLimit > 0 ? configuredLimit : 2);
 
     const { allowed, usageCountBefore } = await dbClient.createLeadIfUnderLimit({
       email,
@@ -64,13 +71,19 @@ export async function POST(req: NextRequest) {
     const analysis = JSON.parse(report.analysis_json);
     const optimizationResult = await optimizeVacancy(report.vacancy_text, analysis, locale || 'nl');
 
-    // Sync to HubSpot (with proper error handling)
+    // Sync to HubSpot (with proper error handling).
+    //
+    // lead_source tags every contact synced from this app so the sales team
+    // can segment "external analyzer" leads separately from the in-product
+    // recruitment-intelligence-demo leads (which use
+    // lead_source: "recruitment-intelligence-demo" from backend salesRoutes).
     const hubspotResult = await syncHubSpotContact(email, {
       company: analysis.metadata?.organization || "",
       website: "",
       vacature_titel: analysis.metadata?.job_title || "Unknown Vacancy",
       vacature_report_id: reportId,
-      count_analyzer_flow: String(usageCount + 1) // NEW total count (1 for first submission, 2 for second)
+      count_analyzer_flow: String(usageCount + 1), // NEW total count (1 for first submission, 2 for second)
+      lead_source: "external-analyzer",
     });
 
     if (hubspotResult && !hubspotResult.success) {
