@@ -32,6 +32,11 @@ export function EmailModal({ tokens, reportId, fingerprint, locale, onClose, onU
   }, [busy, t.modals.email.busy.length]);
 
   const submit = async () => {
+    // Double-click guard. React state is async, so a rapid second click can
+    // enter submit() before the first call's setBusy(true) has rendered — two
+    // parallel /api/optimize requests means one may 500 while the other
+    // succeeds, showing an error banner next to an unlocked report.
+    if (busy) return;
     if (!email || !email.includes("@")) return;
     if (!reportId) {
       onError(t.errors.reportNotAvailable);

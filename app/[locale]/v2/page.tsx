@@ -28,6 +28,43 @@ type Screen = "landing" | "loading" | "report";
 type Modal = "email" | "limit" | "demo" | null;
 
 // ---------------------------------------------------------------------------
+// BannerOverlay — fixed-position wrapper with auto-dismiss. Key on the message
+// string so a new banner resets the timer (otherwise a second error fired
+// 7s later would inherit the first banner's already-expired timer).
+// ---------------------------------------------------------------------------
+
+interface BannerOverlayProps {
+  banner: BannerState;
+  tokens: ReturnType<typeof buildTokens>;
+  onDismiss: () => void;
+}
+
+function BannerOverlay({ banner, tokens, onDismiss }: BannerOverlayProps) {
+  useEffect(() => {
+    // Info toasts linger slightly longer (users may need to read a queued-job
+    // confirmation). Errors clear quicker so they don't stack on retries.
+    const ms = banner.variant === "error" ? 6000 : 8000;
+    const timer = setTimeout(onDismiss, ms);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [banner.message, banner.variant]);
+
+  return (
+    <div style={{
+      position: "fixed", top: 80, left: "50%", transform: "translateX(-50%)",
+      zIndex: 50, maxWidth: 520, width: "calc(100% - 32px)",
+    }}>
+      <InlineBanner
+        tokens={tokens}
+        message={banner.message}
+        variant={banner.variant}
+        onDismiss={onDismiss}
+      />
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // V2Page
 // ---------------------------------------------------------------------------
 
@@ -212,6 +249,10 @@ export default function V2Page() {
     setUnlocked(true);
     setUsesLeft((n) => Math.max(0, n - 1));
     setModal(null);
+    // Clear any stale error/info banner from a prior failed attempt — otherwise
+    // the user sees a successful unlock and a leftover "couldn't generate" toast
+    // at the same time.
+    setBanner(null);
   };
 
   // Opens email modal if uses remain (or already unlocked), limit modal otherwise.
@@ -250,17 +291,11 @@ export default function V2Page() {
           />
 
           {banner && (
-            <div style={{
-              position: "fixed", top: 80, left: "50%", transform: "translateX(-50%)",
-              zIndex: 50, maxWidth: 520, width: "calc(100% - 32px)",
-            }}>
-              <InlineBanner
-                tokens={tokens}
-                message={banner.message}
-                variant={banner.variant}
-                onDismiss={() => setBanner(null)}
-              />
-            </div>
+            <BannerOverlay
+              banner={banner}
+              tokens={tokens}
+              onDismiss={() => setBanner(null)}
+            />
           )}
 
           {screen === "landing" && (
