@@ -81,8 +81,14 @@ export default function V2Page() {
   const startAnalyze = async (text: string, category: string) => {
     setPendingText(text);
     setPendingCategory(category);
-    setStageIdx(undefined);
-    setProgressPct(undefined);
+    // Start externally-driven at step 0 / 0% immediately. If we left
+    // these undefined the Loading component would fall back to its
+    // internal timer — which would race the SSE events and cause the
+    // loader to visibly rewind when the first real "progress" arrived
+    // with a lower stage index. Externally-driven from the start means
+    // the progress only ever moves forward.
+    setStageIdx(0);
+    setProgressPct(0);
     setScreen("loading");
 
     // SSE request. Consumes the ReadableStream from /api/analyze/stream,
@@ -136,8 +142,16 @@ export default function V2Page() {
           if (evt.event === "started") {
             // no-op; next progress event will populate the UI
           } else if (evt.event === "progress") {
-            if (typeof evt.stageIdx === "number") setStageIdx(evt.stageIdx);
-            if (typeof evt.pct === "number") setProgressPct(evt.pct);
+            // Monotonic — never move the bar or the step index backward
+            // mid-stream. stageFromPct on the server clamps correctly, but
+            // if two events race (e.g. a reconnect) we still want to pin
+            // forward-only motion for the visual.
+            if (typeof evt.stageIdx === "number") {
+              setStageIdx((prev) => Math.max(prev ?? 0, evt.stageIdx as number));
+            }
+            if (typeof evt.pct === "number") {
+              setProgressPct((prev) => Math.max(prev ?? 0, evt.pct as number));
+            }
           } else if (evt.event === "done") {
             settled = true;
             if (evt.reportId) {

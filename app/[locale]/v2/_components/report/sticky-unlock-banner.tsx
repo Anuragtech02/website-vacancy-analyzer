@@ -62,8 +62,14 @@ export function StickyUnlockBanner({ tokens, onOpenEmail, currentScore, potentia
         variant="primary"
         onClick={onOpenEmail}
         style={{
-          padding: "10px 16px",
+          padding: "12px 20px",
           fontSize: 13,
+          // Keep the CTA on one line — "View improved version →" was
+          // wrapping inside a too-narrow pill. On desktop/tablet the
+          // parent flex container grows the title column instead; on
+          // mobile the button is already full-width so nowrap is fine.
+          whiteSpace: "nowrap",
+          flexShrink: 0,
           width: mobile ? "100%" : undefined,
         }}
       >

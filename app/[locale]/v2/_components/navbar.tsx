@@ -118,14 +118,29 @@ export function Navbar({ tokens, onHome, usesLeft, screen }: NavbarProps) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const handleScrollToAnalyzer = () => {
-    window.dispatchEvent(new CustomEvent("va2:scroll-to-analyzer"));
+  const router = useRouter();
+  const locale = useLocale();
+
+  // Clicking "Analyze vacancy" on the landing scrolls to the analyzer card;
+  // on the report page there is no analyzer card to scroll to, so route
+  // back to /v2 instead. Gives report-page users a one-click path to start
+  // a new vacancy analysis (previous behaviour hid the button entirely,
+  // which meant the only way back to landing was the logo).
+  const handleAnalyzeClick = () => {
+    if (screen === "report") {
+      router.push(`/${locale}/v2`);
+    } else {
+      window.dispatchEvent(new CustomEvent("va2:scroll-to-analyzer"));
+    }
   };
 
   const mobile = isMobile(bp);
   const narrow = isNarrow(bp);
-  // Hide the "Analyze vacancy" CTA on mobile/narrow viewports; keep on report screen suppressed (unchanged).
-  const showAnalyzeCTA = screen !== "report" && !narrow;
+  // Hide the "Analyze vacancy" CTA only on narrow viewports (mobile +
+  // tablet) to keep that header uncluttered. On desktop it's present on
+  // every screen so a user who's on the report page can jump back to
+  // analyze a new vacancy in one click.
+  const showAnalyzeCTA = !narrow;
   // Book-demo link is present on every screen but hides on mobile to keep the
   // narrow-viewport header clean (the footer still has it there).
   const showBookDemo = !mobile;
@@ -189,15 +204,18 @@ export function Navbar({ tokens, onHome, usesLeft, screen }: NavbarProps) {
             </Button>
           )}
 
-          {/* Analyze vacancy CTA — hidden on report screen and on narrow viewports */}
+          {/* Analyze vacancy CTA — hidden only on narrow viewports. On
+              the report page the button routes to /v2 landing so the user
+              can start a new analysis; on landing it scrolls to the
+              analyzer card. */}
           {showAnalyzeCTA && (
             <Button
               tokens={tokens}
               variant="primary"
-              onClick={handleScrollToAnalyzer}
+              onClick={handleAnalyzeClick}
               style={{ padding: "10px 16px", fontSize: 14, display: "inline-flex", alignItems: "center", gap: 6 }}
             >
-              {t.nav.analyzeVacancy}
+              {screen === "report" ? t.nav.newAnalysis : t.nav.analyzeVacancy}
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>

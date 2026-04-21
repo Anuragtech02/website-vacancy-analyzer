@@ -17,6 +17,7 @@ const en = {
   },
   nav: {
     analyzeVacancy: "Analyze vacancy",
+    newAnalysis:    "New analysis",
     bookDemo: "Book a demo",
     langEn: "EN",
     langNl: "NL",

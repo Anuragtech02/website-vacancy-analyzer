@@ -18,6 +18,7 @@ const nl = {
   },
   nav: {
     analyzeVacancy: "Analyseer vacature",
+    newAnalysis:    "Nieuwe analyse",
     bookDemo: "Plan een demo",
     langEn: "EN",
     langNl: "NL",
