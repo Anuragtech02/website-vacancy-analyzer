@@ -24,7 +24,8 @@ interface AnalyzerCardProps {
 // Hard upper bound: typed/pasted vacancies beyond this length are rejected
 // client-side to keep LLM latency predictable and token cost bounded.
 // Must stay in sync with MAX_VACANCY_CHARS in app/api/analyze/route.ts.
-const MAX_CHARS = 4000;
+// Raised from 4000 → 10000 — real vacancies routinely run 6–10k.
+const MAX_CHARS = 10000;
 
 // Matches the option values v1 uses (app/[locale]/page.tsx) and what
 // lib/prompts.ts' getAnalyzerPrompt(category, ...) expects — changing a value

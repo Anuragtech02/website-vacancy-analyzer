@@ -10,7 +10,9 @@ import { createJob, enqueueJob } from "@/lib/jobs";
 // 'done'. See lib/jobs.ts for the full lifecycle documentation.
 
 // Hard upper bound — must stay in sync with v2 AnalyzerCard MAX_CHARS.
-const MAX_VACANCY_CHARS = 4000;
+// Raised from 4000 → 10000 on user report that real-world vacancies
+// (especially senior / technical roles) routinely run 6–10k characters.
+const MAX_VACANCY_CHARS = 10000;
 
 export async function POST(req: NextRequest) {
   const ip = req.headers.get("x-forwarded-for") || "unknown";
