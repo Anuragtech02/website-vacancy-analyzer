@@ -555,19 +555,26 @@ export default function Home() {
                              </p>
                           </div>
 
-                          {/* Email Capture (show after 15 seconds) */}
+                          {/* Email Capture (show after 15 seconds).
+                              Radius reset: the shadcn Button base class is
+                              rounded-full (pill), which clashed with the
+                              card (rounded-xl) and input (rounded-lg) and
+                              made the whole element feel "too round". Every
+                              surface here now shares rounded-lg — card,
+                              input, and the Button (via className override
+                              merged by twMerge). */}
                           {showEmailCapture && (
                             <div className="w-full max-w-md mx-auto mb-6 px-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 space-y-3">
+                              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 space-y-3 shadow-sm">
                                 <div className="flex items-start gap-3">
-                                  <div className="flex-shrink-0 w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center">
-                                    <span className="text-white text-sm font-bold">!</span>
+                                  <div className="flex-shrink-0 w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center mt-0.5">
+                                    <span className="text-white text-sm font-bold leading-none">!</span>
                                   </div>
-                                  <div className="flex-1">
+                                  <div className="flex-1 min-w-0">
                                     <h4 className="font-bold text-slate-800 text-sm mb-1">
                                       {t('emailCapture.title')}
                                     </h4>
-                                    <p className="text-xs text-slate-600">
+                                    <p className="text-xs text-slate-600 leading-relaxed">
                                       {t('emailCapture.body')}
                                     </p>
                                   </div>
@@ -578,11 +585,11 @@ export default function Home() {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder={t('emailCapture.placeholder')}
-                                    className="flex-1 px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    className="flex-1 min-w-0 px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40"
                                   />
                                   <Button
                                     onClick={handleContinueInBackground}
-                                    className="px-4 py-2 text-sm font-semibold bg-primary hover:bg-primary/90"
+                                    className="px-4 py-2 text-sm font-semibold rounded-lg bg-primary hover:bg-primary/90 shrink-0"
                                   >
                                     {t('emailCapture.continue')}
                                   </Button>
