@@ -4,6 +4,7 @@ import { type Tokens } from "../theme";
 import { Button, Pill } from "../primitives";
 import { useV2T } from "../i18n-context";
 import { useBanner } from "../banner-context";
+import { useBreakpoint, isMobile } from "../use-breakpoint";
 
 interface ReportHeaderProps {
   tokens: Tokens;
@@ -15,6 +16,8 @@ interface ReportHeaderProps {
 export function ReportHeader({ tokens, usesLeft, unlocked, jobTitle }: ReportHeaderProps) {
   const t = useV2T();
   const setBanner = useBanner();
+  const bp = useBreakpoint();
+  const mobile = isMobile(bp);
 
   const handleDownloadPdf = () => {
     if (!unlocked) return;
@@ -35,8 +38,9 @@ export function ReportHeader({ tokens, usesLeft, unlocked, jobTitle }: ReportHea
     }}>
       <div style={{
         maxWidth: 1360, margin: "0 auto",
-        padding: "14px 48px",
+        padding: mobile ? "10px 16px" : "14px 48px",
         display: "flex", justifyContent: "space-between", alignItems: "center",
+        flexWrap: "wrap", gap: mobile ? 8 : 0,
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 14, minWidth: 0 }}>
           <div style={{
@@ -52,13 +56,18 @@ export function ReportHeader({ tokens, usesLeft, unlocked, jobTitle }: ReportHea
           }}>{displayTitle}</div>
           <Pill tokens={tokens}>{t.report.header.generatedNow}</Pill>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{
-            fontFamily: tokens.monoFont, fontSize: 11, letterSpacing: "0.12em",
-            color: tokens.inkMute, textTransform: "uppercase",
-          }}>
-            {t.report.header.rewritesLeft.replace('{count}', String(usesLeft))}
-          </div>
+        <div style={{
+          display: "flex", alignItems: "center", gap: 10,
+          flexWrap: "wrap",
+        }}>
+          {!mobile && (
+            <div style={{
+              fontFamily: tokens.monoFont, fontSize: 11, letterSpacing: "0.12em",
+              color: tokens.inkMute, textTransform: "uppercase",
+            }}>
+              {t.report.header.rewritesLeft.replace('{count}', String(usesLeft))}
+            </div>
+          )}
           <Button
             tokens={tokens}
             variant="ghost"

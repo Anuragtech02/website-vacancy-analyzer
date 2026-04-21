@@ -3,6 +3,7 @@
 import { type Tokens } from "../theme";
 import { Card, Eyebrow } from "../primitives";
 import { useV2T } from "../i18n-context";
+import { useBreakpoint, isMobile } from "../use-breakpoint";
 
 interface CriticalPointsProps {
   tokens: Tokens;
@@ -11,6 +12,8 @@ interface CriticalPointsProps {
 
 export function CriticalPoints({ tokens, issues }: CriticalPointsProps) {
   const t = useV2T();
+  const bp = useBreakpoint();
+  const mobile = isMobile(bp);
 
   // Only render real issues from the analysis. Empty → render nothing rather
   // than show fake points.
@@ -20,10 +23,13 @@ export function CriticalPoints({ tokens, issues }: CriticalPointsProps) {
 
   if (items.length === 0) return null;
 
+  const cardPad = mobile ? 20 : 28;
+  const titleFontSize = mobile ? 24 : 30;
+
   return (
     <Card
       tokens={tokens}
-      pad={28}
+      pad={cardPad}
       tint={tokens.ink}
       style={{
         color: tokens.bgRaised, borderColor: tokens.ink,
@@ -34,7 +40,7 @@ export function CriticalPoints({ tokens, issues }: CriticalPointsProps) {
         {t.report.critical.eyebrow}
       </Eyebrow>
       <div style={{
-        fontFamily: tokens.displayFont, fontSize: 30, fontWeight: tokens.displayWeight,
+        fontFamily: tokens.displayFont, fontSize: titleFontSize, fontWeight: tokens.displayWeight,
         color: tokens.bgRaised, marginTop: 10, letterSpacing: "-0.02em",
       }}>
         {t.report.critical.title}

@@ -14,6 +14,7 @@ import { Magnetic } from "../motion";
 import { AnalyzerBackdrop } from "./analyzer-backdrop";
 import { FloatingReassurance } from "./floating-reassurance";
 import { useV2T } from "../i18n-context";
+import { useBreakpoint, isMobile, isNarrow } from "../use-breakpoint";
 
 interface AnalyzerCardProps {
   tokens: Tokens;
@@ -27,6 +28,9 @@ const MAX_CHARS = 2000;
 export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
   const t = useV2T();
   const locale = useLocale();
+  const bp = useBreakpoint();
+  const mobile = isMobile(bp);
+  const narrow = isNarrow(bp);
   const [text, setText] = useState("");
   const [focus, setFocus] = useState(false);
   const chars = text.length;
@@ -47,7 +51,7 @@ export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
     <Card tokens={tokens} pad={0} style={{ overflow: "hidden", position: "relative" }}>
       <AnalyzerBackdrop tokens={tokens} />
       <div style={{
-        padding: "16px 22px",
+        padding: mobile ? "14px 16px" : "16px 22px",
         borderBottom: `1px solid ${tokens.line}`,
         display: "flex", alignItems: "center", justifyContent: "space-between",
         background: tokens.bgMuted,
@@ -57,40 +61,46 @@ export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
         </div>
       </div>
 
-      {/* step explainer strip */}
-      <div style={{
-        display: "grid", gridTemplateColumns: "1fr 20px 1fr 20px 1fr",
-        alignItems: "center", gap: 0,
-        padding: "18px 22px",
-        borderBottom: `1px solid ${tokens.line}`,
-      }}>
-        {t.analyzerCard.steps.map((step, i) => (
-          <React.Fragment key={i}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{
-                width: 22, height: 22, borderRadius: 999,
-                background: i === 0 ? tokens.primaryColor : tokens.bgMuted,
-                color: i === 0 ? "#fff" : tokens.inkSoft,
-                border: `1px solid ${i === 0 ? tokens.primaryColor : tokens.line}`,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontFamily: tokens.monoFont, fontSize: 11, fontWeight: 600,
-              }}>{i + 1}</span>
-              <div>
-                <div style={{ fontFamily: tokens.bodyFont, fontSize: 13, fontWeight: 600, color: tokens.ink }}>{step.title}</div>
-                <div style={{ fontFamily: tokens.bodyFont, fontSize: 12, color: tokens.inkMute }}>{step.desc}</div>
+      {/* step explainer strip — hidden on mobile (ornamental) */}
+      {!mobile && (
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: narrow
+            ? "1fr 16px 1fr 16px 1fr"
+            : "1fr 20px 1fr 20px 1fr",
+          alignItems: "center", gap: 0,
+          padding: narrow ? "14px 16px" : "18px 22px",
+          borderBottom: `1px solid ${tokens.line}`,
+        }}>
+          {t.analyzerCard.steps.map((step, i) => (
+            <React.Fragment key={i}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <span style={{
+                  width: 22, height: 22, borderRadius: 999,
+                  background: i === 0 ? tokens.primaryColor : tokens.bgMuted,
+                  color: i === 0 ? "#fff" : tokens.inkSoft,
+                  border: `1px solid ${i === 0 ? tokens.primaryColor : tokens.line}`,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontFamily: tokens.monoFont, fontSize: 11, fontWeight: 600,
+                  flexShrink: 0,
+                }}>{i + 1}</span>
+                <div>
+                  <div style={{ fontFamily: tokens.bodyFont, fontSize: 13, fontWeight: 600, color: tokens.ink }}>{step.title}</div>
+                  <div style={{ fontFamily: tokens.bodyFont, fontSize: 12, color: tokens.inkMute }}>{step.desc}</div>
+                </div>
               </div>
-            </div>
-            {i < 2 && (
-              <svg width="20" height="10" viewBox="0 0 20 10" style={{ color: tokens.lineStrong }}>
-                <path d="M0 5 L18 5 M14 1 L18 5 L14 9" stroke="currentColor" strokeWidth="1" fill="none" />
-              </svg>
-            )}
-          </React.Fragment>
-        ))}
-      </div>
+              {i < 2 && (
+                <svg width="20" height="10" viewBox="0 0 20 10" style={{ color: tokens.lineStrong }}>
+                  <path d="M0 5 L18 5 M14 1 L18 5 L14 9" stroke="currentColor" strokeWidth="1" fill="none" />
+                </svg>
+              )}
+            </React.Fragment>
+          ))}
+        </div>
+      )}
 
       {/* textarea */}
-      <div style={{ position: "relative", padding: 22 }}>
+      <div style={{ position: "relative", padding: mobile ? 16 : 22 }}>
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -98,7 +108,9 @@ export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
           onBlur={() => setFocus(false)}
           placeholder={t.analyzerCard.placeholder}
           style={{
-            width: "100%", height: 280, resize: "vertical",
+            width: "100%",
+            height: mobile ? 200 : 280,
+            resize: "vertical",
             background: "transparent", border: "none", outline: "none",
             fontFamily: tokens.bodyFont, fontSize: 15, lineHeight: 1.55,
             color: tokens.ink,
@@ -106,7 +118,11 @@ export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
           }}
         />
         <div style={{
-          display: "flex", justifyContent: "space-between", alignItems: "center",
+          display: "flex",
+          flexDirection: mobile ? "column-reverse" : "row",
+          justifyContent: "space-between",
+          alignItems: mobile ? "flex-start" : "center",
+          gap: mobile ? 8 : 0,
           marginTop: 10, paddingTop: 14,
           borderTop: `1px dashed ${tokens.line}`,
         }}>
@@ -138,7 +154,10 @@ export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
             variant="primary"
             onClick={() => canAnalyze && onAnalyze(text)}
             style={{
-              width: "100%", marginTop: 18, padding: "18px 22px", fontSize: 16,
+              width: "100%",
+              marginTop: 18,
+              padding: mobile ? "16px 18px" : "18px 22px",
+              fontSize: 16,
               opacity: canAnalyze ? 1 : 0.5,
               cursor: canAnalyze ? "pointer" : "not-allowed",
             }}

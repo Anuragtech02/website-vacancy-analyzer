@@ -9,6 +9,7 @@ import type { PillarKey } from "../theme";
 import { Card, Eyebrow } from "../primitives";
 import { useMotion, Reveal } from "../motion";
 import { useV2T } from "../i18n-context";
+import { useBreakpoint, isMobile, isTablet } from "../use-breakpoint";
 
 interface MethodologySectionProps {
   tokens: Tokens;
@@ -17,17 +18,36 @@ interface MethodologySectionProps {
 export function MethodologySection({ tokens }: MethodologySectionProps) {
   const m = useMotion(tokens);
   const t = useV2T();
+  const bp = useBreakpoint();
+  const mobile = isMobile(bp);
+  const tablet = isTablet(bp);
+
+  const gridColumns = mobile
+    ? "1fr"
+    : tablet
+      ? "repeat(2, 1fr)"
+      : "repeat(4, 1fr)";
 
   return (
     <section style={{
-      padding: "80px 64px", maxWidth: 1360, margin: "0 auto",
+      padding: mobile ? "48px 16px" : tablet ? "60px 24px" : "80px 64px",
+      maxWidth: 1360, margin: "0 auto",
       borderTop: `1px solid ${tokens.line}`,
     }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "end", gap: 40, flexWrap: "wrap" }}>
+      <div style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: mobile ? "start" : "end",
+        gap: mobile ? 20 : 40,
+        flexWrap: "wrap",
+        flexDirection: mobile ? "column" : "row",
+      }}>
         <div>
           <Eyebrow tokens={tokens}>{t.methodology.eyebrow}</Eyebrow>
           <h2 style={{
-            fontFamily: tokens.displayFont, fontSize: 48, lineHeight: 1.05,
+            fontFamily: tokens.displayFont,
+            fontSize: mobile ? 30 : tablet ? 38 : 48,
+            lineHeight: 1.05,
             fontWeight: tokens.displayWeight, letterSpacing: "-0.03em",
             color: tokens.ink, marginTop: 16, maxWidth: 720,
           }}>
@@ -41,7 +61,10 @@ export function MethodologySection({ tokens }: MethodologySectionProps) {
         </div>
       </div>
       <div style={{
-        display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginTop: 44,
+        display: "grid",
+        gridTemplateColumns: gridColumns,
+        gap: mobile ? 12 : 16,
+        marginTop: mobile ? 28 : 44,
       }}>
         {(Object.keys(PILLAR_COLORS) as PillarKey[]).map((key, i) => {
           const c = pillarColor(key);

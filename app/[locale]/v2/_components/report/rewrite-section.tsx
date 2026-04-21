@@ -7,6 +7,7 @@ import { type Tokens } from "../theme";
 import { Card, Button, Pill } from "../primitives";
 import { useV2T } from "../i18n-context";
 import { useBanner } from "../banner-context";
+import { useBreakpoint, isMobile, isNarrow } from "../use-breakpoint";
 
 interface RewriteSectionProps {
   tokens: Tokens;
@@ -26,6 +27,9 @@ function stripBasicMarkdown(text: string): string {
 export function RewriteSection({ tokens, rewrittenText, projectedScore }: RewriteSectionProps) {
   const t = useV2T();
   const setBanner = useBanner();
+  const bp = useBreakpoint();
+  const mobile = isMobile(bp);
+  const narrow = isNarrow(bp);
 
   const [copied, setCopied] = useState(false);
   const [downloadingDocx, setDownloadingDocx] = useState(false);
@@ -67,26 +71,43 @@ export function RewriteSection({ tokens, rewrittenText, projectedScore }: Rewrit
     setBanner({ message: t.report.rewrite.alreadySent, variant: "info" });
   };
 
+  const sectionPadding = mobile ? "20px 16px" : "32px 48px";
+  const headerRowPadding = mobile ? "16px 18px" : "22px 28px";
+  const bodyPadding = mobile ? "20px 16px" : "32px 40px";
+  const columnCount = narrow ? 1 : 2;
+
+  const buttonBaseStyle: React.CSSProperties = mobile
+    ? { padding: "10px 14px", fontSize: 13, width: "100%" }
+    : { padding: "8px 14px", fontSize: 13 };
+
   return (
-    <section style={{ padding: "32px 48px", maxWidth: 1360, margin: "0 auto" }}>
+    <section style={{ padding: sectionPadding, maxWidth: 1360, margin: "0 auto" }}>
       <Card tokens={tokens} pad={0} style={{ overflow: "hidden" }}>
         <div style={{
-          padding: "22px 28px", borderBottom: `1px solid ${tokens.line}`,
-          display: "flex", justifyContent: "space-between", alignItems: "center",
+          padding: headerRowPadding, borderBottom: `1px solid ${tokens.line}`,
+          display: "flex", justifyContent: "space-between",
+          alignItems: mobile ? "stretch" : "center",
+          flexDirection: mobile ? "column" : "row",
+          gap: mobile ? 14 : 0,
           background: tokens.bgMuted,
         }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
             <Pill tokens={tokens} tone="ok">{t.report.rewrite.badge}</Pill>
             <div style={{ fontFamily: tokens.bodyFont, fontSize: 14, color: tokens.inkSoft }}>
               {t.report.rewrite.projected.prefix}<strong style={{ color: tokens.ink }}>{scoreDisplay}</strong>
             </div>
           </div>
-          <div style={{ display: "flex", gap: 8 }}>
+          <div style={{
+            display: "flex", gap: 8,
+            flexWrap: "wrap",
+            flexDirection: mobile ? "column" : "row",
+            width: mobile ? "100%" : "auto",
+          }}>
             <Button
               tokens={tokens}
               variant="ghost"
               onClick={handleCopy}
-              style={{ padding: "8px 14px", fontSize: 13 }}
+              style={buttonBaseStyle}
             >
               {copied ? t.report.rewrite.actions.copied : t.report.rewrite.actions.copy}
             </Button>
@@ -96,8 +117,7 @@ export function RewriteSection({ tokens, rewrittenText, projectedScore }: Rewrit
               onClick={handleDownloadDocx}
               disabled={downloadingDocx}
               style={{
-                padding: "8px 14px",
-                fontSize: 13,
+                ...buttonBaseStyle,
                 opacity: downloadingDocx ? 0.55 : 1,
                 cursor: downloadingDocx ? "not-allowed" : "pointer",
               }}
@@ -108,17 +128,17 @@ export function RewriteSection({ tokens, rewrittenText, projectedScore }: Rewrit
               tokens={tokens}
               variant="primary"
               onClick={handleEmailToMe}
-              style={{ padding: "8px 14px", fontSize: 13 }}
+              style={buttonBaseStyle}
             >
               {t.report.rewrite.actions.emailToMe}
             </Button>
           </div>
         </div>
         <div style={{
-          padding: "32px 40px",
+          padding: bodyPadding,
           fontFamily: tokens.bodyFont, fontSize: 15, lineHeight: 1.65,
           color: tokens.ink, whiteSpace: "pre-wrap",
-          columnCount: 2, columnGap: 40,
+          columnCount, columnGap: 40,
         }}>
           {bodyText}
         </div>

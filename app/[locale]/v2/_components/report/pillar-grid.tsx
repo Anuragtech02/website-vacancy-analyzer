@@ -6,6 +6,7 @@ import { useMotion, Reveal } from "../motion";
 import { type PillarDatum } from "./pillar-data";
 import { PillarIcon } from "./pillar-icon";
 import { useV2T } from "../i18n-context";
+import { useBreakpoint, isMobile, isTablet, isNarrow } from "../use-breakpoint";
 
 interface PillarGridProps {
   tokens: Tokens;
@@ -15,35 +16,55 @@ interface PillarGridProps {
 export function PillarGrid({ tokens, pillars }: PillarGridProps) {
   const m = useMotion(tokens);
   const t = useV2T();
+  const bp = useBreakpoint();
+  const mobile = isMobile(bp);
+  const tablet = isTablet(bp);
+  const narrow = isNarrow(bp);
 
   // Parent always passes a real pillar array derived from the analysis.
   // Empty means no analysis is available — render nothing rather than fake data.
   const data = pillars ?? [];
   if (data.length === 0) return null;
 
+  const sectionPadding = mobile
+    ? "16px 16px 24px"
+    : tablet
+      ? "16px 24px 28px"
+      : "16px 48px 32px";
+
+  const gridTemplateColumns = mobile
+    ? "1fr"
+    : tablet
+      ? "repeat(2, 1fr)"
+      : "repeat(4, 1fr)";
+
+  const headerTitleFontSize = mobile ? 26 : 34;
+
   return (
-    <section style={{ padding: "16px 48px 32px", maxWidth: 1360, margin: "0 auto" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "end", marginBottom: 22 }}>
+    <section style={{ padding: sectionPadding, maxWidth: 1360, margin: "0 auto" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "end", marginBottom: 22, gap: 12 }}>
         <div>
           <Eyebrow tokens={tokens}>{t.report.pillars.eyebrow}</Eyebrow>
           <h2 style={{
-            fontFamily: tokens.displayFont, fontSize: 34, lineHeight: 1.1,
+            fontFamily: tokens.displayFont, fontSize: headerTitleFontSize, lineHeight: 1.1,
             fontWeight: tokens.displayWeight, letterSpacing: "-0.02em",
             color: tokens.ink, marginTop: 10,
           }}>
             {t.report.pillars.title}
           </h2>
         </div>
-        <div style={{
-          fontFamily: tokens.monoFont, fontSize: 11, letterSpacing: "0.12em",
-          textTransform: "uppercase", color: tokens.inkMute,
-        }}>
-          {t.report.pillars.sortedBy}
-        </div>
+        {!mobile && (
+          <div style={{
+            fontFamily: tokens.monoFont, fontSize: 11, letterSpacing: "0.12em",
+            textTransform: "uppercase", color: tokens.inkMute,
+          }}>
+            {t.report.pillars.sortedBy}
+          </div>
+        )}
       </div>
       <div style={{
         display: "grid",
-        gridTemplateColumns: "repeat(4, 1fr)",
+        gridTemplateColumns,
         gridAutoRows: "1fr",
         gap: 14,
         alignItems: "stretch",
@@ -55,13 +76,15 @@ export function PillarGrid({ tokens, pillars }: PillarGridProps) {
             const c = pillarColor(p.key);
             const toneColor = p.tone === "ok" ? tokens.ok : p.tone === "warn" ? tokens.warn : tokens.bad;
             const big = i === 0 || i === 1;
+            const cardGridColumn = narrow ? "span 1" : (big ? "span 2" : "span 1");
+            const titleFontSize = mobile ? (big ? 18 : 16) : (big ? 20 : 17);
             return (
               <Reveal
                 tokens={tokens}
                 delay={i * 70}
                 key={p.key}
                 style={{
-                  gridColumn: big ? "span 2" : "span 1",
+                  gridColumn: cardGridColumn,
                   display: "flex",
                   height: "100%",
                 }}
@@ -127,7 +150,7 @@ export function PillarGrid({ tokens, pillars }: PillarGridProps) {
                         P{String(data.findIndex((x) => x.key === p.key) + 1).padStart(2, "0")}
                       </div>
                       <div style={{
-                        fontFamily: tokens.displayFont, fontSize: big ? 20 : 17, fontWeight: tokens.displayWeight,
+                        fontFamily: tokens.displayFont, fontSize: titleFontSize, fontWeight: tokens.displayWeight,
                         color: tokens.ink, letterSpacing: "-0.01em", lineHeight: 1.2,
                       }}>
                         {t.methodology.pillars[p.key]}

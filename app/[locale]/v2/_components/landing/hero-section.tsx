@@ -10,6 +10,7 @@ import { useMotion, Reveal } from "../motion";
 import { Icon } from "../icons";
 import type { IconName } from "../icons";
 import { useV2T } from "../i18n-context";
+import { useBreakpoint, isMobile, isNarrow } from "../use-breakpoint";
 
 interface HeroSectionProps {
   tokens: Tokens;
@@ -18,6 +19,9 @@ interface HeroSectionProps {
 export function HeroSection({ tokens }: HeroSectionProps) {
   const m = useMotion(tokens);
   const t = useV2T();
+  const bp = useBreakpoint();
+  const mobile = isMobile(bp);
+  const narrow = isNarrow(bp);
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
 
   const ICON_NAMES: IconName[] = ["target", "document", "publish"];
@@ -27,12 +31,16 @@ export function HeroSection({ tokens }: HeroSectionProps) {
       <Reveal tokens={tokens} delay={80}>
         <h1 style={{
           fontFamily: tokens.displayFont,
-          fontSize: "clamp(48px, 5.2vw, 76px)",
+          fontSize: mobile
+            ? "clamp(32px, 9vw, 40px)"
+            : narrow
+              ? "clamp(40px, 6vw, 56px)"
+              : "clamp(48px, 5.2vw, 76px)",
           lineHeight: 1.02,
           fontWeight: tokens.displayWeight,
           letterSpacing: "-0.035em",
           color: tokens.ink,
-          margin: "18px 0 0",
+          margin: mobile ? "4px 0 0" : "18px 0 0",
           textWrap: "balance",
         } as React.CSSProperties}>
           {t.hero.title.part1}
@@ -42,13 +50,17 @@ export function HeroSection({ tokens }: HeroSectionProps) {
       </Reveal>
       <Reveal tokens={tokens} delay={220}>
         <p style={{
-          fontFamily: tokens.bodyFont, fontSize: 19, lineHeight: 1.5,
-          color: tokens.inkSoft, marginTop: 28, maxWidth: 520,
+          fontFamily: tokens.bodyFont,
+          fontSize: mobile ? 16 : 19,
+          lineHeight: 1.5,
+          color: tokens.inkSoft,
+          marginTop: mobile ? 18 : 28,
+          maxWidth: 520,
         }}>
           {t.hero.subtitle}
         </p>
       </Reveal>
-      <div style={{ display: "flex", flexDirection: "column", gap: 14, marginTop: 32 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: mobile ? 10 : 14, marginTop: mobile ? 22 : 32 }}>
         {t.hero.bullets.map((bullet, idx) => (
           <Reveal tokens={tokens} delay={340 + idx * 100} key={idx}>
             <div
@@ -71,8 +83,8 @@ export function HeroSection({ tokens }: HeroSectionProps) {
                 <Icon name={ICON_NAMES[idx]} tokens={tokens} size={18} />
               </div>
               <div>
-                <div style={{ fontFamily: tokens.bodyFont, fontSize: 16, fontWeight: 600, color: tokens.ink }}>{bullet.title}</div>
-                <div style={{ fontFamily: tokens.bodyFont, fontSize: 15, color: tokens.inkSoft, lineHeight: 1.45 }}>{bullet.desc}</div>
+                <div style={{ fontFamily: tokens.bodyFont, fontSize: mobile ? 15 : 16, fontWeight: 600, color: tokens.ink }}>{bullet.title}</div>
+                <div style={{ fontFamily: tokens.bodyFont, fontSize: mobile ? 14 : 15, color: tokens.inkSoft, lineHeight: 1.45 }}>{bullet.desc}</div>
               </div>
             </div>
           </Reveal>

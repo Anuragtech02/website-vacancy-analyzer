@@ -5,6 +5,7 @@ import { type Tokens } from "../theme";
 import { Button, Eyebrow, Highlight } from "../primitives";
 import { ModalShell } from "./modal-shell";
 import { useV2T } from "../i18n-context";
+import { useBreakpoint, isMobile } from "../use-breakpoint";
 import { fetchWithTimeout } from "@/lib/fetch-with-timeout";
 import type { OptimizationResult } from "@/lib/gemini";
 
@@ -21,6 +22,8 @@ interface EmailModalProps {
 
 export function EmailModal({ tokens, reportId, fingerprint, locale, onClose, onUnlock, onLimit, onError }: EmailModalProps) {
   const t = useV2T();
+  const bp = useBreakpoint();
+  const mobile = isMobile(bp);
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [msgIdx, setMsgIdx] = useState(0);
@@ -74,10 +77,10 @@ export function EmailModal({ tokens, reportId, fingerprint, locale, onClose, onU
 
   return (
     <ModalShell tokens={tokens} onClose={busy ? () => {} : onClose}>
-      <div style={{ padding: "36px 36px 30px" }}>
+      <div style={{ padding: mobile ? "28px 20px 24px" : "36px 36px 30px" }}>
         <Eyebrow tokens={tokens}>{t.modals.email.eyebrow}</Eyebrow>
         <h3 style={{
-          fontFamily: tokens.displayFont, fontSize: 30, lineHeight: 1.1,
+          fontFamily: tokens.displayFont, fontSize: mobile ? 24 : 30, lineHeight: 1.1,
           fontWeight: tokens.displayWeight, letterSpacing: "-0.02em",
           color: tokens.ink, marginTop: 12,
         }}>
@@ -118,7 +121,8 @@ export function EmailModal({ tokens, reportId, fingerprint, locale, onClose, onU
               {t.modals.email.submit}
             </Button>
             <div style={{
-              display: "flex", justifyContent: "center", gap: 16, marginTop: 14,
+              display: "flex", flexWrap: "wrap", justifyContent: "center",
+              gap: mobile ? 10 : 16, marginTop: 14,
               fontFamily: tokens.monoFont, fontSize: 10, letterSpacing: "0.12em",
               textTransform: "uppercase", color: tokens.inkMute,
             }}>
@@ -126,9 +130,9 @@ export function EmailModal({ tokens, reportId, fingerprint, locale, onClose, onU
             </div>
           </>
         ) : (
-          <div style={{ marginTop: 24, padding: "28px 24px", background: tokens.bgMuted, borderRadius: tokens.cardRadius }}>
+          <div style={{ marginTop: 24, padding: mobile ? "20px 16px" : "28px 24px", background: tokens.bgMuted, borderRadius: tokens.cardRadius }}>
             <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-              <div style={{ width: 10, height: 10, borderRadius: 999, background: tokens.primaryColor, animation: "va-pulse 1.2s ease infinite" }} />
+              <div style={{ width: 10, height: 10, borderRadius: 999, background: tokens.primaryColor, animation: "va-pulse 1.2s ease infinite", flexShrink: 0 }} />
               <div style={{
                 fontFamily: tokens.bodyFont, fontSize: 15, color: tokens.ink, fontWeight: 500,
                 minHeight: 22,

@@ -6,6 +6,7 @@
 import type { Tokens } from "../theme";
 import { useMotion } from "../motion/use-motion";
 import { useV2T } from "../i18n-context";
+import { useBreakpoint, isMobile } from "../use-breakpoint";
 
 interface FloatingReassuranceProps {
   tokens: Tokens;
@@ -15,6 +16,13 @@ interface FloatingReassuranceProps {
 export function FloatingReassurance({ tokens, visible }: FloatingReassuranceProps) {
   const m = useMotion(tokens);
   const t = useV2T();
+  const bp = useBreakpoint();
+  const mobile = isMobile(bp);
+
+  // On mobile the chips would overlap the header title — hide them entirely
+  // (the reassurance is ornamental, not load-bearing).
+  if (mobile) return null;
+
   const items = [
     { label: t.floatingReassurance.noSpam,  delay: 0.05 },
     { label: t.floatingReassurance.private, delay: 0.15 },

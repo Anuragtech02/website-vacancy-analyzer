@@ -5,6 +5,7 @@ import { type Tokens } from "../theme";
 import { Card, Button, Eyebrow } from "../primitives";
 import { useMotion, AmbientBG, Shimmer, TypingText } from "../motion";
 import { useV2T } from "../i18n-context";
+import { useBreakpoint, isMobile } from "../use-breakpoint";
 import type { V2Messages } from "../../_messages";
 
 type StepKey = keyof V2Messages["loading"]["steps"];
@@ -35,6 +36,8 @@ export function Loading({ tokens, onSkipToEmail }: LoadingProps) {
   const [elapsed, setElapsed] = useState(0);
   const m = useMotion(tokens);
   const t = useV2T();
+  const bp = useBreakpoint();
+  const mobile = isMobile(bp);
 
   useEffect(() => {
     const tick = setInterval(() => setElapsed((e) => e + 0.1), 100);
@@ -64,10 +67,18 @@ export function Loading({ tokens, onSkipToEmail }: LoadingProps) {
   const currentLabel  = t.loading.steps[current.key].label;
   const currentDetail = t.loading.steps[current.key].detail;
 
+  // Responsive sizing. Inline styles can't use media queries, so every
+  // dimension that needs to shrink at narrow widths is derived from `bp`.
+  const statusFontSize = mobile ? 32 : bp === "tablet" ? 40 : 48;
+  const outerPadding = mobile ? "24px 16px" : "48px 32px";
+  const cardBigStatusPadding = mobile ? "36px 20px 24px" : "56px 40px 32px";
+  const cardTimelinePadding = mobile ? "20px 20px 24px" : "24px 40px 32px";
+  const slowBannerMargin = mobile ? "0 16px 16px" : "0 24px 24px";
+
   return (
     <div style={{
       minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center",
-      padding: "48px 32px", position: "relative", overflow: "hidden",
+      padding: outerPadding, position: "relative", overflow: "hidden",
     }}>
       <AmbientBG tokens={tokens} />
       <Card tokens={tokens} pad={0} style={{ width: "100%", maxWidth: 760, overflow: "hidden", position: "relative", zIndex: 1 }}>
@@ -95,23 +106,23 @@ export function Loading({ tokens, onSkipToEmail }: LoadingProps) {
         </div>
 
         {/* big status */}
-        <div style={{ padding: "56px 40px 32px" }}>
+        <div style={{ padding: cardBigStatusPadding }}>
           <Eyebrow tokens={tokens}>
             {t.loading.stepCounter
               .replace('{current}', String(Math.min(stepIdx + 1, LOADING_STEPS.length)))
               .replace('{total}', String(LOADING_STEPS.length))}
           </Eyebrow>
           <div style={{
-            fontFamily: tokens.displayFont, fontSize: 48, lineHeight: 1.08,
+            fontFamily: tokens.displayFont, fontSize: statusFontSize, lineHeight: 1.08,
             fontWeight: tokens.displayWeight, letterSpacing: "-0.03em",
             color: tokens.ink, marginTop: 14,
-            minHeight: 64,
+            minHeight: mobile ? 44 : 64,
           }}>
             <TypingText tokens={tokens} text={currentLabel} />
             <span style={{ color: tokens.primaryColor }}>…</span>
           </div>
           <div style={{
-            fontFamily: tokens.bodyFont, fontSize: 17, color: tokens.inkSoft,
+            fontFamily: tokens.bodyFont, fontSize: mobile ? 15 : 17, color: tokens.inkSoft,
             marginTop: 12, maxWidth: 540,
           }}>
             {currentDetail}
@@ -119,7 +130,7 @@ export function Loading({ tokens, onSkipToEmail }: LoadingProps) {
         </div>
 
         {/* step timeline */}
-        <div style={{ padding: "24px 40px 32px" }}>
+        <div style={{ padding: cardTimelinePadding }}>
           <div style={{
             height: 2, background: tokens.line, position: "relative",
             marginBottom: 18,
@@ -130,57 +141,98 @@ export function Loading({ tokens, onSkipToEmail }: LoadingProps) {
               transition: "width .6s cubic-bezier(.2,.7,.2,1)",
             }} />
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: `repeat(${LOADING_STEPS.length}, 1fr)`, gap: 8 }}>
-            {LOADING_STEPS.map((s, i) => {
-              const state = i < stepIdx ? "done" : i === stepIdx ? "active" : "pending";
-              return (
-                <div key={s.key} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                  <div style={{
-                    width: 16, height: 16, borderRadius: 999,
-                    background: state === "done" ? tokens.primaryColor : state === "active" ? tokens.bgRaised : tokens.bgMuted,
-                    border: `1.5px solid ${state === "pending" ? tokens.line : tokens.primaryColor}`,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    flexShrink: 0,
-                  }}>
-                    {state === "done" && (
-                      <svg width="9" height="9" viewBox="0 0 9 9">
-                        <path d="M1 5 L3.5 7.5 L8 2" stroke="#fff" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    )}
-                    {state === "active" && (
-                      <div style={{ width: 6, height: 6, borderRadius: 999, background: tokens.primaryColor, animation: "va-pulse 1.2s ease infinite" }} />
-                    )}
+          {/*
+            On mobile we can't afford 6 columns of labels — each cell is ~45px
+            wide at 320vw and the mono labels collide. Instead we show only the
+            active step's dot + label, inheriting the same visual language.
+          */}
+          {mobile ? (
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <div style={{
+                width: 16, height: 16, borderRadius: 999,
+                background: tokens.bgRaised,
+                border: `1.5px solid ${tokens.primaryColor}`,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                flexShrink: 0,
+              }}>
+                <div style={{ width: 6, height: 6, borderRadius: 999, background: tokens.primaryColor, animation: "va-pulse 1.2s ease infinite" }} />
+              </div>
+              <div style={{
+                fontFamily: tokens.monoFont, fontSize: 11,
+                color: tokens.inkSoft,
+                letterSpacing: "0.08em",
+                lineHeight: 1.3,
+              }}>
+                {t.loading.steps[current.key].label}
+              </div>
+            </div>
+          ) : (
+            <div style={{ display: "grid", gridTemplateColumns: `repeat(${LOADING_STEPS.length}, 1fr)`, gap: 8 }}>
+              {LOADING_STEPS.map((s, i) => {
+                const state = i < stepIdx ? "done" : i === stepIdx ? "active" : "pending";
+                return (
+                  <div key={s.key} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    <div style={{
+                      width: 16, height: 16, borderRadius: 999,
+                      background: state === "done" ? tokens.primaryColor : state === "active" ? tokens.bgRaised : tokens.bgMuted,
+                      border: `1.5px solid ${state === "pending" ? tokens.line : tokens.primaryColor}`,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      flexShrink: 0,
+                    }}>
+                      {state === "done" && (
+                        <svg width="9" height="9" viewBox="0 0 9 9">
+                          <path d="M1 5 L3.5 7.5 L8 2" stroke="#fff" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      )}
+                      {state === "active" && (
+                        <div style={{ width: 6, height: 6, borderRadius: 999, background: tokens.primaryColor, animation: "va-pulse 1.2s ease infinite" }} />
+                      )}
+                    </div>
+                    <div style={{
+                      fontFamily: tokens.monoFont, fontSize: 10,
+                      color: state === "pending" ? tokens.inkMute : tokens.inkSoft,
+                      letterSpacing: "0.08em",
+                      lineHeight: 1.3,
+                    }}>
+                      {t.loading.steps[s.key].label}
+                    </div>
                   </div>
-                  <div style={{
-                    fontFamily: tokens.monoFont, fontSize: 10,
-                    color: state === "pending" ? tokens.inkMute : tokens.inkSoft,
-                    letterSpacing: "0.08em",
-                    lineHeight: 1.3,
-                  }}>
-                    {t.loading.steps[s.key].label}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* 15s+ friendly banner */}
         {elapsed > 15 && (
           <div style={{
-            margin: "0 24px 24px",
-            padding: "14px 18px",
+            margin: slowBannerMargin,
+            padding: mobile ? "12px 14px" : "14px 18px",
             background: `color-mix(in oklch, ${tokens.warn} 14%, transparent)`,
             border: `1px solid color-mix(in oklch, ${tokens.warn} 40%, transparent)`,
             borderRadius: tokens.cardRadius,
-            display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16,
+            display: "flex",
+            flexDirection: mobile ? "column" : "row",
+            justifyContent: "space-between",
+            alignItems: mobile ? "stretch" : "center",
+            gap: mobile ? 12 : 16,
           }}>
             <div style={{
               fontFamily: tokens.bodyFont, fontSize: 14, color: tokens.ink, lineHeight: 1.4,
             }}>
               {t.loading.slowBanner.text}
             </div>
-            <Button tokens={tokens} variant="ghost" onClick={onSkipToEmail} style={{ padding: "8px 14px", fontSize: 13, flexShrink: 0 }}>
+            <Button
+              tokens={tokens}
+              variant="ghost"
+              onClick={onSkipToEmail}
+              style={{
+                padding: "8px 14px",
+                fontSize: 13,
+                flexShrink: 0,
+                width: mobile ? "100%" : undefined,
+              }}
+            >
               {t.loading.slowBanner.cta}
             </Button>
           </div>

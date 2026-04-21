@@ -10,26 +10,27 @@ import type { Tokens } from "./theme";
 import { Button } from "./primitives";
 import { useMotion } from "./motion";
 import { useV2T } from "./i18n-context";
+import { useBreakpoint, isMobile, isNarrow } from "./use-breakpoint";
 
 // ---------------------------------------------------------------------------
 // Wordmark (internal)
 // ---------------------------------------------------------------------------
 
-function Wordmark({ tokens, onHome }: { tokens: Tokens; onHome: () => void }) {
+function Wordmark({ tokens, onHome, compact }: { tokens: Tokens; onHome: () => void; compact?: boolean }) {
   return (
     <button
       onClick={onHome}
       style={{
-        display: "flex", alignItems: "center", gap: 10,
+        display: "flex", alignItems: "center", gap: compact ? 8 : 10,
         background: "none", border: "none", padding: 0, cursor: "pointer",
       }}
     >
-      <Image src="/logo-icon.png" alt="Vacature Tovenaar logo" width={32} height={32} />
+      <Image src="/logo-icon.png" alt="Vacature Tovenaar logo" width={compact ? 28 : 32} height={compact ? 28 : 32} />
       <span style={{
         fontFamily: tokens.displayFont,
         fontWeight: tokens.displayWeight,
         color: tokens.ink,
-        fontSize: 18,
+        fontSize: compact ? 16 : 18,
         letterSpacing: "-0.02em",
       }}>
         Vacature Tovenaar
@@ -106,6 +107,7 @@ export interface NavbarProps {
 export function Navbar({ tokens, onHome, usesLeft, screen }: NavbarProps) {
   const m = useMotion(tokens);
   const t = useV2T();
+  const bp = useBreakpoint();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -118,6 +120,11 @@ export function Navbar({ tokens, onHome, usesLeft, screen }: NavbarProps) {
   const handleScrollToAnalyzer = () => {
     window.dispatchEvent(new CustomEvent("va2:scroll-to-analyzer"));
   };
+
+  const mobile = isMobile(bp);
+  const narrow = isNarrow(bp);
+  // Hide the "Analyze vacancy" CTA on mobile/narrow viewports; keep on report screen suppressed (unchanged).
+  const showAnalyzeCTA = screen !== "report" && !narrow;
 
   return (
     <header style={{
@@ -132,19 +139,19 @@ export function Navbar({ tokens, onHome, usesLeft, screen }: NavbarProps) {
     }}>
       <div style={{
         maxWidth: 1360, margin: "0 auto",
-        padding: "14px 48px",
+        padding: mobile ? "12px 16px" : narrow ? "12px 24px" : "14px 48px",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
       }}>
         {/* Logo */}
-        <Wordmark tokens={tokens} onHome={onHome} />
+        <Wordmark tokens={tokens} onHome={onHome} compact={mobile} />
 
         {/* Spacer */}
         <div style={{ flex: 1 }} />
 
         {/* Right cluster */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: mobile ? 8 : 10 }}>
           {/* Uses left pill — only on report screen */}
           <div style={{
             display: screen === "report" ? "inline-flex" : "none",
@@ -164,8 +171,8 @@ export function Navbar({ tokens, onHome, usesLeft, screen }: NavbarProps) {
           {/* Language toggle */}
           <LanguageToggle tokens={tokens} />
 
-          {/* Analyze vacancy CTA — hidden on report screen (AnalyzerCard is unmounted there) */}
-          {screen !== 'report' && (
+          {/* Analyze vacancy CTA — hidden on report screen and on narrow viewports */}
+          {showAnalyzeCTA && (
             <Button
               tokens={tokens}
               variant="primary"

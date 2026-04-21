@@ -3,6 +3,7 @@
 import { type Tokens } from "../theme";
 import { Card, Eyebrow, ScoreRing } from "../primitives";
 import { useV2T } from "../i18n-context";
+import { useBreakpoint, isMobile, isTablet, isNarrow } from "../use-breakpoint";
 
 interface ScoreCardProps {
   tokens: Tokens;
@@ -14,6 +15,11 @@ interface ScoreCardProps {
 
 export function ScoreCard({ tokens, overall, verdictLabel, executiveSummary, wordCount }: ScoreCardProps) {
   const t = useV2T();
+  const bp = useBreakpoint();
+  const mobile = isMobile(bp);
+  const tablet = isTablet(bp);
+  const narrow = isNarrow(bp);
+
   const wordsDisplay = wordCount != null ? String(wordCount) : "148";
 
   // Derive read time from word count (~200 WPM)
@@ -24,15 +30,21 @@ export function ScoreCard({ tokens, overall, verdictLabel, executiveSummary, wor
       })()
     : "—";
 
+  const ringSize = mobile ? 160 : tablet ? 180 : 220;
+  const verdictFontSize = mobile ? 32 : tablet ? 40 : 48;
+  const cardPad = mobile ? 24 : 36;
+  const gridGap = mobile ? 24 : 36;
+  const gridColumns = narrow ? "1fr" : "240px 1fr";
+
   return (
-    <Card tokens={tokens} pad={36} style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+    <Card tokens={tokens} pad={cardPad} style={{ height: "100%", display: "flex", flexDirection: "column" }}>
       <div style={{
-        display: "grid", gridTemplateColumns: "240px 1fr", gap: 36,
-        alignItems: "start", flex: 1,
+        display: "grid", gridTemplateColumns: gridColumns, gap: gridGap,
+        alignItems: narrow ? "center" : "start", flex: 1,
       }}>
         {/* Left column: score ring + word/read-time stats directly beneath */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 28 }}>
-          <ScoreRing tokens={tokens} value={overall} size={220} label={t.report.scoreCard.scoreRingLabel} />
+          <ScoreRing tokens={tokens} value={overall} size={ringSize} label={t.report.scoreCard.scoreRingLabel} />
           <div style={{ display: "flex", gap: 32, justifyContent: "center" }}>
             {(
               [
@@ -52,7 +64,7 @@ export function ScoreCard({ tokens, overall, verdictLabel, executiveSummary, wor
         <div>
           <Eyebrow tokens={tokens}>{t.report.scoreCard.eyebrow}</Eyebrow>
           <div style={{
-            fontFamily: tokens.displayFont, fontSize: 48, lineHeight: 1.05,
+            fontFamily: tokens.displayFont, fontSize: verdictFontSize, lineHeight: 1.05,
             fontWeight: tokens.displayWeight, letterSpacing: "-0.03em",
             color: tokens.ink, marginTop: 14,
           }}>
