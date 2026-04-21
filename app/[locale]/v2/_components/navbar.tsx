@@ -11,6 +11,7 @@ import { Button } from "./primitives";
 import { useMotion } from "./motion";
 import { useV2T } from "./i18n-context";
 import { useBreakpoint, isMobile, isNarrow } from "./use-breakpoint";
+import { openDemoCalendar } from "./demo-link";
 
 // ---------------------------------------------------------------------------
 // Wordmark (internal)
@@ -125,6 +126,9 @@ export function Navbar({ tokens, onHome, usesLeft, screen }: NavbarProps) {
   const narrow = isNarrow(bp);
   // Hide the "Analyze vacancy" CTA on mobile/narrow viewports; keep on report screen suppressed (unchanged).
   const showAnalyzeCTA = screen !== "report" && !narrow;
+  // Book-demo link is present on every screen but hides on mobile to keep the
+  // narrow-viewport header clean (the footer still has it there).
+  const showBookDemo = !mobile;
 
   return (
     <header style={{
@@ -170,6 +174,20 @@ export function Navbar({ tokens, onHome, usesLeft, screen }: NavbarProps) {
 
           {/* Language toggle */}
           <LanguageToggle tokens={tokens} />
+
+          {/* Book a demo — ghost button, opens the HubSpot calendar in a new
+              tab. Same target as the DemoModal CTA and the footer link, so
+              there's one way to "talk to sales" regardless of where you click. */}
+          {showBookDemo && (
+            <Button
+              tokens={tokens}
+              variant="ghost"
+              onClick={openDemoCalendar}
+              style={{ padding: "8px 14px", fontSize: 13 }}
+            >
+              {t.nav.bookDemo}
+            </Button>
+          )}
 
           {/* Analyze vacancy CTA — hidden on report screen and on narrow viewports */}
           {showAnalyzeCTA && (

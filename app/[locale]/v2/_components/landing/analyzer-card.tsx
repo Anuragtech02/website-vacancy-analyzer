@@ -194,7 +194,7 @@ export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
               .replace('{count}', chars.toLocaleString(locale))
               .replace('{max}', MAX_CHARS.toLocaleString(locale))}
             {canAnalyze && " ✓"}
-            {overLimit && ` — ${t.analyzerCard.overLimit}`}
+            {overLimit && ` · ${t.analyzerCard.overLimit}`}
           </div>
         </div>
         {/* Category selector + Analyze button share one row on >= tablet.

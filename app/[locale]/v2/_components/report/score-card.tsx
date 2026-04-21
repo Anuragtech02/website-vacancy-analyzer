@@ -28,7 +28,7 @@ export function ScoreCard({ tokens, overall, verdictLabel, executiveSummary, wor
         const secs = Math.max(5, Math.round((wordCount / 200) * 60));
         return secs < 60 ? `${secs}s` : `${Math.round(secs / 60)}m`;
       })()
-    : "—";
+    : "–";
 
   const ringSize = mobile ? 160 : tablet ? 180 : 220;
   const verdictFontSize = mobile ? 32 : tablet ? 40 : 48;

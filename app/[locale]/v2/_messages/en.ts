@@ -8,15 +8,16 @@ const en = {
     dismiss: "Dismiss",
   },
   errors: {
-    analysisFailed: "Analysis failed — please try again.",
+    analysisFailed: "Analysis failed. Please try again.",
     analysisTimeout: "Analysis is taking longer than expected. Please try again or have the result emailed to you.",
     optimizeFailed: "Couldn't generate the rewrite. Please try again.",
-    reportNotAvailable: "Report not available — please re-run the analysis.",
+    reportNotAvailable: "Report not available. Please re-run the analysis.",
     rateLimited: "You've used up your free rewrites for this browser.",
     networkError: "Network error. Check your connection and try again.",
   },
   nav: {
     analyzeVacancy: "Analyze vacancy",
+    bookDemo: "Book a demo",
     langEn: "EN",
     langNl: "NL",
     freeLeft: "{count} free left",
@@ -28,7 +29,7 @@ const en = {
       part2: " people aren't applying.",
     },
     subtitle:
-      "Paste your job posting. In under a minute, our model grades it across eight dimensions and tells you exactly what to fix — with a rewritten version ready to publish.",
+      "Paste your job posting. In under a minute, our model grades it across eight dimensions and tells you exactly what to fix, with a rewritten version ready to publish.",
     bullets: [
       {
         title: "Eight-point diagnostic",
@@ -40,7 +41,7 @@ const en = {
       },
       {
         title: "A ready-to-publish rewrite",
-        desc: "Not a suggestion — a finished draft you can ship.",
+        desc: "Not a suggestion, a finished draft you can ship.",
       },
     ],
   },
@@ -54,7 +55,7 @@ const en = {
       { title: "Receive", desc: "Score + rewritten version" },
     ],
     placeholder:
-      "Paste your vacancy here — plain text is fine. We'll preserve the structure.",
+      "Paste your vacancy here. Plain text is fine; we'll preserve the structure.",
     trySample: "Try with a sample posting",
     charsCount: "{count} / {max} chars",
     overLimit: "limit exceeded",
@@ -202,7 +203,7 @@ Send your CV and motivation letter to jobs@company.example. We will come back to
       },
     },
     slowBanner: {
-      text: "Taking longer than usual? We can email the full report when it's ready — no need to wait.",
+      text: "Taking longer than usual? We can email the full report when it's ready. No need to wait.",
       cta:  "Email it to me",
     },
   },
@@ -213,7 +214,7 @@ Send your CV and motivation letter to jobs@company.example. We will come back to
       generatedNow:  "Generated just now",
       rewritesLeft:  "{count} free rewrites left",
       downloadPdf:   "Download PDF",
-      pdfSentInfo:   "Your report was emailed as a PDF when you unlocked — check your inbox (and spam folder).",
+      pdfSentInfo:   "Your report was emailed as a PDF when you unlocked. Check your inbox (and spam folder).",
     },
     scoreCard: {
       eyebrow: "Verdict",
@@ -224,7 +225,7 @@ Send your CV and motivation letter to jobs@company.example. We will come back to
         weak:             "Weak",
       },
       summary:
-        "A capable posting that's being held back by two critical weaknesses: accidentally exclusive language and a benefits section that reads like an afterthought. The tone and culture signals are genuinely strong — don't lose those in the rewrite.",
+        "A capable posting that's being held back by two critical weaknesses: accidentally exclusive language and a benefits section that reads like an afterthought. The tone and culture signals are genuinely strong; don't lose those in the rewrite.",
       stats: {
         words:        "Words",
         readTime:     "Read time",
@@ -312,7 +313,7 @@ Send your CV and motivation letter to jobs@company.example. We will come back to
     disclaimer:
       "Scores are produced by a large language model tuned on 14,000 anonymized postings and applicant outcomes. Treat them as a second opinion, not a verdict. Your domain knowledge wins every tie.",
     stickyBanner: {
-      title:    "The rewrite is ready — projected {score} / 10",
+      title:    "The rewrite is ready. Projected {score} / 10",
       subtitle: "Enter your email to unlock. No marketing spam, unsubscribe any time.",
       cta:      "Unlock rewrite →",
     },
@@ -341,7 +342,7 @@ Send your CV and motivation letter to jobs@company.example. We will come back to
         "Tightening the call to action…",
         "Polishing tone of voice…",
       ],
-      busyHint: "Takes about 3 seconds — hang tight.",
+      busyHint: "Takes about 3 seconds. Hang tight.",
     },
     limit: {
       eyebrow: "Free tier limit",
@@ -350,7 +351,7 @@ Send your CV and motivation letter to jobs@company.example. We will come back to
         highlight: "taste",
         part2:     " for it?",
       },
-      body:     "You've used both free rewrites. Teams that like the tool usually want unlimited rewrites, saved postings, and the ATS sync — that's what the paid plan is.",
+      body:     "You've used both free rewrites. Teams that like the tool usually want unlimited rewrites, saved postings, and the ATS sync; that's what the paid plan is.",
       seeDemo:  "See what you'd get",
       later:    "Maybe later",
     },
@@ -361,7 +362,7 @@ Send your CV and motivation letter to jobs@company.example. We will come back to
       features: [
         {
           title: "Unlimited rewrites",
-          desc:  "No daily caps — rewrite every posting your team ships.",
+          desc:  "No daily caps; rewrite every posting your team ships.",
         },
         {
           title: "Persona matching",
