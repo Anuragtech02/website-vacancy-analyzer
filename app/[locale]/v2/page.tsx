@@ -18,7 +18,7 @@ import { V2MessagesProvider } from "./_components/i18n-context";
 import { BannerProvider, type BannerState } from "./_components/banner-context";
 import { BannerOverlay } from "./_components/banner-overlay";
 import { getV2Messages } from "./_messages";
-import { getErrorMessage } from "@/lib/fetch-with-timeout";
+import { fetchWithTimeout, getErrorMessage } from "@/lib/fetch-with-timeout";
 import { generateFingerprint } from "@/lib/fingerprint";
 import type { OptimizationResult } from "@/lib/gemini";
 
@@ -81,95 +81,53 @@ export default function V2Page() {
   const startAnalyze = async (text: string, category: string) => {
     setPendingText(text);
     setPendingCategory(category);
-    // Start externally-driven at step 0 / 0% immediately. If we left
-    // these undefined the Loading component would fall back to its
-    // internal timer — which would race the SSE events and cause the
-    // loader to visibly rewind when the first real "progress" arrived
-    // with a lower stage index. Externally-driven from the start means
-    // the progress only ever moves forward.
-    setStageIdx(0);
-    setProgressPct(0);
+    // NOTE: we briefly shipped a real SSE consumer (POST /api/analyze/stream)
+    // that drove Loading from live Gemini token-stream progress. Works
+    // locally, but on Coolify behind Traefik the SSE events got buffered
+    // upstream and arrived in a single burst at end-of-stream — so the
+    // loader would sit on step 1 for 30-40s and then rapid-fire 1→2→3→6
+    // right before the report opened. Reverted to the sync JSON path and
+    // Loading's internal timer animation. The streaming infra is still in
+    // the repo (app/api/analyze/stream, analyzeVacancyStreaming) for when
+    // we have bandwidth to tune proxy buffering or move to a different
+    // transport.
+    setStageIdx(undefined);
+    setProgressPct(undefined);
     setScreen("loading");
 
-    // SSE request. Consumes the ReadableStream from /api/analyze/stream,
-    // parses `data: ...\n\n` frames, and drives the Loading UI from real
-    // backend progress events instead of a client timer.
-    let response: Response;
     try {
-      response = await fetch("/api/analyze/stream", {
+      const response = await fetchWithTimeout("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ vacancyText: text, category, locale }),
+        // Match server maxDuration (5 min). 120s was aborting legitimate
+        // long Gemini 3 Pro runs before the server finished.
+        timeout: 300000,
+        retries: 0,
       });
-    } catch (err) {
-      console.error("Analyze SSE connect error:", err);
-      const msg = err instanceof Error ? getErrorMessage(err, locale) : v2messages.errors.analysisFailed;
-      setBanner({ message: msg, variant: "error" });
-      setScreen("landing");
-      return;
-    }
 
-    if (!response.ok || !response.body) {
-      setBanner({ message: v2messages.errors.analysisFailed, variant: "error" });
-      setScreen("landing");
-      return;
-    }
+      if (!response.ok) throw new Error("Analysis failed");
 
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer = "";
-    let settled = false;
+      const data = await response.json();
 
-    try {
-      while (!settled) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-
-        // SSE events are delimited by a blank line (`\n\n`).
-        const chunks = buffer.split("\n\n");
-        buffer = chunks.pop() ?? "";
-        for (const chunk of chunks) {
-          const line = chunk.split("\n").find((l) => l.startsWith("data: "));
-          if (!line) continue;
-          let evt: { event?: string; stageIdx?: number; pct?: number; reportId?: string; message?: string };
-          try {
-            evt = JSON.parse(line.slice("data: ".length));
-          } catch {
-            continue;
-          }
-
-          if (evt.event === "started") {
-            // no-op; next progress event will populate the UI
-          } else if (evt.event === "progress") {
-            // Monotonic — never move the bar or the step index backward
-            // mid-stream. stageFromPct on the server clamps correctly, but
-            // if two events race (e.g. a reconnect) we still want to pin
-            // forward-only motion for the visual.
-            if (typeof evt.stageIdx === "number") {
-              setStageIdx((prev) => Math.max(prev ?? 0, evt.stageIdx as number));
-            }
-            if (typeof evt.pct === "number") {
-              setProgressPct((prev) => Math.max(prev ?? 0, evt.pct as number));
-            }
-          } else if (evt.event === "done") {
-            settled = true;
-            if (evt.reportId) {
-              router.push(`/${locale}/v2/report/${evt.reportId}`);
-            } else {
-              setBanner({ message: v2messages.errors.analysisFailed, variant: "error" });
-              setScreen("landing");
-            }
-          } else if (evt.event === "error") {
-            settled = true;
-            setBanner({ message: evt.message ?? v2messages.errors.analysisFailed, variant: "error" });
-            setScreen("landing");
-          }
-        }
+      if (data.async) {
+        setBanner({ message: data.message ?? "Queued for email delivery.", variant: "info" });
+        setScreen("landing");
+        return;
       }
-    } catch (err) {
-      console.error("Analyze SSE read error:", err);
-      setBanner({ message: v2messages.errors.analysisFailed, variant: "error" });
+
+      if (data.reportId && data.analysis) {
+        router.push(`/${locale}/v2/report/${data.reportId}`);
+        return;
+      }
+
+      throw new Error("Unexpected analysis response");
+    } catch (error) {
+      console.error("Analyze error:", error);
+      const msg = error instanceof Error
+        ? getErrorMessage(error, locale)
+        : v2messages.errors.analysisFailed;
+      setBanner({ message: msg, variant: "error" });
       setScreen("landing");
     }
   };
