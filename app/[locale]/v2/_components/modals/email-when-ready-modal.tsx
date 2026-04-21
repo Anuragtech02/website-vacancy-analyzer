@@ -3,13 +3,13 @@
 // email-when-ready-modal.tsx — shown from the Loading screen's slow-banner
 // "Email it to me" CTA. The user drops their email, we POST /api/analyze
 // with the email (and the already-submitted vacancy text + category + locale),
-// and the backend queues the job in the background (ENABLE_BACKGROUND_JOBS=true
-// required on the environment). User can close the tab; the full report
-// lands in their inbox.
+// and the backend spawns a detached in-process analyze promise (Next.js on
+// Coolify stays alive long enough to finish), then emails the user a link
+// to the report when it's done. User can close the tab.
 //
-// If the backend comes back with `async: false` (background-jobs env var
-// isn't set), we fall back to a "still running here" message and let the
-// foreground analysis keep going on the page.
+// No Bull queue, no Redis, no separate worker — the analyze call runs in
+// the same Node process that served the HTTP response and finishes after
+// the response returns.
 
 import { useState } from "react";
 import { type Tokens } from "../theme";
@@ -67,16 +67,16 @@ export function EmailWhenReadyModal({
       const data = await response.json();
 
       if (data.async) {
-        // Backend queued the job. User is done here.
+        // Backend kicked off the detached in-process job. User is done here.
         onQueued(data.message ?? t.loading.emailWhenReady.done);
         onClose();
         return;
       }
 
-      // Background jobs aren't enabled on this environment — the backend
-      // will run it synchronously. We don't wait for that here; just tell
-      // the user their foreground analysis is still going.
-      onError(t.loading.emailWhenReady.disabledHint);
+      // The backend always returns async:true when an email is provided
+      // now; this branch means the server didn't recognize the email for
+      // some reason. Fall back to the generic error copy.
+      onError(t.loading.emailWhenReady.error);
       setBusy(false);
     } catch {
       onError(t.loading.emailWhenReady.error);
