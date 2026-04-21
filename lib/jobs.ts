@@ -21,7 +21,7 @@
 import { PgBoss } from "pg-boss";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, lt } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { analysisJobs } from "./db/schema";
 
@@ -215,8 +215,16 @@ export async function reapZombieJobs(): Promise<number> {
       finished_at: new Date(),
       updated_at: new Date(),
     })
+    // Use typed operators, not a raw `sql` template. Drizzle converts the
+    // Date to the correct timestamp parameter only when it knows the column
+    // type — inside a raw sql tag the Date would be handed straight to
+    // postgres-js, which calls Buffer.byteLength() on it and crashes with
+    // ERR_INVALID_ARG_TYPE.
     .where(
-      sql`${analysisJobs.status} = 'running' AND ${analysisJobs.updated_at} < ${cutoff}`,
+      and(
+        eq(analysisJobs.status, "running"),
+        lt(analysisJobs.updated_at, cutoff),
+      ),
     )
     .returning({ id: analysisJobs.id });
   return result.length;
