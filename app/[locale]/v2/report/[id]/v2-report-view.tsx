@@ -13,6 +13,7 @@ import { useLocale } from "next-intl";
 import { buildTokens, DEFAULT_TWEAKS } from "../../_components/theme";
 import { PageShaderBackdrop } from "../../_components/shader";
 import { Navbar } from "../../_components/navbar";
+import { Footer } from "../../_components/landing/footer";
 import { Report } from "../../_components/report";
 import { EmailModal, LimitModal, DemoModal } from "../../_components/modals";
 import { V2MessagesProvider } from "../../_components/i18n-context";
@@ -143,6 +144,8 @@ export function V2ReportView({ reportId, analysis, vacancyText }: V2ReportViewPr
               onOpenLimit={() => setModal("limit")}
               onOpenDemo={() => setModal("demo")}
             />
+
+            <Footer tokens={tokens} />
 
             {modal === "email" && (
               <EmailModal

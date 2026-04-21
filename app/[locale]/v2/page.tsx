@@ -5,7 +5,7 @@
 // navigate to /v2/report/[id] instead of swapping screens in-place — every
 // report is now a real, shareable URL (matches v1 behaviour).
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import { buildTokens, DEFAULT_TWEAKS } from "./_components/theme";
@@ -41,6 +41,12 @@ export default function V2Page() {
   // returns; used by EmailWhenReadyModal to call attach-email and by the
   // poll loop to fetch status.
   const [pendingJobId, setPendingJobId]       = useState<string | null>(null);
+
+  // Cancellation flag for the running poll loop. Flipped to true when the
+  // user opts for "email me when ready", so the loop bails instead of
+  // redirecting the user to the report (which would yank them off the
+  // landing page they just got thrown back onto).
+  const pollAbortedRef = useRef<boolean>(false);
 
   // Backend-driven progress. Populated from SSE events. When stageIdx is
   // undefined the Loading screen falls back to its own timer animation
@@ -97,6 +103,7 @@ export default function V2Page() {
   // saves the final report, and sets status='done'.
   const startAnalyze = async (text: string, category: string) => {
     setPendingJobId(null);
+    pollAbortedRef.current = false;
     // Start at step 0 / 0% so Loading renders externally-driven from
     // the first frame (never falls back to the internal timer that
     // would race real progress events).
@@ -133,6 +140,10 @@ export default function V2Page() {
     const MAX_POLLS = 180;
     for (let i = 0; i < MAX_POLLS; i++) {
       await new Promise((r) => setTimeout(r, POLL_INTERVAL_MS));
+      // If the user asked us to notify them by email, the worker now
+      // owns the rest of this job. Stop polling so we don't hijack
+      // their tab when the worker finishes.
+      if (pollAbortedRef.current) return;
       let status: { status: string; progress: number; stage?: string; reportId?: string; error?: string };
       try {
         const res = await fetch(`/api/analyze/status?id=${encodeURIComponent(jobId)}`, {
@@ -225,6 +236,15 @@ export default function V2Page() {
                 jobId={pendingJobId}
                 onClose={() => setModal(null)}
                 onQueued={(msg) => {
+                  // Cancel the polling loop before navigating back to
+                  // landing — otherwise the loop keeps ticking and, the
+                  // moment the worker flips the job to `done`, it
+                  // calls router.push(report) and yanks the user off
+                  // the landing page they just got sent to.
+                  pollAbortedRef.current = true;
+                  setPendingJobId(null);
+                  setStageIdx(undefined);
+                  setProgressPct(undefined);
                   setBanner({ message: msg, variant: "success" });
                   setScreen("landing");
                 }}

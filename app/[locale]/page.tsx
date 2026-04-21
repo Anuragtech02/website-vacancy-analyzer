@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { Wand2, ArrowRight, CheckCircle2, Search, MessageSquare, FileText, Layout, Globe, Play, Building2, Sparkles, XCircle, Mail, TrendingUp, Clock, DollarSign } from "lucide-react";
@@ -36,6 +36,11 @@ export default function Home() {
   // returns. Used by the email-capture banner to call attach-email on
   // the existing job, and by the poll loop to fetch status.
   const [currentJobId, setCurrentJobId] = useState<string | null>(null);
+  // Cancellation flag for the running poll loop. Flipped to true when the
+  // user submits "email me when ready", so the poll loop stops checking
+  // status instead of eventually calling router.push(report) and yanking
+  // the user off the home screen they just got sent back to.
+  const pollAbortedRef = useRef<boolean>(false);
   const router = useRouter();
 
   // Animate through steps when analyzing
@@ -103,6 +108,7 @@ export default function Home() {
 
     setIsAnalyzing(true);
     setCurrentJobId(null);
+    pollAbortedRef.current = false;
 
     // Step 1: enqueue. Fast (<500ms) — just a DB write + queue send.
     let jobId: string;
@@ -136,6 +142,10 @@ export default function Home() {
     const MAX_POLLS = 180;
     for (let i = 0; i < MAX_POLLS; i++) {
       await new Promise((r) => setTimeout(r, POLL_INTERVAL_MS));
+      // If the user asked to be emailed when ready, the worker owns the
+      // rest of this job — stop polling so the "done" tick doesn't
+      // navigate the user's tab off the home screen.
+      if (pollAbortedRef.current) return;
       try {
         const res = await fetch(`/api/analyze/status?id=${encodeURIComponent(jobId)}`, {
           headers: { "Cache-Control": "no-cache" },
@@ -195,9 +205,17 @@ export default function Home() {
       // Done — show success banner and reset the analyzing state so the
       // user can close the tab. The background job keeps running on the
       // worker container and the email will arrive when it completes.
+      //
+      // Crucially: signal the poll loop to stop before we flip
+      // isAnalyzing off. Otherwise the loop keeps polling and, the
+      // moment the worker marks the job done, calls router.push(report)
+      // and snatches the user back into the report flow they just
+      // opted out of.
+      pollAbortedRef.current = true;
       const successMsg = t('emailCapture.queuedMessage');
       setBanner({ message: successMsg, variant: "success" });
       setIsAnalyzing(false);
+      setCurrentJobId(null);
       setVacancyText("");
       setEmail("");
     } catch (err) {
