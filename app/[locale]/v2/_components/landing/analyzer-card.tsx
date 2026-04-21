@@ -20,7 +20,9 @@ interface AnalyzerCardProps {
   onAnalyze: (text: string) => void;
 }
 
-const MIN_CHARS = 1000;
+// Hard upper bound: typed/pasted vacancies beyond this length are rejected
+// client-side to keep LLM latency predictable and token cost bounded.
+const MAX_CHARS = 2000;
 
 export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
   const t = useV2T();
@@ -28,7 +30,8 @@ export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
   const [text, setText] = useState("");
   const [focus, setFocus] = useState(false);
   const chars = text.length;
-  const canAnalyze = chars >= MIN_CHARS;
+  const overLimit = chars > MAX_CHARS;
+  const canAnalyze = chars > 0 && !overLimit;
 
   const cardRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -119,10 +122,14 @@ export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
           >{t.analyzerCard.trySample}</button>
           <div style={{
             fontFamily: tokens.monoFont, fontSize: 11,
-            color: canAnalyze ? tokens.ok : tokens.inkMute,
+            color: overLimit ? tokens.bad : canAnalyze ? tokens.ok : tokens.inkMute,
             letterSpacing: "0.08em",
           }}>
-            {t.analyzerCard.charsCount.replace('{count}', chars.toLocaleString(locale)).replace('{min}', MIN_CHARS.toLocaleString(locale))} {canAnalyze && "✓"}
+            {t.analyzerCard.charsCount
+              .replace('{count}', chars.toLocaleString(locale))
+              .replace('{max}', MAX_CHARS.toLocaleString(locale))}
+            {canAnalyze && " ✓"}
+            {overLimit && ` — ${t.analyzerCard.overLimit}`}
           </div>
         </div>
         <Magnetic tokens={tokens} strength={6}>

@@ -10,6 +10,10 @@ import { dbRaw } from "@/lib/db-raw";
 // Default Vercel serverless timeout is 60s on Pro. Bump to 300s (5 min).
 export const maxDuration = 300;
 
+// Hard upper bound — must stay in sync with v2 AnalyzerCard MAX_CHARS.
+// Enforced here too so the limit can't be bypassed with a direct POST.
+const MAX_VACANCY_CHARS = 2000;
+
 export async function POST(req: NextRequest) {
   // Rate Limiting
   const ip = req.headers.get("x-forwarded-for") || "unknown";
@@ -32,6 +36,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { error: "Vacancy text is required" },
         { status: 400 }
+      );
+    }
+
+    if (vacancyText.length > MAX_VACANCY_CHARS) {
+      return NextResponse.json(
+        { error: `Vacancy text exceeds ${MAX_VACANCY_CHARS} character limit.` },
+        { status: 413 }
       );
     }
 

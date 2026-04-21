@@ -56,7 +56,8 @@ const en = {
     placeholder:
       "Paste your vacancy here — plain text is fine. We'll preserve the structure.",
     trySample: "Try with a sample posting",
-    charsCount: "{count} / {min} chars",
+    charsCount: "{count} / {max} chars",
+    overLimit: "limit exceeded",
     submit: "Analyze vacancy",
     sampleVacancy: `Senior Full-Stack Engineer (m/f/x)
 Amsterdam · Hybrid · Permanent contract

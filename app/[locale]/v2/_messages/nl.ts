@@ -57,7 +57,8 @@ const nl = {
     placeholder:
       "Plak hier je vacature — platte tekst is prima. We behouden de structuur.",
     trySample: "Probeer met een voorbeeldvacature",
-    charsCount: "{count} / {min} tekens",
+    charsCount: "{count} / {max} tekens",
+    overLimit: "limiet overschreden",
     submit: "Analyseer vacature",
     sampleVacancy: `Senior Full-Stack Engineer (m/v/x)
 Amsterdam · Hybride · Vast contract
