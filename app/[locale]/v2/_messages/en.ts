@@ -59,6 +59,15 @@ const en = {
     charsCount: "{count} / {max} chars",
     overLimit: "limit exceeded",
     submit: "Analyze vacancy",
+    category: {
+      label:               "Job category",
+      general:             "General (Default)",
+      government:          "Government / Public Sector",
+      tech:                "Technology / Startups",
+      healthcareEducation: "Healthcare / Education",
+      legalCorporate:      "Legal / Corporate",
+      blueCollar:          "Blue Collar / Manual",
+    },
     sampleVacancy: `Senior Full-Stack Engineer (m/f/x)
 Amsterdam · Hybrid · Permanent contract
 

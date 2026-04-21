@@ -65,14 +65,14 @@ export default function V2Page() {
      "va2_unlocked", "va2_submitted_text"].forEach((k) => localStorage.removeItem(k));
   }, []);
 
-  const startAnalyze = async (text: string) => {
+  const startAnalyze = async (text: string, category: string) => {
     setScreen("loading");
 
     try {
       const response = await fetchWithTimeout("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ vacancyText: text, category: "General", locale }),
+        body: JSON.stringify({ vacancyText: text, category, locale }),
         timeout: 120000,
         retries: 1,
       });

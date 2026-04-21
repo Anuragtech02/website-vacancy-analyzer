@@ -15,7 +15,7 @@ import { useBreakpoint, isMobile, isNarrow } from "../use-breakpoint";
 
 export interface LandingProps {
   tokens: Tokens;
-  onAnalyze: (text: string) => void;
+  onAnalyze: (text: string, category: string) => void;
 }
 
 export function Landing({ tokens, onAnalyze }: LandingProps) {

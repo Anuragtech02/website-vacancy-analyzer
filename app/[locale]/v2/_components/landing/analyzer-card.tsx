@@ -18,12 +18,36 @@ import { useBreakpoint, isMobile, isNarrow } from "../use-breakpoint";
 
 interface AnalyzerCardProps {
   tokens: Tokens;
-  onAnalyze: (text: string) => void;
+  onAnalyze: (text: string, category: string) => void;
 }
 
 // Hard upper bound: typed/pasted vacancies beyond this length are rejected
 // client-side to keep LLM latency predictable and token cost bounded.
 const MAX_CHARS = 2000;
+
+// Matches the option values v1 uses (app/[locale]/page.tsx) and what
+// lib/prompts.ts' getAnalyzerPrompt(category, ...) expects — changing a value
+// here without mirroring to the prompt would silently fall back to General.
+type CategoryKey =
+  | "general"
+  | "government"
+  | "tech"
+  | "healthcareEducation"
+  | "legalCorporate"
+  | "blueCollar";
+
+const CATEGORY_VALUES: Record<CategoryKey, string> = {
+  general:             "General",
+  government:          "Government / Public Sector",
+  tech:                "Technology / Startups",
+  healthcareEducation: "Healthcare / Education",
+  legalCorporate:      "Legal / Corporate",
+  blueCollar:          "Blue Collar / Manual",
+};
+
+const CATEGORY_KEYS: CategoryKey[] = [
+  "general", "government", "tech", "healthcareEducation", "legalCorporate", "blueCollar",
+];
 
 export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
   const t = useV2T();
@@ -33,6 +57,7 @@ export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
   const narrow = isNarrow(bp);
   const [text, setText] = useState("");
   const [focus, setFocus] = useState(false);
+  const [categoryKey, setCategoryKey] = useState<CategoryKey>("general");
   const chars = text.length;
   const overLimit = chars > MAX_CHARS;
   const canAnalyze = chars > 0 && !overLimit;
@@ -148,26 +173,92 @@ export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
             {overLimit && ` — ${t.analyzerCard.overLimit}`}
           </div>
         </div>
-        <Magnetic tokens={tokens} strength={6}>
-          <Button
-            tokens={tokens}
-            variant="primary"
-            onClick={() => canAnalyze && onAnalyze(text)}
-            style={{
-              width: "100%",
-              marginTop: 18,
-              padding: mobile ? "16px 18px" : "18px 22px",
-              fontSize: 16,
-              opacity: canAnalyze ? 1 : 0.5,
-              cursor: canAnalyze ? "pointer" : "not-allowed",
-            }}
-          >
-            {t.analyzerCard.submit}
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+        {/* Category selector + Analyze button share one row on >= tablet.
+            The select value is self-describing ("General (Default)", "Tech /
+            Startups", etc.) so a separate "JOB CATEGORY" label isn't pulling
+            its weight — aria-label on the <select> covers a11y. */}
+        <div style={{
+          display: "flex",
+          flexDirection: mobile ? "column" : "row",
+          alignItems: "stretch",
+          gap: mobile ? 10 : 12,
+          marginTop: 16,
+        }}>
+          <div style={{ position: "relative", flex: mobile ? undefined : "0 1 260px" }}>
+            <svg
+              width="16" height="16" viewBox="0 0 24 24" fill="none"
+              aria-hidden
+              style={{
+                position: "absolute", left: 12, top: "50%",
+                transform: "translateY(-50%)",
+                color: tokens.inkMute, pointerEvents: "none",
+              }}
+            >
+              <path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h.01M9 12h.01M9 15h.01M9 18h.01M15 9h.01M15 12h.01M15 15h.01M15 18h.01" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-          </Button>
-        </Magnetic>
+            <select
+              id="va2-category"
+              aria-label={t.analyzerCard.category.label}
+              value={categoryKey}
+              onChange={(e) => setCategoryKey(e.target.value as CategoryKey)}
+              style={{
+                width: "100%",
+                appearance: "none",
+                WebkitAppearance: "none",
+                MozAppearance: "none",
+                background: tokens.bgRaised,
+                border: `1px solid ${tokens.line}`,
+                borderRadius: tokens.cardRadius,
+                padding: mobile ? "14px 36px 14px 38px" : "16px 36px 16px 38px",
+                fontFamily: tokens.bodyFont,
+                fontSize: 14,
+                fontWeight: 600,
+                color: tokens.ink,
+                cursor: "pointer",
+                outline: "none",
+              }}
+            >
+              {CATEGORY_KEYS.map((k) => (
+                <option key={k} value={k}>{t.analyzerCard.category[k]}</option>
+              ))}
+            </select>
+            <svg
+              width="12" height="12" viewBox="0 0 20 20"
+              aria-hidden
+              style={{
+                position: "absolute", right: 14, top: "50%",
+                transform: "translateY(-50%)",
+                color: tokens.inkMute, pointerEvents: "none",
+              }}
+            >
+              <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" fill="currentColor"/>
+            </svg>
+          </div>
+
+          <Magnetic
+            tokens={tokens}
+            strength={6}
+            style={{ flex: mobile ? undefined : 1, display: mobile ? "block" : "inline-block" }}
+          >
+            <Button
+              tokens={tokens}
+              variant="primary"
+              onClick={() => canAnalyze && onAnalyze(text, CATEGORY_VALUES[categoryKey])}
+              style={{
+                width: "100%",
+                padding: mobile ? "16px 18px" : "16px 22px",
+                fontSize: 16,
+                opacity: canAnalyze ? 1 : 0.5,
+                cursor: canAnalyze ? "pointer" : "not-allowed",
+              }}
+            >
+              {t.analyzerCard.submit}
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </Button>
+          </Magnetic>
+        </div>
       </div>
 
       {/* floating reassurance — fades out when text has content */}
