@@ -72,29 +72,54 @@ export function MethodologySection({ tokens }: MethodologySectionProps) {
           const c = pillarColor(key);
           return (
             <Reveal tokens={tokens} delay={i * 70} key={key} style={{ display: "flex", height: "100%" }}>
-              <Card tokens={tokens} pad={20} tint={c.bg}
+              <Card
+                tokens={tokens}
+                pad={20}
+                tint={tokens.bgRaised}
                 style={{
                   width: "100%",
+                  position: "relative", overflow: "hidden",
                   display: "flex", flexDirection: "column",
-                  borderColor: c.border,
-                  transition: m.on ? "transform .3s cubic-bezier(.2,.7,.2,1)" : "none",
+                  transition: m.on ? "transform .3s cubic-bezier(.2,.7,.2,1), box-shadow .3s ease" : "none",
                 }}
-                onMouseEnter={(e) => { if (m.on) { e.currentTarget.style.transform = "translateY(-3px) rotate(-0.4deg)"; }}}
-                onMouseLeave={(e) => { if (m.on) { e.currentTarget.style.transform = "none"; }}}
+                onMouseEnter={(e) => { if (m.on) {
+                  e.currentTarget.style.transform = "translateY(-3px)";
+                  e.currentTarget.style.boxShadow = "0 14px 32px -18px rgba(40,30,20,0.22)";
+                }}}
+                onMouseLeave={(e) => { if (m.on) {
+                  e.currentTarget.style.transform = "none";
+                  e.currentTarget.style.boxShadow = "none";
+                }}}
               >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
+                {/* Thin colored top stripe — the one place colour shows up
+                    so the grid reads as a family without flooding each card
+                    with a different pastel. Matches the report pillar grid. */}
+                <div style={{
+                  position: "absolute", top: 0, left: 0, right: 0, height: 3,
+                  background: c.fg,
+                }} />
+
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginTop: 6 }}>
                   <div style={{
                     fontFamily: tokens.monoFont, fontSize: 11,
-                    color: c.dark, letterSpacing: "0.12em", fontWeight: 500,
+                    color: tokens.inkMute, letterSpacing: "0.14em",
+                    textTransform: "uppercase", fontWeight: 500,
                   }}>P{String(i + 1).padStart(2, "0")}</div>
+                  {/* Small tinted badge — keeps each card identifiable
+                      without screaming colour. */}
                   <div style={{
-                    width: 10, height: 10, borderRadius: 2, background: c.fg,
-                  }} />
+                    width: 28, height: 28,
+                    borderRadius: tokens.cardRadius > 6 ? 8 : 2,
+                    background: c.bg, border: `1px solid ${c.border}`,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                  }}>
+                    <div style={{ width: 8, height: 8, borderRadius: 2, background: c.fg }} />
+                  </div>
                 </div>
                 <div style={{
-                  fontFamily: tokens.displayFont, fontSize: 22,
+                  fontFamily: tokens.displayFont, fontSize: 20,
                   fontWeight: tokens.displayWeight, color: tokens.ink,
-                  marginTop: 22, letterSpacing: "-0.01em", lineHeight: 1.15,
+                  marginTop: 20, letterSpacing: "-0.01em", lineHeight: 1.2,
                 }}>{t.methodology.pillars[key]}</div>
               </Card>
             </Reveal>
