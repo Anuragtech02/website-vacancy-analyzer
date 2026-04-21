@@ -13,6 +13,9 @@
       "placeholder": "Plak hier je bestaande vacaturetekst (inclusief functietitel)",
       "helperText": "💡 Tip: Kopieer de volledige tekst van je huidige vacature",
       "error": "Er ging iets mis. Probeer het opnieuw.",
+      "charCount": "{count} / {max} tekens",
+      "overLimit": "Je tekst bevat {count} tekens. Kort deze in tot {max} tekens of minder.",
+      "tooLarge": "Je vacaturetekst is langer dan {max} tekens. Kort deze in en probeer het opnieuw.",
       "howItWorks": {
         "title": "Hoe werkt het?",
         "step1Title": "Plak vacature",

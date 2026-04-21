@@ -23,6 +23,13 @@ export default function Home() {
     { id: 5, label: t('steps.checkSEO'), icon: Globe, duration: 2500, isFinal: false },
     { id: 6, label: t('steps.finalize'), icon: Sparkles, duration: 0, isFinal: true },
   ];
+  // Hard upper bound: typed/pasted vacancies beyond this length are rejected
+  // client-side, matching the server guard in app/api/analyze/route.ts.
+  // Keep in sync with MAX_VACANCY_CHARS there and MAX_CHARS in v2's
+  // AnalyzerCard. Real-world senior / technical vacancies routinely run
+  // 6–10k characters so 10k is the practical ceiling.
+  const MAX_CHARS = 10000;
+
   const [vacancyText, setVacancyText] = useState("");
   const [category, setCategory] = useState("General");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -106,6 +113,20 @@ export default function Home() {
   const handleAnalyze = async () => {
     if (!vacancyText.trim()) return;
 
+    // Guard: client-side char cap. The submit button is also disabled in
+    // this state, so this check really just protects against programmatic
+    // submission (enter key on disabled form, browser autofill, etc.).
+    if (vacancyText.length > MAX_CHARS) {
+      setBanner({
+        message: t('hero.overLimit', {
+          count: vacancyText.length.toLocaleString(locale),
+          max: MAX_CHARS.toLocaleString(locale),
+        }),
+        variant: "error",
+      });
+      return;
+    }
+
     setIsAnalyzing(true);
     setCurrentJobId(null);
     pollAbortedRef.current = false;
@@ -120,7 +141,21 @@ export default function Home() {
         timeout: 30000,
         retries: 0,
       });
-      if (!response.ok) throw new Error("Analysis failed");
+      if (!response.ok) {
+        // 413 Payload Too Large — the server's MAX_VACANCY_CHARS guard
+        // tripped. Show the specific "too large" message instead of the
+        // generic "something went wrong" fallback, because the user can
+        // actually do something about this.
+        if (response.status === 413) {
+          setBanner({
+            message: t('hero.tooLarge', { max: MAX_CHARS.toLocaleString(locale) }),
+            variant: "error",
+          });
+          setIsAnalyzing(false);
+          return;
+        }
+        throw new Error("Analysis failed");
+      }
       const data = await response.json() as { jobId?: string };
       if (!data.jobId) throw new Error("Unexpected analysis response");
       jobId = data.jobId;
@@ -399,14 +434,39 @@ export default function Home() {
                                     value={vacancyText}
                                     onChange={(e) => setVacancyText(e.target.value)}
                                     placeholder={t('hero.placeholder')}
-                                    className="peer w-full h-48 sm:h-56 lg:h-64 p-4 sm:p-5 bg-slate-50/30 focus:bg-white rounded-xl sm:rounded-2xl border-2 border-slate-100/50 resize-none focus:ring-4 focus:ring-primary/5 focus:border-primary/20 transition-all text-sm sm:text-base leading-relaxed placeholder:text-slate-300 font-medium"
+                                    maxLength={MAX_CHARS}
+                                    className={cn(
+                                      "peer w-full h-48 sm:h-56 lg:h-64 p-4 sm:p-5 bg-slate-50/30 focus:bg-white rounded-xl sm:rounded-2xl border-2 resize-none focus:ring-4 transition-all text-sm sm:text-base leading-relaxed placeholder:text-slate-300 font-medium",
+                                      // Over-limit styling overrides the default focus ring / border treatment so the constraint is obvious.
+                                      vacancyText.length > MAX_CHARS
+                                        ? "border-red-400/70 focus:ring-red-500/10 focus:border-red-500/40"
+                                        : "border-slate-100/50 focus:ring-primary/5 focus:border-primary/20"
+                                    )}
                                     style={{ whiteSpace: "pre-wrap" }}
                                 />
 
-                                {/* Helper Text */}
-                                <p className="mt-2 text-xs text-slate-500 px-1">
-                                  {t('hero.helperText')}
-                                </p>
+                                {/* Helper Text + live char counter. Counter turns red once over the limit; the submit button below disables in the same state, so the user has two redundant signals that the text won't be accepted. */}
+                                <div className="mt-2 flex items-center justify-between gap-3 px-1">
+                                  <p className="text-xs text-slate-500">
+                                    {t('hero.helperText')}
+                                  </p>
+                                  <p
+                                    className={cn(
+                                      "text-xs font-mono tabular-nums shrink-0 transition-colors",
+                                      vacancyText.length > MAX_CHARS
+                                        ? "text-red-600 font-semibold"
+                                        : vacancyText.length > MAX_CHARS * 0.9
+                                          ? "text-amber-600"
+                                          : "text-slate-400"
+                                    )}
+                                    aria-live="polite"
+                                  >
+                                    {t('hero.charCount', {
+                                      count: vacancyText.length.toLocaleString(locale),
+                                      max: MAX_CHARS.toLocaleString(locale),
+                                    })}
+                                  </p>
+                                </div>
 
                                 {/* Floating Badge - Bottom Left (Inside/Overlapping Textarea) */}
                                 <div className="absolute left-2 sm:left-4 xl:-left-8 bottom-6 sm:bottom-8 bg-white py-2 sm:py-2.5 px-3 sm:px-4 rounded-xl sm:rounded-2xl shadow-xl border border-slate-100 flex items-center gap-2 sm:gap-3 z-20 transition-all duration-300 peer-focus:opacity-0 peer-focus:-translate-x-4 peer-hover:opacity-0 peer-hover:-translate-x-4 pointer-events-none">
@@ -443,7 +503,7 @@ export default function Home() {
                                 <div className="flex items-center gap-4 w-full sm:w-auto">
                                     <Button
                                         onClick={() => handleAnalyze()}
-                                        disabled={!vacancyText.trim()}
+                                        disabled={!vacancyText.trim() || vacancyText.length > MAX_CHARS}
                                         className="w-full sm:w-auto px-4 sm:px-6 py-5 sm:py-6 rounded-xl sm:rounded-2xl text-sm sm:text-base font-bold shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98] transition-all group cursor-pointer"
                                     >
                                         {t('hero.cta')}

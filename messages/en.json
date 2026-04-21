@@ -13,6 +13,9 @@
       "placeholder": "Paste your existing job posting here (including job title)",
       "helperText": "💡 Tip: Copy the full text of your current job posting",
       "error": "Something went wrong. Please try again.",
+      "charCount": "{count} / {max} characters",
+      "overLimit": "Your text is {count} characters — please shorten it to {max} or fewer.",
+      "tooLarge": "Your vacancy text exceeds the {max}-character limit. Please shorten it and try again.",
       "howItWorks": {
         "title": "How does it work?",
         "step1Title": "Paste vacancy",
