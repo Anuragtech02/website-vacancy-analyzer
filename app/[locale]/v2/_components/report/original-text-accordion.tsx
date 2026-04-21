@@ -28,18 +28,38 @@ export function OriginalTextAccordion({ tokens, text }: OriginalTextAccordionPro
       <Card tokens={tokens} pad={0}>
         <button
           onClick={() => setTextOpen(!textOpen)}
+          onMouseEnter={(e) => {
+            const el = e.currentTarget as HTMLButtonElement;
+            el.style.background = tokens.bgMuted;
+            const chevron = el.querySelector('[data-accordion-chevron]') as HTMLElement | null;
+            if (chevron) chevron.style.color = tokens.ink;
+          }}
+          onMouseLeave={(e) => {
+            const el = e.currentTarget as HTMLButtonElement;
+            el.style.background = "transparent";
+            const chevron = el.querySelector('[data-accordion-chevron]') as HTMLElement | null;
+            if (chevron) chevron.style.color = tokens.inkMute;
+          }}
           style={{
-            width: "100%", background: "none", border: "none",
+            width: "100%", background: "transparent", border: "none",
             padding: buttonPadding, cursor: "pointer", textAlign: "left",
             display: "flex", justifyContent: "space-between", alignItems: "center",
             fontFamily: tokens.bodyFont, fontSize: buttonFontSize, color: tokens.ink, fontWeight: 500,
             gap: 12,
+            transition: "background .15s ease",
+            borderRadius: "inherit",
           }}
         >
           <span>{t.report.accordion.show}</span>
-          <span style={{
-            fontFamily: tokens.monoFont, fontSize: 11, color: tokens.inkMute, letterSpacing: "0.12em",
-          }}>{textOpen ? t.report.accordion.toggle.hide : t.report.accordion.toggle.show}</span>
+          <span
+            data-accordion-chevron
+            style={{
+              fontFamily: tokens.monoFont, fontSize: 11, color: tokens.inkMute, letterSpacing: "0.12em",
+              transition: "color .15s ease",
+            }}
+          >
+            {textOpen ? t.report.accordion.toggle.hide : t.report.accordion.toggle.show}
+          </span>
         </button>
         {textOpen && (
           <div style={{

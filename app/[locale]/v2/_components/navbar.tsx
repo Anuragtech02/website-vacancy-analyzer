@@ -29,6 +29,14 @@ function Wordmark({ tokens: _tokens, onHome, compact }: { tokens: Tokens; onHome
     <button
       onClick={onHome}
       aria-label="Vacature Tovenaar — home"
+      onMouseEnter={(e) => {
+        const img = (e.currentTarget as HTMLButtonElement).firstElementChild as HTMLElement | null;
+        if (img) img.style.transform = "scale(1.03)";
+      }}
+      onMouseLeave={(e) => {
+        const img = (e.currentTarget as HTMLButtonElement).firstElementChild as HTMLElement | null;
+        if (img) img.style.transform = "scale(1)";
+      }}
       style={{
         display: "flex", alignItems: "center",
         background: "none", border: "none", padding: 0, cursor: "pointer",
@@ -39,7 +47,11 @@ function Wordmark({ tokens: _tokens, onHome, compact }: { tokens: Tokens; onHome
         alt="Vacature Tovenaar"
         width={width}
         height={height}
-        style={{ display: "block", height, width: "auto" }}
+        style={{
+          display: "block", height, width: "auto",
+          transformOrigin: "left center",
+          transition: "transform .18s cubic-bezier(.2,.7,.2,1)",
+        }}
         priority
       />
     </button>
@@ -77,6 +89,18 @@ function LanguageToggle({ tokens }: { tokens: Tokens }) {
           <button
             key={lang}
             onClick={() => switchTo(lang)}
+            onMouseEnter={(e) => {
+              // Hover feedback only on the inactive pill — active already
+              // looks pressed; doubling up would read as a bug.
+              if (active) return;
+              (e.currentTarget as HTMLButtonElement).style.background = tokens.bgMuted;
+              (e.currentTarget as HTMLButtonElement).style.color = tokens.ink;
+            }}
+            onMouseLeave={(e) => {
+              if (active) return;
+              (e.currentTarget as HTMLButtonElement).style.background = "transparent";
+              (e.currentTarget as HTMLButtonElement).style.color = tokens.inkSoft;
+            }}
             style={{
               background: active ? tokens.ink : "transparent",
               color: active ? tokens.bgRaised : tokens.inkSoft,

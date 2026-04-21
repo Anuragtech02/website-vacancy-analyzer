@@ -177,12 +177,21 @@ export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
         }}>
           <button
             onClick={() => setText(t.analyzerCard.sampleVacancy)}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.color = tokens.primaryColor;
+              (e.currentTarget as HTMLButtonElement).style.textUnderlineOffset = "5px";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.color = tokens.inkSoft;
+              (e.currentTarget as HTMLButtonElement).style.textUnderlineOffset = "3px";
+            }}
             style={{
               background: "none", border: "none", cursor: "pointer",
               fontFamily: tokens.monoFont, fontSize: 11,
               color: tokens.inkSoft, letterSpacing: "0.1em",
               textTransform: "uppercase", padding: 0,
               textDecoration: "underline", textUnderlineOffset: 3,
+              transition: "color .15s ease, text-underline-offset .15s ease",
             }}
           >{t.analyzerCard.trySample}</button>
           <div style={{

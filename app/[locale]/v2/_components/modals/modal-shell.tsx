@@ -46,12 +46,28 @@ export function ModalShell({ tokens, children, onClose, maxWidth = 520 }: ModalS
       >
         <button
           onClick={onClose}
+          aria-label="Close"
+          onMouseEnter={(e) => {
+            const el = e.currentTarget as HTMLButtonElement;
+            el.style.background = tokens.bgMuted;
+            el.style.color = tokens.ink;
+            el.style.borderColor = tokens.ink;
+            el.style.transform = "rotate(90deg)";
+          }}
+          onMouseLeave={(e) => {
+            const el = e.currentTarget as HTMLButtonElement;
+            el.style.background = tokens.bgRaised;
+            el.style.color = tokens.inkSoft;
+            el.style.borderColor = tokens.line;
+            el.style.transform = "rotate(0deg)";
+          }}
           style={{
             position: "absolute", top: 14, right: 14,
             width: 32, height: 32, borderRadius: 999,
             border: `1px solid ${tokens.line}`, background: tokens.bgRaised, cursor: "pointer",
             display: "flex", alignItems: "center", justifyContent: "center",
             color: tokens.inkSoft,
+            transition: "background .15s ease, color .15s ease, border-color .15s ease, transform .25s cubic-bezier(.2,.7,.2,1)",
           }}
         >
           <svg width="12" height="12" viewBox="0 0 12 12">
