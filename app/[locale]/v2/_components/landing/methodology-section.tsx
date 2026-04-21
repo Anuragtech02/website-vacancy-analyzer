@@ -4,12 +4,13 @@
 // Ported from landing.jsx (React-in-HTML prototype).
 
 import type { Tokens } from "../theme";
-import { PILLAR_COLORS, pillarColor } from "../theme";
+import { PILLAR_COLORS } from "../theme";
 import type { PillarKey } from "../theme";
 import { Card, Eyebrow } from "../primitives";
 import { useMotion, Reveal } from "../motion";
 import { useV2T } from "../i18n-context";
 import { useBreakpoint, isMobile, isTablet } from "../use-breakpoint";
+import { PillarIcon } from "../report/pillar-icon";
 
 interface MethodologySectionProps {
   tokens: Tokens;
@@ -69,21 +70,19 @@ export function MethodologySection({ tokens }: MethodologySectionProps) {
         marginTop: mobile ? 28 : 44,
       }}>
         {(Object.keys(PILLAR_COLORS) as PillarKey[]).map((key, i) => {
-          const c = pillarColor(key);
           return (
             <Reveal tokens={tokens} delay={i * 70} key={key} style={{ display: "flex", height: "100%" }}>
               <Card
                 tokens={tokens}
-                pad={20}
+                pad={22}
                 tint={tokens.bgRaised}
                 style={{
                   width: "100%",
-                  position: "relative", overflow: "hidden",
                   display: "flex", flexDirection: "column",
                   transition: m.on ? "transform .3s cubic-bezier(.2,.7,.2,1), box-shadow .3s ease" : "none",
                 }}
                 onMouseEnter={(e) => { if (m.on) {
-                  e.currentTarget.style.transform = "translateY(-3px)";
+                  e.currentTarget.style.transform = "translateY(-4px)";
                   e.currentTarget.style.boxShadow = "0 14px 32px -18px rgba(40,30,20,0.22)";
                 }}}
                 onMouseLeave={(e) => { if (m.on) {
@@ -91,35 +90,22 @@ export function MethodologySection({ tokens }: MethodologySectionProps) {
                   e.currentTarget.style.boxShadow = "none";
                 }}}
               >
-                {/* Thin colored top stripe — the one place colour shows up
-                    so the grid reads as a family without flooding each card
-                    with a different pastel. Matches the report pillar grid. */}
-                <div style={{
-                  position: "absolute", top: 0, left: 0, right: 0, height: 3,
-                  background: c.fg,
-                }} />
-
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginTop: 6 }}>
+                {/* Top row: P## mono label on the left, single primary-colour
+                    icon on the right. Same visual pattern as problem-section
+                    (see landing/problem-section.tsx) — the v2 design language
+                    uses the one orange accent consistently, not a rainbow. */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
                   <div style={{
                     fontFamily: tokens.monoFont, fontSize: 11,
                     color: tokens.inkMute, letterSpacing: "0.14em",
                     textTransform: "uppercase", fontWeight: 500,
                   }}>P{String(i + 1).padStart(2, "0")}</div>
-                  {/* Small tinted badge — keeps each card identifiable
-                      without screaming colour. */}
-                  <div style={{
-                    width: 28, height: 28,
-                    borderRadius: tokens.cardRadius > 6 ? 8 : 2,
-                    background: c.bg, border: `1px solid ${c.border}`,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                  }}>
-                    <div style={{ width: 8, height: 8, borderRadius: 2, background: c.fg }} />
-                  </div>
+                  <PillarIcon name={key} color={tokens.primaryColor} />
                 </div>
                 <div style={{
-                  fontFamily: tokens.displayFont, fontSize: 20,
+                  fontFamily: tokens.displayFont, fontSize: 22,
                   fontWeight: tokens.displayWeight, color: tokens.ink,
-                  marginTop: 20, letterSpacing: "-0.01em", lineHeight: 1.2,
+                  marginTop: 22, letterSpacing: "-0.01em", lineHeight: 1.15,
                 }}>{t.methodology.pillars[key]}</div>
               </Card>
             </Reveal>
