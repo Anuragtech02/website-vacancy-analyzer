@@ -14,7 +14,7 @@
 import "dotenv/config";
 import { analyzeVacancy } from "../lib/gemini";
 import { dbClient } from "../lib/db";
-import { sendEmail } from "../lib/email";
+import { sendAnalysisReadyEmail, sendAnalysisFailedEmail } from "../lib/email";
 import { nanoid } from "nanoid";
 import {
   ANALYZE_QUEUE,
@@ -112,23 +112,23 @@ async function handleAnalyzeJob(jobs: { data: AnalyzeJobMessage; id: string }[])
 
 async function sendCompletionEmail(email: string, reportId: string, locale: string): Promise<void> {
   const reportUrl = `${BASE_URL}/${locale}/v2/report/${reportId}`;
-  const subject = locale === "en"
-    ? "Your vacancy analysis is ready"
-    : "Je vacature-analyse is klaar";
-  const body = locale === "en"
-    ? `Your vacancy analysis has finished.\n\nOpen the report here:\n${reportUrl}\n\nKind regards,\nVacature Tovenaar`
-    : `Je vacature-analyse is klaar.\n\nBekijk het rapport hier:\n${reportUrl}\n\nMet vriendelijke groet,\nVacature Tovenaar`;
-  await sendEmail({ to: email, subject, body });
+  await sendAnalysisReadyEmail({
+    to: email,
+    reportUrl,
+    locale: normalizeLocale(locale),
+  });
 }
 
 async function sendFailureEmail(email: string, locale: string): Promise<void> {
-  const subject = locale === "en"
-    ? "We couldn't finish your vacancy analysis"
-    : "Je vacature-analyse is niet gelukt";
-  const body = locale === "en"
-    ? "Sorry — our analysis job failed. Please try again on the site, or reach out to joost@vacaturetovenaar.nl and we'll take a look."
-    : "Helaas is onze analyse niet gelukt. Probeer het opnieuw op de site, of mail joost@vacaturetovenaar.nl dan kijken we mee.";
-  await sendEmail({ to: email, subject, body });
+  await sendAnalysisFailedEmail({
+    to: email,
+    locale: normalizeLocale(locale),
+    retryUrl: `${BASE_URL}/${locale}`,
+  });
+}
+
+function normalizeLocale(l: string): "en" | "nl" {
+  return l === "en" ? "en" : "nl";
 }
 
 // ─── Main loop ─────────────────────────────────────────────────────────────
