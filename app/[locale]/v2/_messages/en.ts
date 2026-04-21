@@ -174,6 +174,7 @@ Send your CV and motivation letter to jobs@company.example. We will come back to
     header: {
       working: "Our software is at work",
       elapsed: "{seconds}s elapsed",
+      eta:     "Usually takes about a minute",
     },
     stepCounter: "Step {current} of {total}",
     steps: {
@@ -255,7 +256,7 @@ Send your CV and motivation letter to jobs@company.example. We will come back to
       },
       currentLabel:   "Current",
       potentialLabel: "Potential",
-      unlockButton:   "Unlock improved version",
+      unlockButton:   "View improved version",
       trust: {
         noSpam:      "No spam",
         gdpr:        "GDPR safe",
@@ -326,8 +327,8 @@ Send your CV and motivation letter to jobs@company.example. We will come back to
       "Scores are produced by a large language model tuned on 14,000 anonymized postings and applicant outcomes. Treat them as a second opinion, not a verdict. Your domain knowledge wins every tie.",
     stickyBanner: {
       title:    "The rewrite is ready. Projected {score} / 10",
-      subtitle: "Enter your email to unlock. No marketing spam, unsubscribe any time.",
-      cta:      "Unlock rewrite →",
+      subtitle: "Enter your email to view the improved version. No marketing spam, unsubscribe any time.",
+      cta:      "View improved version →",
     },
   },
   modals: {

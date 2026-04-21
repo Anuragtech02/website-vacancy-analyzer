@@ -175,6 +175,7 @@ Stuur je CV en motivatiebrief naar jobs@bedrijf.nl. We komen bij je terug als er
     header: {
       working: "Onze software is aan het werk",
       elapsed: "{seconds}s verstreken",
+      eta:     "Duurt meestal zo'n minuut",
     },
     stepCounter: "Stap {current} van {total}",
     steps: {
@@ -256,7 +257,7 @@ Stuur je CV en motivatiebrief naar jobs@bedrijf.nl. We komen bij je terug als er
       },
       currentLabel:   "Huidig",
       potentialLabel: "Potentieel",
-      unlockButton:   "Ontgrendel verbeterde versie",
+      unlockButton:   "Bekijk verbeterde versie",
       trust: {
         noSpam:      "Geen spam",
         gdpr:        "AVG-proof",
@@ -328,7 +329,7 @@ Stuur je CV en motivatiebrief naar jobs@bedrijf.nl. We komen bij je terug als er
     stickyBanner: {
       title:    "De herschrijving is klaar. Voorspelling {score} / 10",
       subtitle: "Voer je e-mail in om te ontgrendelen. Geen marketingmail, altijd uitschrijven.",
-      cta:      "Ontgrendel herschrijving →",
+      cta:      "Bekijk verbeterde versie →",
     },
   },
   modals: {

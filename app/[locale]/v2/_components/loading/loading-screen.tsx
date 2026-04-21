@@ -29,39 +29,59 @@ export const LOADING_STEPS: Array<{ key: StepKey }> = [
 interface LoadingProps {
   tokens: Tokens;
   onSkipToEmail: () => void;
+  /**
+   * Externally-driven step index (0-5) from the SSE progress events. When
+   * omitted, the loader falls back to a client-side timer animation — used
+   * during SSR and as a graceful degradation if the stream never sends a
+   * progress event. Backend-driven values take precedence the moment they
+   * arrive.
+   */
+  stageIdx?: number;
+  /** Externally-driven progress % (0-100). Optional; derived from stageIdx if absent. */
+  progressPct?: number;
 }
 
-export function Loading({ tokens, onSkipToEmail }: LoadingProps) {
-  const [stepIdx, setStepIdx] = useState(0);
+export function Loading({ tokens, onSkipToEmail, stageIdx, progressPct }: LoadingProps) {
+  const [internalStepIdx, setInternalStepIdx] = useState(0);
   const [elapsed, setElapsed] = useState(0);
   const m = useMotion(tokens);
   const t = useV2T();
   const bp = useBreakpoint();
   const mobile = isMobile(bp);
 
+  // If the parent is driving the loader via SSE, use that stage index.
+  // Otherwise, fall back to the internal timer-based animation.
+  const externallyDriven = stageIdx !== undefined;
+  const stepIdx = externallyDriven ? Math.min(Math.max(0, stageIdx), LOADING_STEPS.length - 1) : internalStepIdx;
+
   useEffect(() => {
     const tick = setInterval(() => setElapsed((e) => e + 0.1), 100);
     return () => clearInterval(tick);
   }, []);
 
-  // Advance through the visible steps and then HOLD on the last step.
-  // The parent owns the report transition — we never call back to say "done"
-  // because we don't actually know when Gemini is done until the fetch resolves.
+  // Internal timer advance — disabled when the parent is driving via SSE.
   useEffect(() => {
-    if (stepIdx >= LOADING_STEPS.length - 1) return;
+    if (externallyDriven) return;
+    if (internalStepIdx >= LOADING_STEPS.length - 1) return;
     const durations = [900, 1100, 1000, 1200, 1100, 1300];
-    const timer = setTimeout(() => setStepIdx((i) => i + 1), durations[stepIdx] ?? 1000);
+    const timer = setTimeout(() => setInternalStepIdx((i) => i + 1), durations[internalStepIdx] ?? 1000);
     return () => clearTimeout(timer);
-  }, [stepIdx]);
+  }, [internalStepIdx, externallyDriven]);
 
-  // Progress bar eases toward 100% on the last step but never reaches it,
-  // so the user sees continued motion while the fetch is still in flight.
-  const basePct = (stepIdx / LOADING_STEPS.length) * 100;
-  const onLastStep = stepIdx >= LOADING_STEPS.length - 1;
-  const tailPct = onLastStep
+  // Progress bar:
+  //   - External mode: use the progressPct the server sent (clamped to 97%).
+  //   - Internal mode: derive from the step index + an easing tail so the
+  //     bar keeps moving while holding on the last step.
+  const internalBasePct = (internalStepIdx / LOADING_STEPS.length) * 100;
+  const internalOnLastStep = internalStepIdx >= LOADING_STEPS.length - 1;
+  const internalTailPct = internalOnLastStep
     ? Math.min(18, (elapsed - (0.9 + 1.1 + 1.0 + 1.2 + 1.1)) * 1.5)
     : 0;
-  const pct = Math.min(97, Math.max(0, basePct + Math.max(0, tailPct)));
+  const internalPct = Math.min(97, Math.max(0, internalBasePct + Math.max(0, internalTailPct)));
+  const pct = externallyDriven
+    ? Math.min(97, Math.max(0, progressPct ?? (stepIdx / LOADING_STEPS.length) * 100))
+    : internalPct;
+
   const current = LOADING_STEPS[Math.min(stepIdx, LOADING_STEPS.length - 1)];
   // Pull translated label/detail by the step's key — fully type-safe, no cast needed
   const currentLabel  = t.loading.steps[current.key].label;
@@ -100,8 +120,18 @@ export function Loading({ tokens, onSkipToEmail }: LoadingProps) {
               {t.loading.header.working}
             </div>
           </div>
-          <div style={{ fontFamily: tokens.monoFont, fontSize: 11, color: tokens.inkMute }}>
-            {t.loading.header.elapsed.replace('{seconds}', elapsed.toFixed(1))}
+          <div style={{
+            display: "flex", alignItems: "center", gap: 10,
+            fontFamily: tokens.monoFont, fontSize: 11, color: tokens.inkMute,
+          }}>
+            {/* ETA is conservative phrasing — "usually about a minute" — to
+                set expectation without promising an exact time. Hidden on
+                mobile to keep the strip from wrapping. */}
+            {!mobile && (
+              <span>{t.loading.header.eta}</span>
+            )}
+            {!mobile && <span>·</span>}
+            <span>{t.loading.header.elapsed.replace('{seconds}', elapsed.toFixed(1))}</span>
           </div>
         </div>
 

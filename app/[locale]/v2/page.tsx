@@ -18,7 +18,7 @@ import { V2MessagesProvider } from "./_components/i18n-context";
 import { BannerProvider, type BannerState } from "./_components/banner-context";
 import { BannerOverlay } from "./_components/banner-overlay";
 import { getV2Messages } from "./_messages";
-import { fetchWithTimeout, getErrorMessage } from "@/lib/fetch-with-timeout";
+import { getErrorMessage } from "@/lib/fetch-with-timeout";
 import { generateFingerprint } from "@/lib/fingerprint";
 import type { OptimizationResult } from "@/lib/gemini";
 
@@ -42,6 +42,13 @@ export default function V2Page() {
   // attached (which triggers the background-queue path on the server).
   const [pendingText, setPendingText]         = useState<string>("");
   const [pendingCategory, setPendingCategory] = useState<string>("General");
+
+  // Backend-driven progress. Populated from SSE events. When stageIdx is
+  // undefined the Loading screen falls back to its own timer animation
+  // (happens during the initial "started" → first "progress" gap, or if
+  // streaming fails outright).
+  const [stageIdx, setStageIdx]         = useState<number | undefined>(undefined);
+  const [progressPct, setProgressPct]   = useState<number | undefined>(undefined);
 
   // EmailModal on this page is only used from the async-queued branch
   // (reportId is null since we don't have one yet). If a user opens the
@@ -74,44 +81,81 @@ export default function V2Page() {
   const startAnalyze = async (text: string, category: string) => {
     setPendingText(text);
     setPendingCategory(category);
+    setStageIdx(undefined);
+    setProgressPct(undefined);
     setScreen("loading");
 
+    // SSE request. Consumes the ReadableStream from /api/analyze/stream,
+    // parses `data: ...\n\n` frames, and drives the Loading UI from real
+    // backend progress events instead of a client timer.
+    let response: Response;
     try {
-      const response = await fetchWithTimeout("/api/analyze", {
+      response = await fetch("/api/analyze/stream", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ vacancyText: text, category, locale }),
-        // Match server maxDuration (5 min). 120s was aborting legitimate
-        // long Gemini 3 Pro runs before the server finished.
-        timeout: 300000,
-        retries: 0,
       });
-
-      if (!response.ok) throw new Error("Analysis failed");
-
-      const data = await response.json();
-
-      if (data.async) {
-        setBanner({ message: data.message ?? "Queued for email delivery.", variant: "info" });
-        setScreen("landing");
-        return;
-      }
-
-      if (data.reportId && data.analysis) {
-        // Navigate to the shareable report URL instead of rendering the
-        // report inline. The /v2/report/[id] route re-fetches from the DB
-        // server-side so the page survives reloads.
-        router.push(`/${locale}/v2/report/${data.reportId}`);
-        return;
-      }
-
-      throw new Error("Unexpected analysis response");
-    } catch (error) {
-      console.error("Analyze error:", error);
-      const msg = error instanceof Error
-        ? getErrorMessage(error, locale)
-        : v2messages.errors.analysisFailed;
+    } catch (err) {
+      console.error("Analyze SSE connect error:", err);
+      const msg = err instanceof Error ? getErrorMessage(err, locale) : v2messages.errors.analysisFailed;
       setBanner({ message: msg, variant: "error" });
+      setScreen("landing");
+      return;
+    }
+
+    if (!response.ok || !response.body) {
+      setBanner({ message: v2messages.errors.analysisFailed, variant: "error" });
+      setScreen("landing");
+      return;
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let settled = false;
+
+    try {
+      while (!settled) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        // SSE events are delimited by a blank line (`\n\n`).
+        const chunks = buffer.split("\n\n");
+        buffer = chunks.pop() ?? "";
+        for (const chunk of chunks) {
+          const line = chunk.split("\n").find((l) => l.startsWith("data: "));
+          if (!line) continue;
+          let evt: { event?: string; stageIdx?: number; pct?: number; reportId?: string; message?: string };
+          try {
+            evt = JSON.parse(line.slice("data: ".length));
+          } catch {
+            continue;
+          }
+
+          if (evt.event === "started") {
+            // no-op; next progress event will populate the UI
+          } else if (evt.event === "progress") {
+            if (typeof evt.stageIdx === "number") setStageIdx(evt.stageIdx);
+            if (typeof evt.pct === "number") setProgressPct(evt.pct);
+          } else if (evt.event === "done") {
+            settled = true;
+            if (evt.reportId) {
+              router.push(`/${locale}/v2/report/${evt.reportId}`);
+            } else {
+              setBanner({ message: v2messages.errors.analysisFailed, variant: "error" });
+              setScreen("landing");
+            }
+          } else if (evt.event === "error") {
+            settled = true;
+            setBanner({ message: evt.message ?? v2messages.errors.analysisFailed, variant: "error" });
+            setScreen("landing");
+          }
+        }
+      }
+    } catch (err) {
+      console.error("Analyze SSE read error:", err);
+      setBanner({ message: v2messages.errors.analysisFailed, variant: "error" });
       setScreen("landing");
     }
   };
@@ -161,6 +205,8 @@ export default function V2Page() {
               <Loading
                 tokens={tokens}
                 onSkipToEmail={() => setModal("emailWhenReady")}
+                stageIdx={stageIdx}
+                progressPct={progressPct}
               />
             )}
 
