@@ -13,7 +13,7 @@ import { PageShaderBackdrop } from "./_components/shader";
 import { Navbar } from "./_components/navbar";
 import { Landing } from "./_components/landing";
 import { Loading } from "./_components/loading";
-import { EmailModal, LimitModal, DemoModal } from "./_components/modals";
+import { EmailModal, LimitModal, DemoModal, EmailWhenReadyModal } from "./_components/modals";
 import { V2MessagesProvider } from "./_components/i18n-context";
 import { BannerProvider, type BannerState } from "./_components/banner-context";
 import { BannerOverlay } from "./_components/banner-overlay";
@@ -23,7 +23,7 @@ import { generateFingerprint } from "@/lib/fingerprint";
 import type { OptimizationResult } from "@/lib/gemini";
 
 type Screen = "landing" | "loading";
-type Modal = "email" | "limit" | "demo" | null;
+type Modal = "email" | "limit" | "demo" | "emailWhenReady" | null;
 
 export default function V2Page() {
   const tokens = useMemo(() => buildTokens(DEFAULT_TWEAKS), []);
@@ -36,6 +36,12 @@ export default function V2Page() {
   const [modal, setModal]                   = useState<Modal>(null);
   const [banner, setBanner]                 = useState<BannerState | null>(null);
   const [fingerprint, setFingerprint]       = useState<string>("");
+
+  // Remember the current analyze input while we're on the Loading screen so
+  // the EmailWhenReadyModal can re-POST it to /api/analyze with an email
+  // attached (which triggers the background-queue path on the server).
+  const [pendingText, setPendingText]         = useState<string>("");
+  const [pendingCategory, setPendingCategory] = useState<string>("General");
 
   // EmailModal on this page is only used from the async-queued branch
   // (reportId is null since we don't have one yet). If a user opens the
@@ -66,6 +72,8 @@ export default function V2Page() {
   }, []);
 
   const startAnalyze = async (text: string, category: string) => {
+    setPendingText(text);
+    setPendingCategory(category);
     setScreen("loading");
 
     try {
@@ -73,8 +81,10 @@ export default function V2Page() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ vacancyText: text, category, locale }),
-        timeout: 120000,
-        retries: 1,
+        // Match server maxDuration (5 min). 120s was aborting legitimate
+        // long Gemini 3 Pro runs before the server finished.
+        timeout: 300000,
+        retries: 0,
       });
 
       if (!response.ok) throw new Error("Analysis failed");
@@ -150,7 +160,22 @@ export default function V2Page() {
             {screen === "loading" && (
               <Loading
                 tokens={tokens}
-                onSkipToEmail={() => setModal("email")}
+                onSkipToEmail={() => setModal("emailWhenReady")}
+              />
+            )}
+
+            {modal === "emailWhenReady" && (
+              <EmailWhenReadyModal
+                tokens={tokens}
+                vacancyText={pendingText}
+                category={pendingCategory}
+                locale={locale}
+                onClose={() => setModal(null)}
+                onQueued={(msg) => {
+                  setBanner({ message: msg, variant: "success" });
+                  setScreen("landing");
+                }}
+                onError={(msg) => setBanner({ message: msg, variant: "error" })}
               />
             )}
 

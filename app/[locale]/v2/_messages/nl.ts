@@ -207,6 +207,18 @@ Stuur je CV en motivatiebrief naar jobs@bedrijf.nl. We komen bij je terug als er
       text: "Duurt het langer dan gewoonlijk? We kunnen het volledige rapport mailen zodra het klaar is. Je hoeft niet te wachten.",
       cta:  "Mail het naar me",
     },
+    emailWhenReady: {
+      eyebrow:    "Mail me zodra het klaar is",
+      title:      "We analyseren rustig verder op de achtergrond",
+      body:       "Laat je e-mailadres achter en sluit gerust dit tabblad. Zodra de analyse klaar is, ontvang je het volledige rapport in je inbox.",
+      fieldLabel: "Zakelijk e-mailadres",
+      placeholder:"naam@bedrijf.nl",
+      submit:     "Mail het rapport",
+      submitting: "Analyse in de wachtrij zetten…",
+      done:       "Goed. We mailen je zodra het rapport klaar is.",
+      error:      "Dat lukte nu niet. Probeer het zo nog eens.",
+      disabledHint: "Achtergrond-levering staat in deze omgeving nog niet aan. Je analyse blijft op deze pagina doorlopen.",
+    },
   },
   report: {
     header: {

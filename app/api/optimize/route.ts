@@ -34,9 +34,16 @@ export async function POST(req: NextRequest) {
     // Check + insert atomically to prevent double-click / fetch-retry races.
     // IP is intentionally excluded from the count — shared office/VPN IPs would
     // cause colleagues to block each other. See lib/db.ts: countLeadsByFingerprint.
-    // BYPASS_USAGE_LIMIT=true can be set in .env.local for development.
+    //
+    // Limit resolution, in order of precedence:
+    //   1. BYPASS_USAGE_LIMIT=true           → unlimited (dev/local)
+    //   2. ANALYZER_USAGE_LIMIT=<n>          → explicit override (UAT/tester)
+    //   3. default                           → 2 rewrites per user (prod)
     const bypassLimit = process.env.BYPASS_USAGE_LIMIT === 'true';
-    const effectiveLimit = bypassLimit ? Number.MAX_SAFE_INTEGER : 2;
+    const configuredLimit = parseInt(process.env.ANALYZER_USAGE_LIMIT ?? '', 10);
+    const effectiveLimit = bypassLimit
+      ? Number.MAX_SAFE_INTEGER
+      : (Number.isFinite(configuredLimit) && configuredLimit > 0 ? configuredLimit : 2);
 
     const { allowed, usageCountBefore } = await dbClient.createLeadIfUnderLimit({
       email,

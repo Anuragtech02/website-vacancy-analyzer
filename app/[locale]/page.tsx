@@ -102,8 +102,14 @@ export default function Home() {
           locale,
           email: emailForAsync
         }),
-        timeout: 120000, // 2 minutes
-        retries: 1, // Retry once on failure
+        // Match server maxDuration (5 min). The old 120s client cap was
+        // aborting legitimate long Gemini 3 Pro runs before the server
+        // finished, showing users a TimeoutError for a request the backend
+        // was about to succeed with.
+        timeout: 300000, // 5 minutes, matches /api/analyze maxDuration
+        retries: 0, // No automatic retry — an abort+retry against a still-
+                    // running server call would create a duplicate lead when
+                    // the path involves usage tracking.
         onRetry: (attempt, error) => {
           console.log(`Retry attempt ${attempt} after error:`, error.message);
         }

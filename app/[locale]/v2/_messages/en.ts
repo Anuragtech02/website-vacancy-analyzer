@@ -206,6 +206,18 @@ Send your CV and motivation letter to jobs@company.example. We will come back to
       text: "Taking longer than usual? We can email the full report when it's ready. No need to wait.",
       cta:  "Email it to me",
     },
+    emailWhenReady: {
+      eyebrow:    "Email me when ready",
+      title:      "We'll keep analyzing in the background",
+      body:       "Drop your email and you can close this tab. When the analysis is done, the full report lands in your inbox.",
+      fieldLabel: "Work email",
+      placeholder:"name@company.com",
+      submit:     "Email me the report",
+      submitting: "Queueing your analysis…",
+      done:       "Got it. We'll email you when the report is ready.",
+      error:      "Couldn't queue that right now. Try again in a moment.",
+      disabledHint: "Background delivery isn't enabled on this environment yet. Your analysis will keep running on this page.",
+    },
   },
   report: {
     header: {

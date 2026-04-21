@@ -51,8 +51,11 @@ export function EmailModal({ tokens, reportId, fingerprint, locale, onClose, onU
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, reportId, fingerprint, locale }),
-        timeout: 90000,
-        retries: 1,
+        // Match server maxDuration (5 min). Retries disabled: an abort-then-
+        // retry here would double-charge the usage counter (first call inserts
+        // the lead row and keeps running; retry inserts a second row).
+        timeout: 300000,
+        retries: 0,
       });
       const data = await response.json();
 
