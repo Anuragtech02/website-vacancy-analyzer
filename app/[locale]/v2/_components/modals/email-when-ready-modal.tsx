@@ -1,15 +1,15 @@
 "use client";
 
 // email-when-ready-modal.tsx — shown from the Loading screen's slow-banner
-// "Email it to me" CTA. The user drops their email, we POST /api/analyze
-// with the email (and the already-submitted vacancy text + category + locale),
-// and the backend queues the job in the background (ENABLE_BACKGROUND_JOBS=true
-// required on the environment). User can close the tab; the full report
-// lands in their inbox.
+// "Email it to me" CTA. The user drops their email and we POST it to
+// /api/analyze/attach-email with the in-flight jobId. The worker
+// (scripts/worker.ts) re-reads the job row at completion and emails the
+// user a link to /v2/report/[id]. If the job is already finished by the
+// time the modal submits, the attach-email route sends the mail itself.
 //
-// If the backend comes back with `async: false` (background-jobs env var
-// isn't set), we fall back to a "still running here" message and let the
-// foreground analysis keep going on the page.
+// Contrast to the previous design: we no longer re-POST the full
+// analysis to /api/analyze — that would duplicate a Gemini call.
+// Attaching an email to the existing job is a single cheap SQL UPDATE.
 
 import { useState } from "react";
 import { type Tokens } from "../theme";
@@ -21,9 +21,7 @@ import { fetchWithTimeout } from "@/lib/fetch-with-timeout";
 
 interface EmailWhenReadyModalProps {
   tokens: Tokens;
-  vacancyText: string;
-  category: string;
-  locale: string;
+  jobId: string | null;
   onClose: () => void;
   onQueued: (message: string) => void;
   onError: (message: string) => void;
@@ -31,9 +29,7 @@ interface EmailWhenReadyModalProps {
 
 export function EmailWhenReadyModal({
   tokens,
-  vacancyText,
-  category,
-  locale,
+  jobId,
   onClose,
   onQueued,
   onError,
@@ -48,13 +44,17 @@ export function EmailWhenReadyModal({
   const submit = async () => {
     if (busy) return;
     if (!email || !email.includes("@")) return;
+    if (!jobId) {
+      onError(t.loading.emailWhenReady.error);
+      return;
+    }
     setBusy(true);
     try {
-      const response = await fetchWithTimeout("/api/analyze", {
+      const response = await fetchWithTimeout("/api/analyze/attach-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ vacancyText, category, locale, email }),
-        timeout: 30000, // fast-path: the server should return async:true almost immediately
+        body: JSON.stringify({ jobId, email: email.trim() }),
+        timeout: 15000,
         retries: 0,
       });
 
@@ -65,18 +65,13 @@ export function EmailWhenReadyModal({
       }
 
       const data = await response.json();
-
-      if (data.async) {
-        // Backend queued the job. User is done here.
-        onQueued(data.message ?? t.loading.emailWhenReady.done);
+      if (data.success) {
+        onQueued(t.loading.emailWhenReady.done);
         onClose();
         return;
       }
 
-      // Background jobs aren't enabled on this environment — the backend
-      // will run it synchronously. We don't wait for that here; just tell
-      // the user their foreground analysis is still going.
-      onError(t.loading.emailWhenReady.disabledHint);
+      onError(t.loading.emailWhenReady.error);
       setBusy(false);
     } catch {
       onError(t.loading.emailWhenReady.error);

@@ -32,6 +32,10 @@ export default function Home() {
   const [email, setEmail] = useState("");
   const [loadingTime, setLoadingTime] = useState(0);
   const [banner, setBanner] = useState<{ message: string; variant: BannerVariant } | null>(null);
+  // Job id of the in-flight analyze request. Set when POST /api/analyze
+  // returns. Used by the email-capture banner to call attach-email on
+  // the existing job, and by the poll loop to fetch status.
+  const [currentJobId, setCurrentJobId] = useState<string | null>(null);
   const router = useRouter();
 
   // Animate through steps when analyzing
@@ -87,79 +91,119 @@ export default function Home() {
     };
   }, [isAnalyzing]);
 
-  const handleAnalyze = async (emailForAsync?: string) => {
+  // Enqueue an analyze job and poll until it finishes.
+  //
+  // Architecture (same as v2): POST /api/analyze returns a jobId in
+  // <500ms; we then GET /api/analyze/status?id=jobId every 2s until the
+  // status flips to 'done' (navigate to the report) or 'failed' (show
+  // error). The actual Gemini call runs in the worker container; this
+  // client loop just reads progress from the DB.
+  const handleAnalyze = async () => {
     if (!vacancyText.trim()) return;
 
     setIsAnalyzing(true);
+    setCurrentJobId(null);
 
+    // Step 1: enqueue. Fast (<500ms) — just a DB write + queue send.
+    let jobId: string;
     try {
       const response = await fetchWithTimeout("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          vacancyText,
-          category,
-          locale,
-          email: emailForAsync
-        }),
-        // Match server maxDuration (5 min). The old 120s client cap was
-        // aborting legitimate long Gemini 3 Pro runs before the server
-        // finished, showing users a TimeoutError for a request the backend
-        // was about to succeed with.
-        timeout: 300000, // 5 minutes, matches /api/analyze maxDuration
-        retries: 0, // No automatic retry — an abort+retry against a still-
-                    // running server call would create a duplicate lead when
-                    // the path involves usage tracking.
-        onRetry: (attempt, error) => {
-          console.log(`Retry attempt ${attempt} after error:`, error.message);
-        }
+        body: JSON.stringify({ vacancyText, category, locale }),
+        timeout: 30000,
+        retries: 0,
       });
-
-      if (!response.ok) {
-        throw new Error("Analysis failed");
-      }
-
-      const data = await response.json() as {
-        success: boolean;
-        async: boolean;
-        reportId?: string;
-        jobId?: string;
-        message?: string;
-      };
-
-      // Increment usage count locally
-      const currentCount = parseInt(localStorage.getItem("vacancy_usage_count") || "0", 10);
-      localStorage.setItem("vacancy_usage_count", (currentCount + 1).toString());
-
-      if (data.async && data.jobId) {
-        // Async mode - show success message and stop loading
-        const successMsg = data.message || t('emailCapture.queuedMessage');
-        setBanner({ message: successMsg, variant: "success" });
-        setIsAnalyzing(false);
-        setVacancyText("");
-      } else if (data.reportId) {
-        // Sync mode - redirect to report
-        router.push(`/${locale}/report/${data.reportId}`);
-      }
+      if (!response.ok) throw new Error("Analysis failed");
+      const data = await response.json() as { jobId?: string };
+      if (!data.jobId) throw new Error("Unexpected analysis response");
+      jobId = data.jobId;
+      setCurrentJobId(jobId);
     } catch (error) {
-      console.error("Error:", error);
-      const errMsg = error instanceof Error
-        ? getErrorMessage(error, locale)
-        : t('hero.error');
+      console.error("Enqueue error:", error);
+      const errMsg = error instanceof Error ? getErrorMessage(error, locale) : t('hero.error');
       setBanner({ message: errMsg, variant: "error" });
       setIsAnalyzing(false);
-    }
-  };
-
-  const handleContinueInBackground = () => {
-    if (!email.trim()) {
-      setBanner({
-        message: t('emailCapture.emailRequired'),
-        variant: "error"
-      });
       return;
     }
-    handleAnalyze(email);
+
+    // Increment local usage counter the moment the job is accepted.
+    const currentCount = parseInt(localStorage.getItem("vacancy_usage_count") || "0", 10);
+    localStorage.setItem("vacancy_usage_count", (currentCount + 1).toString());
+
+    // Step 2+: poll. 2-second interval, max 180 polls (~6 min cap).
+    const POLL_INTERVAL_MS = 2000;
+    const MAX_POLLS = 180;
+    for (let i = 0; i < MAX_POLLS; i++) {
+      await new Promise((r) => setTimeout(r, POLL_INTERVAL_MS));
+      try {
+        const res = await fetch(`/api/analyze/status?id=${encodeURIComponent(jobId)}`, {
+          headers: { "Cache-Control": "no-cache" },
+        });
+        if (!res.ok) continue; // transient — retry next tick
+        const status = await res.json() as {
+          status: string;
+          progress: number;
+          stage?: string;
+          reportId?: string;
+          error?: string;
+        };
+
+        if (status.status === "done" && status.reportId) {
+          router.push(`/${locale}/report/${status.reportId}`);
+          return;
+        }
+        if (status.status === "failed") {
+          setBanner({ message: status.error ?? t('hero.error'), variant: "error" });
+          setIsAnalyzing(false);
+          return;
+        }
+      } catch (err) {
+        console.warn("Poll error:", err);
+        // keep polling on transient errors
+      }
+    }
+
+    setBanner({ message: t('hero.error'), variant: "error" });
+    setIsAnalyzing(false);
+  };
+
+  // User hit the "email me when ready" slow-banner after 15s of waiting.
+  // We attach their email to the *existing* job (no duplicate Gemini run)
+  // and tell them they can close the tab.
+  const handleContinueInBackground = async () => {
+    if (!email.trim() || !email.includes("@")) {
+      setBanner({ message: t('emailCapture.emailRequired'), variant: "error" });
+      return;
+    }
+    if (!currentJobId) {
+      // Shouldn't happen — the banner only shows during an in-flight
+      // analyze, which always has a jobId by then. Fall through to a
+      // generic error rather than silently doing nothing.
+      setBanner({ message: t('hero.error'), variant: "error" });
+      return;
+    }
+    try {
+      const res = await fetchWithTimeout("/api/analyze/attach-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jobId: currentJobId, email: email.trim() }),
+        timeout: 15000,
+        retries: 0,
+      });
+      if (!res.ok) throw new Error("attach-email failed");
+      // Done — show success banner and reset the analyzing state so the
+      // user can close the tab. The background job keeps running on the
+      // worker container and the email will arrive when it completes.
+      const successMsg = t('emailCapture.queuedMessage');
+      setBanner({ message: successMsg, variant: "success" });
+      setIsAnalyzing(false);
+      setVacancyText("");
+      setEmail("");
+    } catch (err) {
+      console.error("attach-email error:", err);
+      setBanner({ message: t('hero.error'), variant: "error" });
+    }
   };
 
   return (
