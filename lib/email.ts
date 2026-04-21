@@ -132,10 +132,15 @@ export async function sendOptimizedVacancyEmail({
               <tr>
                 <td align="center">
                   <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 16px; box-shadow: 0 4px 6px rgba(31, 27, 22, 0.05); border: 1px solid #FFE4D6;">
-                    <!-- Header -->
+                    <!-- Header — full stacked brand asset (icon + wordmark).
+                         Served as PNG (rasterised from vt-dark.svg at 800px
+                         wide) because Outlook 2007-2019 strips SVG and
+                         Gmail's Android client rasterises inconsistently.
+                         height:72 / width:192 preserves the native 2.66:1
+                         aspect ratio without forcing mail clients to infer. -->
                     <tr>
-                      <td style="padding: 40px; border-bottom: 2px solid #FFE4D6; background: linear-gradient(135deg, #FFF8F6 0%, #ffffff 100%); text-align: center;">
-                        <img src="https://analyse.vacaturetovenaar.nl/logo-icon.png" alt="Vacature Tovenaar" style="height: 80px; width: auto; display: inline-block; margin: 0 auto;" />
+                      <td style="padding: 36px 40px 28px 40px; border-bottom: 2px solid #FFE4D6; background: linear-gradient(135deg, #FFF8F6 0%, #ffffff 100%); text-align: center;">
+                        <img src="https://analyse.vacaturetovenaar.nl/vt-dark.png" alt="Vacature Tovenaar" width="192" height="72" style="height: 72px; width: 192px; display: inline-block; margin: 0 auto; border: 0; outline: none;" />
                       </td>
                     </tr>
 
@@ -487,10 +492,14 @@ function renderNotificationEmail(t: NotificationTemplate): string {
       <tr>
         <td align="center">
           <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 16px; box-shadow: 0 4px 6px rgba(31, 27, 22, 0.05); border: 1px solid #FFE4D6; max-width: 600px;">
-            <!-- Header -->
+            <!-- Header — full stacked brand asset (icon + wordmark).
+                 PNG, not SVG, so Outlook + Gmail Android render it. Explicit
+                 width/height attrs help mail clients reserve space before
+                 images load and defeat their "did they mean icon-only?"
+                 aspect-ratio guesses. -->
             <tr>
-              <td style="padding: 40px 40px 32px 40px; border-bottom: 2px solid #FFE4D6; background: linear-gradient(135deg, #FFF8F6 0%, #ffffff 100%); text-align: center; border-radius: 16px 16px 0 0;">
-                <img src="https://analyse.vacaturetovenaar.nl/logo-icon.png" alt="Vacature Tovenaar" style="height: 64px; width: auto; display: inline-block;" />
+              <td style="padding: 36px 40px 28px 40px; border-bottom: 2px solid #FFE4D6; background: linear-gradient(135deg, #FFF8F6 0%, #ffffff 100%); text-align: center; border-radius: 16px 16px 0 0;">
+                <img src="https://analyse.vacaturetovenaar.nl/vt-dark.png" alt="Vacature Tovenaar" width="160" height="60" style="height: 60px; width: 160px; display: inline-block; border: 0; outline: none;" />
               </td>
             </tr>
 
