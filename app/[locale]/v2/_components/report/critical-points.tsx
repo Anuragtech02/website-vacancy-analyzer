@@ -25,7 +25,10 @@ export function CriticalPoints({ tokens, issues }: CriticalPointsProps) {
       tokens={tokens}
       pad={28}
       tint={tokens.ink}
-      style={{ color: tokens.bgRaised, borderColor: tokens.ink }}
+      style={{
+        color: tokens.bgRaised, borderColor: tokens.ink,
+        height: "100%", display: "flex", flexDirection: "column",
+      }}
     >
       <Eyebrow tokens={{ ...tokens, inkSoft: "rgba(255,255,255,0.6)", primaryColor: tokens.primaryColor }}>
         {t.report.critical.eyebrow}

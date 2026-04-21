@@ -91,10 +91,10 @@ export function Report({
     <div style={{ width: "100%" }}>
       <ReportHeader tokens={tokens} usesLeft={usesLeft} unlocked={unlocked} jobTitle={analysis?.metadata.job_title} />
 
-      {/* TOP: score + gate/critical */}
+      {/* TOP: score + gate/critical — stretch so both cards share the row height */}
       <section style={{
         padding: "48px 48px 32px", maxWidth: 1360, margin: "0 auto",
-        display: "grid", gridTemplateColumns: "1.35fr 1fr", gap: 32, alignItems: "start",
+        display: "grid", gridTemplateColumns: "1.35fr 1fr", gap: 32, alignItems: "stretch",
       }}>
         <ScoreCard
           tokens={tokens}

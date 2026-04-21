@@ -22,7 +22,11 @@ export function GateCard({ tokens, currentScore, potentialScore, onUnlock }: Gat
       tokens={tokens}
       pad={0}
       tint={tokens.ink}
-      style={{ color: tokens.bgRaised, borderColor: tokens.ink, overflow: "hidden", position: "relative" }}
+      style={{
+        color: tokens.bgRaised, borderColor: tokens.ink,
+        overflow: "hidden", position: "relative",
+        height: "100%", display: "flex", flexDirection: "column",
+      }}
     >
       {/* soft orange glow */}
       <div style={{
@@ -46,13 +50,16 @@ export function GateCard({ tokens, currentScore, potentialScore, onUnlock }: Gat
         </div>
       </div>
 
-      {/* before / after reveal */}
+      {/* before / after reveal — flex-grows to absorb any extra height when the
+          card stretches to match the ScoreCard, so the Unlock button stays
+          anchored to the bottom. */}
       <div style={{
         margin: "0 28px",
         padding: "18px", position: "relative",
         background: "rgba(255,255,255,0.04)",
         border: "1px solid rgba(255,255,255,0.12)",
         borderRadius: tokens.cardRadius,
+        flex: "1 0 auto",
       }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
           <div>

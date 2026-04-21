@@ -25,9 +25,30 @@ export function ScoreCard({ tokens, overall, verdictLabel, executiveSummary, wor
     : "—";
 
   return (
-    <Card tokens={tokens} pad={36}>
-      <div style={{ display: "grid", gridTemplateColumns: "240px 1fr", gap: 36, alignItems: "center" }}>
-        <ScoreRing tokens={tokens} value={overall} size={220} label={t.report.scoreCard.scoreRingLabel} />
+    <Card tokens={tokens} pad={36} style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+      <div style={{
+        display: "grid", gridTemplateColumns: "240px 1fr", gap: 36,
+        alignItems: "start", flex: 1,
+      }}>
+        {/* Left column: score ring + word/read-time stats directly beneath */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 28 }}>
+          <ScoreRing tokens={tokens} value={overall} size={220} label={t.report.scoreCard.scoreRingLabel} />
+          <div style={{ display: "flex", gap: 32, justifyContent: "center" }}>
+            {(
+              [
+                [t.report.scoreCard.stats.words,    wordsDisplay],
+                [t.report.scoreCard.stats.readTime, readTimeDisplay],
+              ] as const
+            ).map(([k, v]) => (
+              <div key={k} style={{ textAlign: "center" }}>
+                <div style={{ fontFamily: tokens.displayFont, fontSize: 24, fontWeight: tokens.displayWeight, color: tokens.ink, letterSpacing: "-0.02em" }}>{v}</div>
+                <div style={{ fontFamily: tokens.monoFont, fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: tokens.inkMute, marginTop: 2 }}>{k}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Right column: verdict + executive summary, uncluttered */}
         <div>
           <Eyebrow tokens={tokens}>{t.report.scoreCard.eyebrow}</Eyebrow>
           <div style={{
@@ -43,19 +64,6 @@ export function ScoreCard({ tokens, overall, verdictLabel, executiveSummary, wor
           }}>
             {executiveSummary ?? t.report.scoreCard.summary}
           </p>
-          <div style={{ display: "flex", gap: 20, marginTop: 22, flexWrap: "wrap" }}>
-            {(
-              [
-                [t.report.scoreCard.stats.words,    wordsDisplay],
-                [t.report.scoreCard.stats.readTime,  readTimeDisplay],
-              ] as const
-            ).map(([k, v]) => (
-              <div key={k}>
-                <div style={{ fontFamily: tokens.displayFont, fontSize: 24, fontWeight: tokens.displayWeight, color: tokens.ink, letterSpacing: "-0.02em" }}>{v}</div>
-                <div style={{ fontFamily: tokens.monoFont, fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: tokens.inkMute, marginTop: 2 }}>{k}</div>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </Card>
