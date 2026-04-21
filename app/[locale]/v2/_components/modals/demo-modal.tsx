@@ -5,6 +5,7 @@ import { Button, Eyebrow } from "../primitives";
 import { ModalShell } from "./modal-shell";
 import { useV2T } from "../i18n-context";
 import { useBreakpoint, isMobile } from "../use-breakpoint";
+import { openDemoCalendar } from "../demo-link";
 
 interface DemoModalProps {
   tokens: Tokens;
@@ -62,7 +63,10 @@ export function DemoModal({ tokens, onClose }: DemoModalProps) {
             tokens={tokens}
             variant="primary"
             style={{ padding: "14px 22px", width: mobile ? "100%" : undefined }}
-            onClick={onClose}
+            onClick={() => {
+              openDemoCalendar();
+              onClose();
+            }}
           >
             {t.modals.demo.cta}
           </Button>

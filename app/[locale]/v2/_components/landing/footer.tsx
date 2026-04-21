@@ -11,6 +11,7 @@ import { useLocale } from "next-intl";
 import type { Tokens } from "../theme";
 import { useV2T } from "../i18n-context";
 import { useBreakpoint, isMobile, isTablet } from "../use-breakpoint";
+import { DEMO_CALENDAR_URL } from "../demo-link";
 
 interface FooterProps {
   tokens: Tokens;
@@ -21,7 +22,9 @@ function useFooterLinks(locale: string) {
     { key: "privacy",  href: `/${locale}/privacy`,                                          external: false, accent: false },
     { key: "terms",    href: `/${locale}/terms`,                                            external: false, accent: false },
     { key: "contact",  href: "mailto:joost@vacaturetovenaar.nl",                            external: true,  accent: false },
-    { key: "bookDemo", href: "mailto:joost@vacaturetovenaar.nl?subject=Demo%20aanvragen",   external: true,  accent: true  },
+    // "Book a demo" → HubSpot calendar, same destination as the DemoModal
+    // CTA and the v1 AccessRequestModal's onPlanDemo handler.
+    { key: "bookDemo", href: DEMO_CALENDAR_URL,                                             external: true,  accent: true  },
   ] as const;
 }
 
