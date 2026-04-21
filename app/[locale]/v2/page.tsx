@@ -203,12 +203,9 @@ export default function V2Page() {
     }
   };
 
-  // Fallback: called from Loading's onComplete timer if fetch already resolved
-  // and screen was set to "report" — no-op in that case.
-  const analyzeDone = () => {
-    // Only flip if still loading (fetch hasn't resolved yet / no-op if already on report)
-    setScreen((s) => (s === "loading" ? "report" : s));
-  };
+  // NOTE: there's no analyzeDone timer anymore — the loader never force-ends.
+  // Screen transition to "report" happens exclusively in startAnalyze when
+  // /api/analyze resolves, so we can't land on the report with analysis=null.
 
   const handleUnlock = (optim: OptimizationResult, _email: string) => {
     setOptimization(optim);
@@ -273,7 +270,6 @@ export default function V2Page() {
           {screen === "loading" && (
             <Loading
               tokens={tokens}
-              onComplete={analyzeDone}
               onSkipToEmail={() => setModal("email")}
             />
           )}

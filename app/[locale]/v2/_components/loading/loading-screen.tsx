@@ -13,7 +13,9 @@ export interface LoadingStep {
   key: StepKey;
 }
 
-// TODO: replace with real API data. Fallback for step animation.
+// Step labels shown in the loader timeline. The loader is decorative — the
+// actual transition to the report screen is driven by the /api/analyze fetch
+// resolving in the parent page. The loader never force-completes on its own.
 export const LOADING_STEPS: Array<{ key: StepKey }> = [
   { key: "parse" },
   { key: "bias" },
@@ -25,11 +27,10 @@ export const LOADING_STEPS: Array<{ key: StepKey }> = [
 
 interface LoadingProps {
   tokens: Tokens;
-  onComplete: () => void;
   onSkipToEmail: () => void;
 }
 
-export function Loading({ tokens, onComplete, onSkipToEmail }: LoadingProps) {
+export function Loading({ tokens, onSkipToEmail }: LoadingProps) {
   const [stepIdx, setStepIdx] = useState(0);
   const [elapsed, setElapsed] = useState(0);
   const m = useMotion(tokens);
@@ -40,17 +41,24 @@ export function Loading({ tokens, onComplete, onSkipToEmail }: LoadingProps) {
     return () => clearInterval(tick);
   }, []);
 
+  // Advance through the visible steps and then HOLD on the last step.
+  // The parent owns the report transition — we never call back to say "done"
+  // because we don't actually know when Gemini is done until the fetch resolves.
   useEffect(() => {
-    if (stepIdx >= LOADING_STEPS.length) {
-      const t = setTimeout(onComplete, 500);
-      return () => clearTimeout(t);
-    }
+    if (stepIdx >= LOADING_STEPS.length - 1) return;
     const durations = [900, 1100, 1000, 1200, 1100, 1300];
-    const t = setTimeout(() => setStepIdx((i) => i + 1), durations[stepIdx] ?? 1000);
-    return () => clearTimeout(t);
-  }, [stepIdx, onComplete]);
+    const timer = setTimeout(() => setStepIdx((i) => i + 1), durations[stepIdx] ?? 1000);
+    return () => clearTimeout(timer);
+  }, [stepIdx]);
 
-  const pct = Math.min(100, (stepIdx / LOADING_STEPS.length) * 100);
+  // Progress bar eases toward 100% on the last step but never reaches it,
+  // so the user sees continued motion while the fetch is still in flight.
+  const basePct = (stepIdx / LOADING_STEPS.length) * 100;
+  const onLastStep = stepIdx >= LOADING_STEPS.length - 1;
+  const tailPct = onLastStep
+    ? Math.min(18, (elapsed - (0.9 + 1.1 + 1.0 + 1.2 + 1.1)) * 1.5)
+    : 0;
+  const pct = Math.min(97, Math.max(0, basePct + Math.max(0, tailPct)));
   const current = LOADING_STEPS[Math.min(stepIdx, LOADING_STEPS.length - 1)];
   // Pull translated label/detail by the step's key — fully type-safe, no cast needed
   const currentLabel  = t.loading.steps[current.key].label;
