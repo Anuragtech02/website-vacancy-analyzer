@@ -281,7 +281,11 @@ export async function optimizeVacancy(
   }
 
   const { text } = await generateText({
-    model: resolveModel("gemini-3.1-flash-preview"),
+    // NOTE: gemini-3.1-flash-preview does not yet exist on Vertex AI (as of
+    // 2026-04) — "NOT_FOUND" at the publisher level. The optimizer stays on
+    // 3.0 Flash preview; swap this to 3.1 the day it lands. The routing in
+    // GLOBAL_MODELS is already prepared for both.
+    model: resolveModel("gemini-3-flash-preview"),
     messages: [{ role: "user", content: parts }],
     providerOptions: googleProviderOptions({ thinkingLevel: "medium" }),
   });
