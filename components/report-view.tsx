@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { AnalysisResult, OptimizationResult } from "@/lib/gemini";
 import { Button } from "@/components/ui/button";
+import { InlineBanner, type BannerVariant } from "@/components/ui/inline-banner";
 import { Loader2, Mail, ArrowRight } from "lucide-react";
 import { generateFingerprint } from "@/lib/fingerprint";
 import { useTranslations } from 'next-intl';
@@ -35,6 +36,7 @@ function LimitReachedModal({
   onOpenAccessModal: () => void;
 }) {
   const [showCopiedToast, setShowCopiedToast] = useState(false);
+  const t = useTranslations('report.modal.limitReached');
 
   const handleCopyEmail = async () => {
     try {
@@ -74,9 +76,9 @@ function LimitReachedModal({
               <span className="text-3xl">✨</span>
            </div>
 
-           <h3 className="text-2xl font-black text-slate-900 mb-2">De smaak te pakken?</h3>
+           <h3 className="text-2xl font-black text-slate-900 mb-2">{t('title')}</h3>
            <p className="text-slate-600 mb-8 leading-relaxed">
-             Je hebt je gratis analyses verbruikt. Wil je onbeperkt toegang tot onze software voor al je vacatures?
+             {t('description')}
            </p>
 
            <div className="space-y-3">
@@ -84,7 +86,7 @@ function LimitReachedModal({
                 className="w-full h-12 text-base font-bold shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 rounded-xl"
                 onClick={handleRequestAccess}
              >
-                Vraag volledige toegang aan
+                {t('requestAccess')}
              </Button>
 
              <Button
@@ -92,14 +94,14 @@ function LimitReachedModal({
                 className="w-full text-slate-500 hover:text-slate-900"
                 onClick={handleCopyEmail}
              >
-                Of neem contact op
+                {t('contact')}
              </Button>
            </div>
 
            {/* Toast notification */}
            {showCopiedToast && (
              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-4 py-2 rounded-lg shadow-lg animate-in fade-in slide-in-from-bottom-2 duration-200 text-sm font-medium">
-               📋 E-mailadres gekopieerd: joost@vacaturetovenaar.nl
+               {t('emailCopied')}
              </div>
            )}
        </div>
@@ -120,7 +122,21 @@ function EmailModal({
   status: "idle" | "loading" | "success" | "error";
 }) {
   const [email, setEmail] = useState("");
-  const [loadingMessage, setLoadingMessage] = useState(OPTIMIZATION_MESSAGES[0]);
+  const t = useTranslations('report.modal.email');
+  const tReport = useTranslations('report');
+
+  const OPTIMIZATION_MESSAGES = useMemo(() => [
+    tReport('optimization.messages.removingBureaucratic'),
+    tReport('optimization.messages.addingSafety'),
+    tReport('optimization.messages.optimizingConversion'),
+    tReport('optimization.messages.rewritingTone'),
+    tReport('optimization.messages.strengtheningEVP'),
+    tReport('optimization.messages.applyingProtocol'),
+    tReport('optimization.messages.generatingPDF'),
+    tReport('optimization.messages.sendingEmail'),
+  ], [tReport]);
+
+  const [loadingMessage, setLoadingMessage] = useState(() => OPTIMIZATION_MESSAGES[0]);
 
   // Cycle through loading messages when loading
   useEffect(() => {
@@ -174,22 +190,22 @@ function EmailModal({
               <Mail className="w-8 h-8 text-orange-600" />
             </div>
             <h3 className="text-3xl font-bold text-slate-900 tracking-tight">
-              Waar mogen we het heen sturen?
+              {t('title')}
             </h3>
             <p className="text-slate-600 text-sm leading-relaxed max-w-[280px] mx-auto">
-              We sturen je de geoptimaliseerde versie van deze vacature per e-mail.
+              {t('description')}
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-               <label className="text-xs font-bold uppercase text-slate-400 tracking-wider ml-1">Werk Email</label>
+               <label className="text-xs font-bold uppercase text-slate-400 tracking-wider ml-1">{t('label')}</label>
                <input
                  type="email"
                  required
                  value={email}
                  onChange={(e) => setEmail(e.target.value)}
-                 placeholder="naam@bedrijf.nl"
+                 placeholder={t('placeholder')}
                  className="w-full px-5 py-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all font-medium"
                  disabled={status === "loading"}
                  autoFocus
@@ -207,7 +223,7 @@ function EmailModal({
                 </>
               ) : (
                 <>
-                  Verstuur mijn geoptimaliseerde vacature <ArrowRight className="w-5 h-5 ml-2" />
+                  {t('submit')} <ArrowRight className="w-5 h-5 ml-2" />
                 </>
               )}
             </Button>
@@ -215,15 +231,15 @@ function EmailModal({
 
           {status === "error" && (
             <p className="text-red-700 text-sm text-center font-medium bg-red-50 py-2 rounded-lg">
-              Er ging iets mis. Probeer het opnieuw.
+              {t('error')}
             </p>
           )}
 
           <div className="flex items-center justify-center gap-2 text-[10px] text-slate-400 font-medium uppercase tracking-widest">
              <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-             Geen Spam
+             {t('trustNoSpam')}
              <div className="w-1 h-1 rounded-full bg-slate-300"></div>
-             Veilig
+             {t('trustSecure')}
           </div>
         </div>
       </div>
@@ -283,6 +299,8 @@ export function ReportView({
   locale,
 }: ReportViewProps) {
   const t = useTranslations('report');
+  const tSuccess = useTranslations('report.successToast');
+  const tErrors = useTranslations('errors');
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showLimitModal, setShowLimitModal] = useState(false);
@@ -292,20 +310,9 @@ export function ReportView({
   const [submittedEmail, setSubmittedEmail] = useState<string>("");
   const [phase, setPhase] = useState<number>(1);
   const [showNotification, setShowNotification] = useState(false);
+  const [banner, setBanner] = useState<{ message: string; variant: BannerVariant } | null>(null);
 
   const { summary, metadata, pillars } = analysis;
-
-  // Optimization messages from translations
-  const OPTIMIZATION_MESSAGES = [
-    t('optimization.messages.removingBureaucratic'),
-    t('optimization.messages.addingSafety'),
-    t('optimization.messages.optimizingConversion'),
-    t('optimization.messages.rewritingTone'),
-    t('optimization.messages.strengtheningEVP'),
-    t('optimization.messages.applyingProtocol'),
-    t('optimization.messages.generatingPDF'),
-    t('optimization.messages.sendingEmail'),
-  ];
 
   useEffect(() => {
      // Determine User Phase from LocalStorage
@@ -374,16 +381,27 @@ export function ReportView({
     } catch (error) {
       console.error(error);
       // Show user-friendly error message
-      const errorMessage = error instanceof Error
+      const errMsg = error instanceof Error
         ? getErrorMessage(error, locale)
-        : 'An error occurred';
-      alert(errorMessage);
+        : tErrors('generic');
+      setBanner({ message: errMsg, variant: "error" });
       setStatus("error");
     }
   };
 
   return (
     <div className="font-sans text-slate-900 bg-slate-50 min-h-screen pb-20 relative overflow-hidden selection:bg-primary/20">
+      {/* Inline Banner */}
+      {banner && (
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 max-w-md w-full mx-4 animate-in fade-in slide-in-from-top-4 duration-300">
+          <InlineBanner
+            message={banner.message}
+            variant={banner.variant}
+            onDismiss={() => setBanner(null)}
+          />
+        </div>
+      )}
+
       {/* Background Decorators */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         {/* Dot Pattern */}
@@ -429,6 +447,7 @@ export function ReportView({
             isUnlocked={isUnlocked}
             submittedEmail={submittedEmail}
             issues={summary.key_issues || []}
+            onPlanDemo={() => setShowAccessModal(true)}
             />
         </div>
 
@@ -458,7 +477,7 @@ export function ReportView({
 
         {/* Disclaimer */}
         <div className="mb-20 p-6 rounded-xl text-xs text-muted-foreground leading-relaxed text-center max-w-2xl mx-auto">
-          Disclaimer: Deze analyse is gegenereerd door software. Hoewel we streven naar nauwkeurigheid, raden we aan alle suggesties in context te beoordelen.
+          {t('disclaimer')}
         </div>
       </div>
 
@@ -498,8 +517,8 @@ export function ReportView({
        <NotificationToast
          show={showNotification}
          onClose={() => setShowNotification(false)}
-         message="Mail succesvol verzonden!"
-         description="We hebben de geoptimaliseerde versie naar je inbox gestuurd. Check ook je spam folder voor de zekerheid."
+         message={tSuccess('title')}
+         description={tSuccess('body')}
        />
     </div>
   );

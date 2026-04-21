@@ -3,9 +3,10 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
-import { Wand2, ArrowRight, CheckCircle2, Lock, Search, MessageSquare, FileText, Layout, Globe, Loader2, Play, Building2, Sparkles, XCircle, Mail, TrendingUp, Clock, DollarSign } from "lucide-react";
+import { Wand2, ArrowRight, CheckCircle2, Search, MessageSquare, FileText, Layout, Globe, Play, Building2, Sparkles, XCircle, Mail, TrendingUp, Clock, DollarSign } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { InlineBanner, type BannerVariant } from "@/components/ui/inline-banner";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import Image from "next/image";
 import { fetchWithTimeout, getErrorMessage } from "@/lib/fetch-with-timeout";
@@ -30,6 +31,11 @@ export default function Home() {
   const [showEmailCapture, setShowEmailCapture] = useState(false);
   const [email, setEmail] = useState("");
   const [loadingTime, setLoadingTime] = useState(0);
+  const [banner, setBanner] = useState<{ message: string; variant: BannerVariant } | null>(null);
+  // Job id of the in-flight analyze request. Set when POST /api/analyze
+  // returns. Used by the email-capture banner to call attach-email on
+  // the existing job, and by the poll loop to fetch status.
+  const [currentJobId, setCurrentJobId] = useState<string | null>(null);
   const router = useRouter();
 
   // Animate through steps when analyzing
@@ -85,71 +91,119 @@ export default function Home() {
     };
   }, [isAnalyzing]);
 
-  const handleAnalyze = async (emailForAsync?: string) => {
+  // Enqueue an analyze job and poll until it finishes.
+  //
+  // Architecture (same as v2): POST /api/analyze returns a jobId in
+  // <500ms; we then GET /api/analyze/status?id=jobId every 2s until the
+  // status flips to 'done' (navigate to the report) or 'failed' (show
+  // error). The actual Gemini call runs in the worker container; this
+  // client loop just reads progress from the DB.
+  const handleAnalyze = async () => {
     if (!vacancyText.trim()) return;
 
     setIsAnalyzing(true);
+    setCurrentJobId(null);
 
+    // Step 1: enqueue. Fast (<500ms) — just a DB write + queue send.
+    let jobId: string;
     try {
       const response = await fetchWithTimeout("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          vacancyText,
-          category,
-          locale,
-          email: emailForAsync
-        }),
-        timeout: 120000, // 2 minutes
-        retries: 1, // Retry once on failure
-        onRetry: (attempt, error) => {
-          console.log(`Retry attempt ${attempt} after error:`, error.message);
-        }
+        body: JSON.stringify({ vacancyText, category, locale }),
+        timeout: 30000,
+        retries: 0,
       });
-
-      if (!response.ok) {
-        throw new Error("Analysis failed");
-      }
-
-      const data = await response.json() as {
-        success: boolean;
-        async: boolean;
-        reportId?: string;
-        jobId?: string;
-        message?: string;
-      };
-
-      // Increment usage count locally
-      const currentCount = parseInt(localStorage.getItem("vacancy_usage_count") || "0", 10);
-      localStorage.setItem("vacancy_usage_count", (currentCount + 1).toString());
-
-      if (data.async && data.jobId) {
-        // Async mode - show success message and stop loading
-        alert(data.message || (locale === 'en'
-          ? 'Your analysis has been queued. You will receive an email when it\'s ready.'
-          : 'Je analyse is in de wachtrij geplaatst. Je ontvangt een email wanneer deze klaar is.'));
-        setIsAnalyzing(false);
-        setVacancyText("");
-      } else if (data.reportId) {
-        // Sync mode - redirect to report
-        router.push(`/${locale}/report/${data.reportId}`);
-      }
+      if (!response.ok) throw new Error("Analysis failed");
+      const data = await response.json() as { jobId?: string };
+      if (!data.jobId) throw new Error("Unexpected analysis response");
+      jobId = data.jobId;
+      setCurrentJobId(jobId);
     } catch (error) {
-      console.error("Error:", error);
-      const errorMessage = error instanceof Error
-        ? getErrorMessage(error, locale)
-        : t('hero.error');
-      alert(errorMessage);
+      console.error("Enqueue error:", error);
+      const errMsg = error instanceof Error ? getErrorMessage(error, locale) : t('hero.error');
+      setBanner({ message: errMsg, variant: "error" });
       setIsAnalyzing(false);
-    }
-  };
-
-  const handleContinueInBackground = () => {
-    if (!email.trim()) {
-      alert(locale === 'en' ? 'Please enter your email address' : 'Voer je e-mailadres in');
       return;
     }
-    handleAnalyze(email);
+
+    // Increment local usage counter the moment the job is accepted.
+    const currentCount = parseInt(localStorage.getItem("vacancy_usage_count") || "0", 10);
+    localStorage.setItem("vacancy_usage_count", (currentCount + 1).toString());
+
+    // Step 2+: poll. 2-second interval, max 180 polls (~6 min cap).
+    const POLL_INTERVAL_MS = 2000;
+    const MAX_POLLS = 180;
+    for (let i = 0; i < MAX_POLLS; i++) {
+      await new Promise((r) => setTimeout(r, POLL_INTERVAL_MS));
+      try {
+        const res = await fetch(`/api/analyze/status?id=${encodeURIComponent(jobId)}`, {
+          headers: { "Cache-Control": "no-cache" },
+        });
+        if (!res.ok) continue; // transient — retry next tick
+        const status = await res.json() as {
+          status: string;
+          progress: number;
+          stage?: string;
+          reportId?: string;
+          error?: string;
+        };
+
+        if (status.status === "done" && status.reportId) {
+          router.push(`/${locale}/report/${status.reportId}`);
+          return;
+        }
+        if (status.status === "failed") {
+          setBanner({ message: status.error ?? t('hero.error'), variant: "error" });
+          setIsAnalyzing(false);
+          return;
+        }
+      } catch (err) {
+        console.warn("Poll error:", err);
+        // keep polling on transient errors
+      }
+    }
+
+    setBanner({ message: t('hero.error'), variant: "error" });
+    setIsAnalyzing(false);
+  };
+
+  // User hit the "email me when ready" slow-banner after 15s of waiting.
+  // We attach their email to the *existing* job (no duplicate Gemini run)
+  // and tell them they can close the tab.
+  const handleContinueInBackground = async () => {
+    if (!email.trim() || !email.includes("@")) {
+      setBanner({ message: t('emailCapture.emailRequired'), variant: "error" });
+      return;
+    }
+    if (!currentJobId) {
+      // Shouldn't happen — the banner only shows during an in-flight
+      // analyze, which always has a jobId by then. Fall through to a
+      // generic error rather than silently doing nothing.
+      setBanner({ message: t('hero.error'), variant: "error" });
+      return;
+    }
+    try {
+      const res = await fetchWithTimeout("/api/analyze/attach-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jobId: currentJobId, email: email.trim() }),
+        timeout: 15000,
+        retries: 0,
+      });
+      if (!res.ok) throw new Error("attach-email failed");
+      // Done — show success banner and reset the analyzing state so the
+      // user can close the tab. The background job keeps running on the
+      // worker container and the email will arrive when it completes.
+      const successMsg = t('emailCapture.queuedMessage');
+      setBanner({ message: successMsg, variant: "success" });
+      setIsAnalyzing(false);
+      setVacancyText("");
+      setEmail("");
+    } catch (err) {
+      console.error("attach-email error:", err);
+      setBanner({ message: t('hero.error'), variant: "error" });
+    }
   };
 
   return (
@@ -162,6 +216,17 @@ export default function Home() {
         {/* Ambient Bloom */}
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[800px] bg-gradient-to-b from-primary/10 to-transparent blur-[120px] opacity-60" />
       </div>
+
+      {/* Inline Banner */}
+      {banner && (
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 max-w-md w-full mx-4 animate-in fade-in slide-in-from-top-4 duration-300">
+          <InlineBanner
+            message={banner.message}
+            variant={banner.variant}
+            onDismiss={() => setBanner(null)}
+          />
+        </div>
+      )}
 
       {/* Header / Top Bar */}
       <header className="w-full fixed top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-white/20 shadow-sm">
@@ -252,37 +317,25 @@ export default function Home() {
                         <span className="text-xs sm:text-sm font-bold text-slate-700">{t('hero.rightCandidates')}</span>
                     </div>
 
-                    {/* Input Card - App Window Aesthetic */}
+                    {/* Input Card */}
                     <div className="relative bg-white rounded-3xl sm:rounded-4xl shadow-[0_32px_64px_-12px_rgba(0,0,0,0.08)] border border-slate-100 transform transition-all hover:scale-[1.005] duration-500">
-                        
-                        {/* Browser Header */}
-                        <div className="px-4 sm:px-6 py-3 sm:py-4 bg-slate-50/50 border-b border-slate-100 flex items-center justify-between">
-                            <div className="flex items-center gap-1.5 sm:gap-2">
-                                <div className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-red-400"></div>
-                                <div className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-amber-400"></div>
-                                <div className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-emerald-400"></div>
-                            </div>
-                            <div className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                               <Lock className="w-2.5 sm:w-3 h-2.5 sm:h-3" />
-                               <span className="hidden xs:inline">{t('hero.analyzeTitle')}</span>
-                               <span className="xs:hidden">{t('hero.cta')}</span>
-                            </div>
-                            <div className="w-8 sm:w-12"></div>
-                        </div>
-
-                        <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 relative">
+                        <div className="p-4 sm:p-5 space-y-4 relative">
                             {/* How It Works - Visual Step-by-Step */}
                             <div className="pb-4 border-b border-slate-100">
                               <h3 className="text-sm font-bold text-slate-900 mb-4 text-center">
                                 {t('hero.howItWorks.title')}
                               </h3>
-                              <div className="grid grid-cols-3 gap-2 sm:gap-4">
+                              <div className="relative grid grid-cols-3 gap-3 sm:gap-4">
+                                {/* Connecting line behind icons (desktop only) */}
+                                <div className="hidden sm:block absolute top-5 left-[16.66%] right-[16.66%] h-px bg-slate-200" aria-hidden="true" />
+
                                 {/* Step 1 */}
-                                <div className="flex flex-col items-center text-center">
-                                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
-                                    <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                                <div className="relative flex flex-col items-center text-center">
+                                  <div className="relative z-10 w-10 h-10 rounded-full bg-orange-50 ring-4 ring-white flex items-center justify-center mb-2">
+                                    <FileText className="w-5 h-5 text-primary" />
+                                    <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-primary text-white text-[9px] font-bold flex items-center justify-center">1</span>
                                   </div>
-                                  <div className="font-bold text-xs sm:text-sm text-slate-900 mb-1">
+                                  <div className="font-bold text-xs sm:text-sm text-slate-900 mb-0.5">
                                     {t('hero.howItWorks.step1Title')}
                                   </div>
                                   <div className="text-[10px] sm:text-xs text-slate-500 leading-tight">
@@ -290,17 +343,13 @@ export default function Home() {
                                   </div>
                                 </div>
 
-                                {/* Arrow */}
-                                <div className="flex items-center justify-center pt-6">
-                                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-slate-300" />
-                                </div>
-
                                 {/* Step 2 */}
-                                <div className="flex flex-col items-center text-center">
-                                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
-                                    <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                                <div className="relative flex flex-col items-center text-center">
+                                  <div className="relative z-10 w-10 h-10 rounded-full bg-orange-50 ring-4 ring-white flex items-center justify-center mb-2">
+                                    <Sparkles className="w-5 h-5 text-primary" />
+                                    <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-primary text-white text-[9px] font-bold flex items-center justify-center">2</span>
                                   </div>
-                                  <div className="font-bold text-xs sm:text-sm text-slate-900 mb-1">
+                                  <div className="font-bold text-xs sm:text-sm text-slate-900 mb-0.5">
                                     {t('hero.howItWorks.step2Title')}
                                   </div>
                                   <div className="text-[10px] sm:text-xs text-slate-500 leading-tight">
@@ -308,17 +357,13 @@ export default function Home() {
                                   </div>
                                 </div>
 
-                                {/* Arrow */}
-                                <div className="flex items-center justify-center pt-6">
-                                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-slate-300" />
-                                </div>
-
                                 {/* Step 3 */}
-                                <div className="flex flex-col items-center text-center">
-                                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-emerald-100 flex items-center justify-center mb-2">
-                                    <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
+                                <div className="relative flex flex-col items-center text-center">
+                                  <div className="relative z-10 w-10 h-10 rounded-full bg-emerald-100 ring-4 ring-white flex items-center justify-center mb-2">
+                                    <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                                    <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-emerald-600 text-white text-[9px] font-bold flex items-center justify-center">3</span>
                                   </div>
-                                  <div className="font-bold text-xs sm:text-sm text-slate-900 mb-1">
+                                  <div className="font-bold text-xs sm:text-sm text-slate-900 mb-0.5">
                                     {t('hero.howItWorks.step3Title')}
                                   </div>
                                   <div className="text-[10px] sm:text-xs text-slate-500 leading-tight">
@@ -389,25 +434,8 @@ export default function Home() {
                     </div>
                   </>
                 ) : (
-                  /* Analysis Progress Card - App Window Aesthetic */
-                  <div className="relative bg-white rounded-3xl sm:rounded-4xl shadow-2xl shadow-blue-900/10 border border-white/40 ring-1 ring-slate-200/50 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 min-h-[380px] sm:min-h-[440px] flex flex-col">
-                      {/* Browser Header */}
-                      <div className="px-4 sm:px-5 py-3 sm:py-4 bg-slate-50/80 border-b border-slate-100 flex items-center justify-between gap-4">
-                          <div className="flex items-center gap-1.5 sm:gap-2">
-                              <div className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-red-400/90 shadow-sm"></div>
-                              <div className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-amber-400/90 shadow-sm"></div>
-                              <div className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-emerald-400/90 shadow-sm"></div>
-                          </div>
-
-                          {/* Fake URL Bar - Processing state */}
-                          <div className="flex-1 max-w-[200px] hidden sm:flex items-center justify-center gap-2 px-3 py-1.5 bg-white rounded-lg border border-slate-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
-                              <Loader2 className="w-2.5 h-2.5 text-primary animate-spin" />
-                              <span className="text-[10px] font-semibold text-slate-400 tracking-wide">{t('analyzing.processing')}</span>
-                          </div>
-
-                          <div className="w-8 sm:w-12"></div>
-                      </div>
-
+                  /* Analysis Progress Card */
+                  <div className="relative bg-white rounded-3xl sm:rounded-4xl shadow-2xl shadow-blue-900/10 border border-white/40 ring-1 ring-slate-200/50 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 min-h-[340px] sm:min-h-[400px] flex flex-col">
                       {/* Main Loading Content */}
                       <div className="flex-1 p-6 sm:p-10 flex flex-col items-center justify-center relative bg-white/50">
                           
@@ -434,7 +462,7 @@ export default function Home() {
                           {/* Dynamic Text */}
                           <div className="space-y-2 sm:space-y-3 text-center max-w-lg mx-auto mb-6 sm:mb-8 px-4">
                              <h3 className="text-xl sm:text-3xl font-black text-slate-800 tracking-tight leading-tight">
-                                {ANALYSIS_STEPS.find(s => s.id === currentStep)?.label || "Analyse afronden..."}
+                                {ANALYSIS_STEPS.find(s => s.id === currentStep)?.label || t('steps.fallback')}
                              </h3>
                              <p className="text-xs sm:text-sm text-slate-400 font-bold uppercase tracking-widest opacity-80">
                                 {t('analyzing.working')}
@@ -442,9 +470,7 @@ export default function Home() {
 
                              {/* Time Indication */}
                              <p className="text-xs text-slate-500 mt-2">
-                                {locale === 'en'
-                                  ? `Estimated time: 30-60 seconds (${loadingTime}s elapsed)`
-                                  : `Geschatte tijd: 30-60 seconden (${loadingTime}s verstreken)`}
+                                {t('emailCapture.estimatedTime').replace('{elapsed}', loadingTime.toString())}
                              </p>
                           </div>
 
@@ -458,14 +484,10 @@ export default function Home() {
                                   </div>
                                   <div className="flex-1">
                                     <h4 className="font-bold text-slate-800 text-sm mb-1">
-                                      {locale === 'en'
-                                        ? 'Taking longer than expected?'
-                                        : 'Duurt het langer dan verwacht?'}
+                                      {t('emailCapture.title')}
                                     </h4>
                                     <p className="text-xs text-slate-600">
-                                      {locale === 'en'
-                                        ? 'Enter your email to receive results when ready. You can close this tab.'
-                                        : 'Vul je e-mailadres in om de resultaten te ontvangen zodra ze klaar zijn. Je kunt dit tabblad sluiten.'}
+                                      {t('emailCapture.body')}
                                     </p>
                                   </div>
                                 </div>
@@ -474,14 +496,14 @@ export default function Home() {
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    placeholder={locale === 'en' ? 'your@email.com' : 'jouw@email.nl'}
+                                    placeholder={t('emailCapture.placeholder')}
                                     className="flex-1 px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                                   />
                                   <Button
                                     onClick={handleContinueInBackground}
                                     className="px-4 py-2 text-sm font-semibold bg-primary hover:bg-primary/90"
                                   >
-                                    {locale === 'en' ? 'Continue' : 'Doorgaan'}
+                                    {t('emailCapture.continue')}
                                   </Button>
                                 </div>
                               </div>
@@ -684,7 +706,7 @@ export default function Home() {
                      
                      <div>
                         <Button className="h-14 px-10 rounded-full text-lg font-bold shadow-none border border-transparent bg-primary text-primary-foreground hover:bg-primary/90 transition-all" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                           Nu gratis analyseren
+                           {t('solution.cta')}
                         </Button>
                      </div>
                  </div>
@@ -757,10 +779,10 @@ export default function Home() {
                           {t('footer.website')}
                       </a>
                       <a href={`/${locale}/privacy`} className="text-slate-400 hover:text-white transition-colors">
-                          {t('report.footer.privacy')}
+                          {t('footer.privacy')}
                       </a>
                       <a href={`/${locale}/terms`} className="text-slate-400 hover:text-white transition-colors">
-                          {t('report.footer.terms')}
+                          {t('footer.terms')}
                       </a>
                   </div>
               </div>

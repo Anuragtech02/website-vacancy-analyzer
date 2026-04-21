@@ -48,10 +48,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         'en': `${baseUrl}/en`,
       },
     },
-    icons: {
-      icon: "/favicon.ico",
-      apple: "/logo-icon.png",
-    },
+    // Icons are auto-discovered by Next.js App Router from
+    // app/icon.png and app/apple-icon.png. No manual entry needed.
     robots: {
       index: true,
       follow: true,
@@ -75,9 +73,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       siteName: isEnglish ? "Vacancy Wizard" : "Vacature Tovenaar",
       images: [
         {
-          url: "/logo.png",
-          width: 1200,
-          height: 630,
+          url: "/logo-icon.png",
+          width: 481,
+          height: 540,
           alt: t('title'),
         },
       ],
@@ -86,7 +84,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: "summary_large_image",
       title: t('title'),
       description: t('description'),
-      images: ["/logo.png"],
+      images: ["/logo-icon.png"],
       creator: "@VacatureTovenaar",
     },
     category: "Business Software",
@@ -132,9 +130,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             "url": "https://analyse.vacaturetovenaar.nl",
             "logo": {
               "@type": "ImageObject",
-              "url": "https://analyse.vacaturetovenaar.nl/logo.png",
-              "width": 1200,
-              "height": 630
+              "url": "https://analyse.vacaturetovenaar.nl/logo-icon.png",
+              "width": 481,
+              "height": 540
             },
             "description": isEnglish
               ? "AI-powered vacancy analysis and optimization platform. Helps recruiters and HR professionals write better job postings that attract quality candidates."

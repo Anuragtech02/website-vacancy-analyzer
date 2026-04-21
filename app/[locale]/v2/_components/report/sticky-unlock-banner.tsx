@@ -1,0 +1,80 @@
+"use client";
+
+import { useLocale } from "next-intl";
+import { type Tokens } from "../theme";
+import { Button } from "../primitives";
+import { useV2T } from "../i18n-context";
+import { estimatePotentialScore } from "./estimate-potential";
+import { useBreakpoint, isMobile } from "../use-breakpoint";
+
+interface StickyUnlockBannerProps {
+  tokens: Tokens;
+  onOpenEmail: () => void;
+  currentScore: number;
+  potentialScore?: number;
+}
+
+export function StickyUnlockBanner({ tokens, onOpenEmail, currentScore, potentialScore }: StickyUnlockBannerProps) {
+  const t = useV2T();
+  const locale = useLocale();
+  const bp = useBreakpoint();
+  const mobile = isMobile(bp);
+
+  // Real optimization score when available, otherwise an estimate keyed off the
+  // user's actual current score (never a fixed "8.2" that reads as mock).
+  const resolved = potentialScore ?? estimatePotentialScore(currentScore);
+  const scoreDisplay = resolved.toLocaleString(locale, { maximumFractionDigits: 1 });
+
+  const wrapperStyle: React.CSSProperties = mobile
+    ? {
+        position: "fixed", bottom: 20, left: 12, right: 12, transform: "none",
+        background: tokens.ink, color: tokens.bgRaised,
+        borderRadius: tokens.cardRadius,
+        padding: "14px 18px",
+        display: "flex", flexDirection: "column", alignItems: "stretch", gap: 12,
+        boxShadow: "0 20px 50px -16px rgba(0,0,0,0.35)",
+        zIndex: 8,
+        maxWidth: "none",
+      }
+    : {
+        position: "fixed", bottom: 20, left: "50%", transform: "translateX(-50%)",
+        background: tokens.ink, color: tokens.bgRaised,
+        borderRadius: tokens.cardRadius,
+        padding: "14px 18px 14px 22px",
+        display: "flex", alignItems: "center", gap: 22,
+        boxShadow: "0 20px 50px -16px rgba(0,0,0,0.35)",
+        zIndex: 8,
+        maxWidth: "calc(100vw - 40px)",
+      };
+
+  return (
+    <div style={wrapperStyle}>
+      <div>
+        <div style={{ fontFamily: tokens.bodyFont, fontSize: 14, fontWeight: 600 }}>
+          {t.report.stickyBanner.title.replace("{score}", scoreDisplay)}
+        </div>
+        <div style={{ fontFamily: tokens.bodyFont, fontSize: 12, color: "rgba(255,255,255,0.65)", marginTop: 2 }}>
+          {t.report.stickyBanner.subtitle}
+        </div>
+      </div>
+      <Button
+        tokens={tokens}
+        variant="primary"
+        onClick={onOpenEmail}
+        style={{
+          padding: "12px 20px",
+          fontSize: 13,
+          // Keep the CTA on one line — "View improved version →" was
+          // wrapping inside a too-narrow pill. On desktop/tablet the
+          // parent flex container grows the title column instead; on
+          // mobile the button is already full-width so nowrap is fine.
+          whiteSpace: "nowrap",
+          flexShrink: 0,
+          width: mobile ? "100%" : undefined,
+        }}
+      >
+        {t.report.stickyBanner.cta}
+      </Button>
+    </div>
+  );
+}

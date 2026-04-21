@@ -40,3 +40,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 #.open-next
+
+# SQLite artifacts from the old (now-removed) Bull queue path. Kept in
+# .gitignore so a developer reinstalling locally doesn't re-introduce it.
+database.db
+database.db-shm
+database.db-wal

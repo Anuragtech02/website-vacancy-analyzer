@@ -5,6 +5,9 @@ import { sendOptimizedVacancyEmail } from "@/lib/email";
 import { syncHubSpotContact } from "@/lib/hubspot";
 import { getClientIP } from "@/lib/fingerprint";
 
+// Gemini 3 Flash optimization + Puppeteer PDF + SES send. Budget 5 min.
+export const maxDuration = 300;
+
 export async function POST(req: NextRequest) {
   try {
     const { email, reportId, fingerprint, locale } = await req.json() as { email: string; reportId: string; fingerprint?: string; locale?: string };
@@ -28,19 +31,30 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Check usage count by both identity (IP/fingerprint) and email
-    // Use the higher count to prevent bypass via incognito/different email
-    // BYPASS_USAGE_LIMIT=true can be set in .env.local for development
+    // Check + insert atomically to prevent double-click / fetch-retry races.
+    // IP is intentionally excluded from the count — shared office/VPN IPs would
+    // cause colleagues to block each other. See lib/db.ts: countLeadsByFingerprint.
+    //
+    // Limit resolution, in order of precedence:
+    //   1. BYPASS_USAGE_LIMIT=true           → unlimited (dev/local)
+    //   2. ANALYZER_USAGE_LIMIT=<n>          → explicit override (UAT/tester)
+    //   3. default                           → 2 rewrites per user (prod)
     const bypassLimit = process.env.BYPASS_USAGE_LIMIT === 'true';
+    const configuredLimit = parseInt(process.env.ANALYZER_USAGE_LIMIT ?? '', 10);
+    const effectiveLimit = bypassLimit
+      ? Number.MAX_SAFE_INTEGER
+      : (Number.isFinite(configuredLimit) && configuredLimit > 0 ? configuredLimit : 2);
 
-    const identityUsageCount = await dbClient.countLeadsByIdentity(ipAddress, fingerprint);
-    const emailUsageCount = await dbClient.countLeadsByEmail(email);
-    const usageCount = Math.max(identityUsageCount, emailUsageCount);
+    const { allowed, usageCountBefore } = await dbClient.createLeadIfUnderLimit({
+      email,
+      reportId,
+      ipAddress,
+      fingerprint,
+      limit: effectiveLimit,
+    });
 
-    // Phase 3: Lock State (Logic: If user ALREADY has 2 leads, this is the 3rd attempt -> Block)
-    // Wait, if they have 0, this is 1st. If 1, this is 2nd. If 2, this is 3rd.
-    // So if usageCount >= 2, we block (unless bypass is enabled for development).
-    if (usageCount >= 2 && !bypassLimit) {
+    // Phase 3: Lock State — user already has 2 leads; this would be the 3rd attempt.
+    if (!allowed) {
       return NextResponse.json({
         success: false,
         isLocked: true,
@@ -48,30 +62,28 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Save lead with IP and fingerprint (Increments the count for next time)
-    await dbClient.createLead(email, reportId, ipAddress, fingerprint);
-    
-    // The current usage count for THIS email being sent (0 -> 1st email, 1 -> 2nd email)
-    // We pass `usageCount + 1` to the email function to indicate this is the Nth email?
-    // Let's look at email logic: `usageCount >= 2` triggers Phase 2 content? 
-    // Wait, User request: "Mail #2 – versturen na tweede herschrijving".
-    // So if previous usage is 1, this is the 2nd one. `usageCount` (before createLead) is 1.
-    // So we invoke email with `usageCount + 1`.
-    // If usageCount was 0, we pass 1. (Phase 1)
-    // If usageCount was 1, we pass 2. (Phase 2)
-    // If usageCount was 2, we mocked above.
-    
+    // The lead has been inserted inside the transaction.
+    // usageCountBefore: 0 → 1st rewrite, 1 → 2nd rewrite.
+    // Pass (usageCountBefore + 1) as the "Nth email" value for HubSpot + email template.
+    const usageCount = usageCountBefore; // alias for clarity below
+
     // Generate optimization (pass locale for localized responses)
     const analysis = JSON.parse(report.analysis_json);
     const optimizationResult = await optimizeVacancy(report.vacancy_text, analysis, locale || 'nl');
 
-    // Sync to HubSpot (with proper error handling)
+    // Sync to HubSpot (with proper error handling).
+    //
+    // "scrape_bron" (Dutch: source/origin) is the existing custom
+    // property on this HubSpot portal — same one the sales demo flow
+    // writes to. Keeps all contacts tagged with where they came from,
+    // segmentable in HubSpot views.
     const hubspotResult = await syncHubSpotContact(email, {
       company: analysis.metadata?.organization || "",
       website: "",
       vacature_titel: analysis.metadata?.job_title || "Unknown Vacancy",
       vacature_report_id: reportId,
-      count_analyzer_flow: String(usageCount + 1) // NEW total count (1 for first submission, 2 for second)
+      count_analyzer_flow: String(usageCount + 1), // NEW total count (1 for first submission, 2 for second)
+      scrape_bron: "external-analyzer",
     });
 
     if (hubspotResult && !hubspotResult.success) {

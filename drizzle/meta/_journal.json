@@ -8,6 +8,13 @@
       "when": 1768888268256,
       "tag": "0000_young_guardian",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1776766498076,
+      "tag": "0001_rare_starfox",
+      "breakpoints": true
     }
   ]
 }

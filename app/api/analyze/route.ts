@@ -1,89 +1,66 @@
 import { NextRequest, NextResponse } from "next/server";
-import { analyzeVacancy } from "@/lib/gemini";
 import { checkRateLimit } from "@/lib/rate-limit";
-import { dbClient } from "@/lib/db";
-import { nanoid } from "nanoid";
-import { enqueueAnalysis } from "@/lib/queue";
-import { dbRaw } from "@/lib/db-raw";
+import { createJob, enqueueJob } from "@/lib/jobs";
+
+// Non-blocking: we create a job row, enqueue a pg-boss message, and
+// return immediately. The worker process (scripts/worker.ts) picks it
+// up, runs analyzeVacancy, and updates the row with progress/result.
+// Clients poll GET /api/analyze/status?id=<jobId> to follow along, and
+// navigate to /v2/report/[reportId] once the row's status flips to
+// 'done'. See lib/jobs.ts for the full lifecycle documentation.
+
+// Hard upper bound — must stay in sync with v2 AnalyzerCard MAX_CHARS.
+const MAX_VACANCY_CHARS = 4000;
 
 export async function POST(req: NextRequest) {
-  // Rate Limiting
   const ip = req.headers.get("x-forwarded-for") || "unknown";
   if (!checkRateLimit(ip)) {
     return NextResponse.json(
       { error: "Rate limit exceeded. Please try again later." },
-      { status: 429 }
+      { status: 429 },
     );
   }
 
   try {
-    const { vacancyText, category, locale, email } = await req.json() as {
-      vacancyText: string,
-      category?: string,
-      locale?: string,
-      email?: string
+    const { vacancyText, category, locale } = await req.json() as {
+      vacancyText: string;
+      category?: string;
+      locale?: string;
     };
 
     if (!vacancyText || typeof vacancyText !== "string") {
       return NextResponse.json(
         { error: "Vacancy text is required" },
-        { status: 400 }
+        { status: 400 },
+      );
+    }
+    if (vacancyText.length > MAX_VACANCY_CHARS) {
+      return NextResponse.json(
+        { error: `Vacancy text exceeds ${MAX_VACANCY_CHARS} character limit.` },
+        { status: 413 },
       );
     }
 
     const finalCategory = category || "General";
     const finalLocale = locale || "nl";
 
-    // If email is provided, process asynchronously in background
-    if (email && email.trim() && process.env.ENABLE_BACKGROUND_JOBS === 'true') {
-      const jobId = nanoid(12);
-
-      // Create job record in database
-      await dbRaw.run(
-        `INSERT INTO analysis_jobs (id, status, vacancy_text, category, locale, email, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [jobId, 'pending', vacancyText, finalCategory, finalLocale, email, Math.floor(Date.now() / 1000)]
-      );
-
-      // Enqueue the job for background processing
-      await enqueueAnalysis({
-        jobId,
-        vacancyText,
-        category: finalCategory,
-        locale: finalLocale,
-        email,
-      });
-
-      return NextResponse.json({
-        success: true,
-        async: true,
-        jobId,
-        message: finalLocale === 'en'
-          ? 'Your analysis has been queued. You will receive an email when it\'s ready.'
-          : 'Je analyse is in de wachtrij geplaatst. Je ontvangt een email wanneer deze klaar is.'
-      });
-    }
-
-    // Otherwise, process synchronously (immediate response)
-    const analysis = await analyzeVacancy(vacancyText, finalCategory, finalLocale);
-
-    // Generate Report ID
-    const reportId = nanoid(10);
-
-    // Save to DB
-    await dbClient.createReport(reportId, vacancyText, JSON.stringify(analysis));
+    const jobId = await createJob({
+      vacancyText,
+      category: finalCategory,
+      locale: finalLocale,
+    });
+    await enqueueJob(jobId);
 
     return NextResponse.json({
       success: true,
-      async: false,
-      reportId,
-      analysis
+      jobId,
+      status: "pending",
     });
   } catch (error) {
-    console.error("Analysis Error:", error);
+    console.error("Analysis enqueue error:", error);
     return NextResponse.json(
-      { error: "Failed to analyze vacancy" },
-      { status: 500 }
+      { error: "Failed to start analysis" },
+      { status: 500 },
     );
   }
 }

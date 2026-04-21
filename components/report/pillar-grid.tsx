@@ -17,6 +17,7 @@ import {
   ArrowRight,
   TrendingUp
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface PillarScore {
   score: number;
@@ -53,9 +54,19 @@ interface PillarGridProps {
   isUnlocked: boolean;
 }
 
-const pillarConfig: Record<string, { label: string; icon: typeof Layout; color: string; bgColor: string; watermark: string; gradient: string }> = {
+const pillarKeyMap: Record<string, string> = {
+  structure_layout: 'structure',
+  persona_fit: 'targetAudience',
+  evp_brand: 'evp',
+  tone_of_voice: 'tone',
+  inclusion_bias: 'inclusion',
+  mobile_experience: 'mobile',
+  seo_findability: 'seo',
+  neuromarketing: 'neuromarketing',
+};
+
+const pillarConfig: Record<string, { icon: typeof Layout; color: string; bgColor: string; watermark: string; gradient: string }> = {
   structure_layout: {
-    label: "Structuur & Opmaak",
     icon: Layout,
     color: "text-blue-600",
     bgColor: "bg-blue-50 group-hover:bg-blue-100",
@@ -63,7 +74,6 @@ const pillarConfig: Record<string, { label: string; icon: typeof Layout; color: 
     gradient: "from-blue-50/40 via-white to-white",
   },
   persona_fit: {
-    label: "Doelgroep Match",
     icon: Users,
     color: "text-purple-600",
     bgColor: "bg-purple-50 group-hover:bg-purple-100",
@@ -71,7 +81,6 @@ const pillarConfig: Record<string, { label: string; icon: typeof Layout; color: 
     gradient: "from-purple-50/40 via-white to-white",
   },
   evp_brand: {
-    label: "EVP & Merk",
     icon: Award,
     color: "text-amber-600",
     bgColor: "bg-amber-50 group-hover:bg-amber-100",
@@ -79,7 +88,6 @@ const pillarConfig: Record<string, { label: string; icon: typeof Layout; color: 
     gradient: "from-amber-50/40 via-white to-white",
   },
   tone_of_voice: {
-    label: "Tone of Voice",
     icon: MessageSquare,
     color: "text-pink-600",
     bgColor: "bg-pink-50 group-hover:bg-pink-100",
@@ -87,7 +95,6 @@ const pillarConfig: Record<string, { label: string; icon: typeof Layout; color: 
     gradient: "from-pink-50/40 via-white to-white",
   },
   inclusion_bias: {
-    label: "Inclusie & Bias",
     icon: Heart,
     color: "text-rose-600",
     bgColor: "bg-rose-50 group-hover:bg-rose-100",
@@ -95,7 +102,6 @@ const pillarConfig: Record<string, { label: string; icon: typeof Layout; color: 
     gradient: "from-rose-50/40 via-white to-white",
   },
   mobile_experience: {
-    label: "Mobiele Ervaring",
     icon: Smartphone,
     color: "text-teal-600",
     bgColor: "bg-teal-50 group-hover:bg-teal-100",
@@ -103,7 +109,6 @@ const pillarConfig: Record<string, { label: string; icon: typeof Layout; color: 
     gradient: "from-teal-50/40 via-white to-white",
   },
   seo_findability: {
-    label: "SEO Vindbaarheid",
     icon: Search,
     color: "text-orange-600",
     bgColor: "bg-orange-50 group-hover:bg-orange-100",
@@ -111,7 +116,6 @@ const pillarConfig: Record<string, { label: string; icon: typeof Layout; color: 
     gradient: "from-orange-50/40 via-white to-white",
   },
   neuromarketing: {
-    label: "Neuromarketing",
     icon: Brain,
     color: "text-violet-600",
     bgColor: "bg-violet-50 group-hover:bg-violet-100",
@@ -160,6 +164,7 @@ function PillarCard({
   className?: string;
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const tPillars = useTranslations('report.pillars');
   const config = pillarConfig[pillarKey];
   const scoreColors = getScoreColor(pillar.score);
   const estimatedColors = estimatedScore ? getScoreColor(estimatedScore) : null;
@@ -190,7 +195,7 @@ function PillarCard({
             <div className={cn("p-2.5 rounded-xl transition-colors", config.bgColor)}>
               <Icon className={cn("w-5 h-5", config.color)} />
             </div>
-            <span className="font-bold text-slate-800 text-sm">{config.label}</span>
+            <span className="font-bold text-slate-800 text-sm">{tPillars(`${pillarKeyMap[pillarKey]}.title`)}</span>
           </div>
 
           {/* Score badge(s) */}
@@ -223,6 +228,7 @@ function PillarCard({
 }
 
 export function PillarGrid({ pillars, estimatedScores, isUnlocked }: PillarGridProps) {
+  const t = useTranslations('report.pillars');
   const pillarEntries = Object.entries(pillars) as [keyof Pillars, PillarScore][];
 
   return (
@@ -230,9 +236,9 @@ export function PillarGrid({ pillars, estimatedScores, isUnlocked }: PillarGridP
       {/* Section header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Score Verdeling</h2>
+          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">{t('title')}</h2>
           <p className="text-sm text-slate-500 mt-1">
-            Gedetailleerde analyse van 8 belangrijke onderdelen
+            {t('subtitle')}
           </p>
         </div>
       </div>

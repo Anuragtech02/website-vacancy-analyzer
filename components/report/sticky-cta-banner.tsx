@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Lock, Shield, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 interface StickyCTABannerProps {
   onUnlockClick: () => void;
@@ -14,6 +15,8 @@ interface StickyCTABannerProps {
 export function StickyCTABanner({ onUnlockClick, isUnlocked, phase }: StickyCTABannerProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
+  const t = useTranslations('report.cta');
+  const tTrust = useTranslations('report.modal.email');
 
   useEffect(() => {
     if (isUnlocked || isDismissed) {
@@ -56,10 +59,10 @@ export function StickyCTABanner({ onUnlockClick, isUnlocked, phase }: StickyCTAB
               </div>
               <div>
                 <h3 className="font-bold text-slate-900 text-base sm:text-lg">
-                  Krijg de geoptimaliseerde versie van deze vacature
+                  {t('stickySubtitle')}
                 </h3>
                 <p className="text-sm text-slate-500 hidden sm:block">
-                  Onze software heeft de pijnpunten uit je tekst gehaald voor direct resultaat.
+                  {t('stickyDesc')}
                 </p>
               </div>
             </div>
@@ -72,7 +75,7 @@ export function StickyCTABanner({ onUnlockClick, isUnlocked, phase }: StickyCTAB
                 className="flex-1 sm:flex-none h-12 px-6 font-bold text-white shadow-lg bg-primary hover:bg-primary/90 shadow-primary/20"
               >
                 <Lock className="w-4 h-4 mr-2" />
-                Bekijk verbeterde versie
+                {t('stickyCta')}
               </Button>
 
               {/* Dismiss button - mobile only */}
@@ -90,11 +93,11 @@ export function StickyCTABanner({ onUnlockClick, isUnlocked, phase }: StickyCTAB
           <div className="flex items-center justify-center gap-4 mt-3 sm:hidden">
             <div className="flex items-center gap-1.5 text-xs text-slate-400">
               <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-              <span>Geen Spam</span>
+              <span>{tTrust('trustNoSpam')}</span>
             </div>
             <div className="flex items-center gap-1.5 text-xs text-slate-400">
               <Shield className="w-3 h-3" />
-              <span>Veilig</span>
+              <span>{tTrust('trustSecure')}</span>
             </div>
           </div>
         </div>

@@ -1,4 +1,7 @@
 {
+  "common": {
+    "dismiss": "Sluiten"
+  },
   "landing": {
     "hero": {
       "badge": "Stop met verspillen van budget",
@@ -34,7 +37,8 @@
       "analyzeReadability": "Leesbaarheid analyseren",
       "evaluateStructure": "Structuur evalueren",
       "checkSEO": "SEO vindbaarheid checken",
-      "finalize": "Analyse afronden"
+      "finalize": "Analyse afronden",
+      "fallback": "Analyse afronden..."
     },
     "category": {
       "label": "Functiecategorie",
@@ -89,6 +93,7 @@
       "title": "Structurele vacature",
       "titleHighlight": "verbetering",
       "description": "Onze software analyseert je tekst op belangrijke dimensies die bewezen zorgen voor hogere conversie en kwaliteit.",
+      "cta": "Nu gratis analyseren",
       "checks": [
         "Kandidaat fit check",
         "Tone of voice & veiligheid",
@@ -117,7 +122,18 @@
       "brandName": "Vacature Tovenaar",
       "tagline": "Transformeer generieke vacatureteksten in wervende assets.",
       "website": "Website",
+      "privacy": "Privacybeleid",
+      "terms": "Algemene Voorwaarden",
       "copyright": "© 2025 Vacature Tovenaar. Alle rechten voorbehouden."
+    },
+    "emailCapture": {
+      "title": "Duurt het langer dan verwacht?",
+      "body": "Vul je e-mailadres in om de resultaten te ontvangen zodra ze klaar zijn. Je kunt dit tabblad sluiten.",
+      "placeholder": "jouw@email.nl",
+      "continue": "Doorgaan",
+      "estimatedTime": "Geschatte tijd: 30-60 seconden ({elapsed}s verstreken)",
+      "emailRequired": "Voer je e-mailadres in",
+      "queuedMessage": "Je analyse is in de wachtrij geplaatst. Je ontvangt een email wanneer deze klaar is."
     }
   },
   "report": {
@@ -141,7 +157,17 @@
         "weak": "Zwak",
         "weakDesc": "Significante verbeteringen nodig"
       },
-      "summary": "Samenvatting"
+      "summary": "Samenvatting",
+      "reportLabel": "Analyse Rapport",
+      "outOf": "Van de 10",
+      "criticalPoints": "Kritieke Punten",
+      "allGood": "Uitstekend werk!",
+      "noIssues": "Geen kritieke problemen gedetecteerd.",
+      "showAllIssues": "Toon alle {count} punten",
+      "showFewerIssues": "Toon minder",
+      "planDemoSecondary": "Of plan een demo",
+      "readMore": "Lees meer",
+      "showLess": "Toon minder"
     },
     "pillars": {
       "title": "Score Verdeling",
@@ -180,14 +206,17 @@
       }
     },
     "cta": {
-      "unlock": "Ontgrendel",
-      "maxPotential": "maximum potentieel",
+      "unlock": "Bekijk",
+      "maxPotential": "verbeterde versie",
       "getOptimized": "Krijg de geoptimaliseerde versie.",
       "unlockNow": "Nu ontgrendelen",
       "currentScore": "Huidige Score",
       "potentialScore": "Potentiële Score",
       "optimized": "Geoptimaliseerd",
-      "hoverHint": "Hover voor resultaat"
+      "hoverHint": "Hover voor resultaat",
+      "stickySubtitle": "Krijg de geoptimaliseerde versie van deze vacature",
+      "stickyDesc": "Onze software heeft de pijnpunten uit je tekst gehaald voor direct resultaat.",
+      "stickyCta": "Bekijk verbeterde versie"
     },
     "modal": {
       "limitReached": {
@@ -204,7 +233,10 @@
         "submit": "Verstuur optimalisatie",
         "sending": "Versturen...",
         "success": "Verstuurd! Check je inbox.",
-        "error": "Er ging iets mis. Probeer opnieuw."
+        "error": "Er ging iets mis. Probeer opnieuw.",
+        "label": "Werk Email",
+        "trustNoSpam": "Geen Spam",
+        "trustSecure": "Veilig"
       }
     },
     "optimization": {
@@ -222,12 +254,39 @@
     "original": {
       "title": "Originele Vacaturetekst",
       "show": "Toon originele tekst",
-      "hide": "Verberg originele tekst"
+      "hide": "Verberg originele tekst",
+      "characters": "{count} tekens",
+      "copyText": "Tekst kopiëren",
+      "copied": "Gekopieerd!"
+    },
+    "disclaimer": "Disclaimer: Deze analyse is gegenereerd door software. Hoewel we streven naar nauwkeurigheid, raden we aan alle suggesties in context te beoordelen.",
+    "successToast": {
+      "title": "Mail succesvol verzonden!",
+      "body": "We hebben de geoptimaliseerde versie naar je inbox gestuurd. Check ook je spam folder voor de zekerheid."
     },
     "footer": {
       "privacy": "Privacybeleid",
       "terms": "Algemene Voorwaarden",
       "copyright": "© 2025 Vacature Tovenaar. Alle rechten voorbehouden."
+    },
+    "optimizationResult": {
+      "heading": "Verbeterde Vacature",
+      "subheading": "Je verbeterde vacaturetekst is klaar. Kopieer of download deze hieronder.",
+      "copied": "Gekopieerd!",
+      "copyText": "Kopieer Tekst",
+      "generating": "Genereren...",
+      "downloadWord": "Download Word",
+      "sending": "Verzenden...",
+      "downloadPdf": "Download PDF",
+      "fullText": "Volledige Tekst",
+      "whatChanged": "Wat is er veranderd?",
+      "orgLabel": "Organisatie: ",
+      "locationLabel": "Locatie: ",
+      "diversityHeader": "Diversiteit & Inclusie",
+      "copyError": "Kopiëren mislukt",
+      "wordError": "Word-document genereren mislukt",
+      "pdfSent": "PDF is naar je e-mail verzonden",
+      "pdfError": "PDF verzenden mislukt"
     }
   },
   "metadata": {
@@ -238,7 +297,8 @@
   "errors": {
     "analysisFailed": "Er ging iets mis. Probeer het opnieuw.",
     "emptyVacancy": "Voer een vacaturetekst in.",
-    "networkError": "Netwerkfout. Controleer je internetverbinding."
+    "networkError": "Netwerkfout. Controleer je internetverbinding.",
+    "generic": "Er is een fout opgetreden"
   },
   "accessModal": {
     "title": "Dit was maar een voorproefje...",
