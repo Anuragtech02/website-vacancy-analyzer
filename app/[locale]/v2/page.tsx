@@ -37,11 +37,10 @@ export default function V2Page() {
   const [banner, setBanner]                 = useState<BannerState | null>(null);
   const [fingerprint, setFingerprint]       = useState<string>("");
 
-  // Remember the current analyze input while we're on the Loading screen so
-  // the EmailWhenReadyModal can re-POST it to /api/analyze with an email
-  // attached (which triggers the background-queue path on the server).
-  const [pendingText, setPendingText]         = useState<string>("");
-  const [pendingCategory, setPendingCategory] = useState<string>("General");
+  // Job id of the in-flight analyze request. Set when POST /api/analyze
+  // returns; used by EmailWhenReadyModal to call attach-email and by the
+  // poll loop to fetch status.
+  const [pendingJobId, setPendingJobId]       = useState<string | null>(null);
 
   // Backend-driven progress. Populated from SSE events. When stageIdx is
   // undefined the Loading screen falls back to its own timer animation
@@ -78,58 +77,96 @@ export default function V2Page() {
      "va2_unlocked", "va2_submitted_text"].forEach((k) => localStorage.removeItem(k));
   }, []);
 
+  // Polling loop implementation:
+  //
+  // 1. POST /api/analyze → returns { jobId }
+  // 2. Every 2 seconds: GET /api/analyze/status?id={jobId}
+  // 3. As status updates come in, push { progress, stage } into the
+  //    Loading component props so it animates from real backend values.
+  // 4. When status === 'done' → router.push('/v2/report/<reportId>')
+  // 5. When status === 'failed' → show error banner, back to landing.
+  //
+  // Why polling not SSE: Coolify's Traefik proxy buffers SSE streams,
+  // causing events to arrive in a single burst at end-of-stream. Each
+  // poll is a normal HTTP 200 with a tiny JSON body that Traefik passes
+  // through instantly. We lose nothing — each poll is <200ms and the
+  // status table is a single row read.
+  //
+  // Worker side (scripts/worker.ts) is a separate Node process that
+  // runs analyzeVacancy, updates the row's progress column on a timer,
+  // saves the final report, and sets status='done'.
   const startAnalyze = async (text: string, category: string) => {
-    setPendingText(text);
-    setPendingCategory(category);
-    // NOTE: we briefly shipped a real SSE consumer (POST /api/analyze/stream)
-    // that drove Loading from live Gemini token-stream progress. Works
-    // locally, but on Coolify behind Traefik the SSE events got buffered
-    // upstream and arrived in a single burst at end-of-stream — so the
-    // loader would sit on step 1 for 30-40s and then rapid-fire 1→2→3→6
-    // right before the report opened. Reverted to the sync JSON path and
-    // Loading's internal timer animation. The streaming infra is still in
-    // the repo (app/api/analyze/stream, analyzeVacancyStreaming) for when
-    // we have bandwidth to tune proxy buffering or move to a different
-    // transport.
-    setStageIdx(undefined);
-    setProgressPct(undefined);
+    setPendingJobId(null);
+    // Start at step 0 / 0% so Loading renders externally-driven from
+    // the first frame (never falls back to the internal timer that
+    // would race real progress events).
+    setStageIdx(0);
+    setProgressPct(0);
     setScreen("loading");
 
+    // Step 1: enqueue. This returns in <500ms — just a DB write + queue
+    // send; the actual Gemini call runs on the worker.
+    let jobId: string;
     try {
       const response = await fetchWithTimeout("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ vacancyText: text, category, locale }),
-        // Match server maxDuration (5 min). 120s was aborting legitimate
-        // long Gemini 3 Pro runs before the server finished.
-        timeout: 300000,
+        timeout: 30000,
         retries: 0,
       });
-
       if (!response.ok) throw new Error("Analysis failed");
-
       const data = await response.json();
+      if (!data.jobId) throw new Error("Unexpected analysis response");
+      jobId = data.jobId as string;
+      setPendingJobId(jobId);
+    } catch (error) {
+      console.error("Analyze enqueue error:", error);
+      const msg = error instanceof Error ? getErrorMessage(error, locale) : v2messages.errors.analysisFailed;
+      setBanner({ message: msg, variant: "error" });
+      setScreen("landing");
+      return;
+    }
 
-      if (data.async) {
-        setBanner({ message: data.message ?? "Queued for email delivery.", variant: "info" });
+    // Step 2+: poll loop. 2-second interval, max 180 polls (~6 min cap).
+    const POLL_INTERVAL_MS = 2000;
+    const MAX_POLLS = 180;
+    for (let i = 0; i < MAX_POLLS; i++) {
+      await new Promise((r) => setTimeout(r, POLL_INTERVAL_MS));
+      let status: { status: string; progress: number; stage?: string; reportId?: string; error?: string };
+      try {
+        const res = await fetch(`/api/analyze/status?id=${encodeURIComponent(jobId)}`, {
+          headers: { "Cache-Control": "no-cache" },
+        });
+        if (!res.ok) throw new Error(`status ${res.status}`);
+        status = await res.json();
+      } catch (err) {
+        // Single transient poll failure isn't fatal — retry on next tick.
+        console.warn("Poll error:", err);
+        continue;
+      }
+
+      // Map progress → step index so the Loading component has both.
+      // 6 steps, 100% → step 5, monotonic.
+      const mappedStage = Math.min(5, Math.floor((status.progress / 100) * 6));
+      setStageIdx((prev) => Math.max(prev ?? 0, mappedStage));
+      setProgressPct((prev) => Math.max(prev ?? 0, status.progress));
+
+      if (status.status === "done" && status.reportId) {
+        router.push(`/${locale}/v2/report/${status.reportId}`);
+        return;
+      }
+      if (status.status === "failed") {
+        setBanner({ message: status.error ?? v2messages.errors.analysisFailed, variant: "error" });
         setScreen("landing");
         return;
       }
-
-      if (data.reportId && data.analysis) {
-        router.push(`/${locale}/v2/report/${data.reportId}`);
-        return;
-      }
-
-      throw new Error("Unexpected analysis response");
-    } catch (error) {
-      console.error("Analyze error:", error);
-      const msg = error instanceof Error
-        ? getErrorMessage(error, locale)
-        : v2messages.errors.analysisFailed;
-      setBanner({ message: msg, variant: "error" });
-      setScreen("landing");
+      // else: pending or running → keep polling
     }
+
+    // Fell out of the loop without a terminal state — worker is stuck.
+    setBanner({ message: v2messages.errors.analysisTimeout, variant: "error" });
+    setScreen("landing");
   };
 
   const goHome = () => setScreen("landing");
@@ -185,9 +222,7 @@ export default function V2Page() {
             {modal === "emailWhenReady" && (
               <EmailWhenReadyModal
                 tokens={tokens}
-                vacancyText={pendingText}
-                category={pendingCategory}
-                locale={locale}
+                jobId={pendingJobId}
                 onClose={() => setModal(null)}
                 onQueued={(msg) => {
                   setBanner({ message: msg, variant: "success" });

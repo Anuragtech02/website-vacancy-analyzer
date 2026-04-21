@@ -1,15 +1,15 @@
 "use client";
 
 // email-when-ready-modal.tsx — shown from the Loading screen's slow-banner
-// "Email it to me" CTA. The user drops their email, we POST /api/analyze
-// with the email (and the already-submitted vacancy text + category + locale),
-// and the backend spawns a detached in-process analyze promise (Next.js on
-// Coolify stays alive long enough to finish), then emails the user a link
-// to the report when it's done. User can close the tab.
+// "Email it to me" CTA. The user drops their email and we POST it to
+// /api/analyze/attach-email with the in-flight jobId. The worker
+// (scripts/worker.ts) re-reads the job row at completion and emails the
+// user a link to /v2/report/[id]. If the job is already finished by the
+// time the modal submits, the attach-email route sends the mail itself.
 //
-// No Bull queue, no Redis, no separate worker — the analyze call runs in
-// the same Node process that served the HTTP response and finishes after
-// the response returns.
+// Contrast to the previous design: we no longer re-POST the full
+// analysis to /api/analyze — that would duplicate a Gemini call.
+// Attaching an email to the existing job is a single cheap SQL UPDATE.
 
 import { useState } from "react";
 import { type Tokens } from "../theme";
@@ -21,9 +21,7 @@ import { fetchWithTimeout } from "@/lib/fetch-with-timeout";
 
 interface EmailWhenReadyModalProps {
   tokens: Tokens;
-  vacancyText: string;
-  category: string;
-  locale: string;
+  jobId: string | null;
   onClose: () => void;
   onQueued: (message: string) => void;
   onError: (message: string) => void;
@@ -31,9 +29,7 @@ interface EmailWhenReadyModalProps {
 
 export function EmailWhenReadyModal({
   tokens,
-  vacancyText,
-  category,
-  locale,
+  jobId,
   onClose,
   onQueued,
   onError,
@@ -48,13 +44,17 @@ export function EmailWhenReadyModal({
   const submit = async () => {
     if (busy) return;
     if (!email || !email.includes("@")) return;
+    if (!jobId) {
+      onError(t.loading.emailWhenReady.error);
+      return;
+    }
     setBusy(true);
     try {
-      const response = await fetchWithTimeout("/api/analyze", {
+      const response = await fetchWithTimeout("/api/analyze/attach-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ vacancyText, category, locale, email }),
-        timeout: 30000, // fast-path: the server should return async:true almost immediately
+        body: JSON.stringify({ jobId, email: email.trim() }),
+        timeout: 15000,
         retries: 0,
       });
 
@@ -65,17 +65,12 @@ export function EmailWhenReadyModal({
       }
 
       const data = await response.json();
-
-      if (data.async) {
-        // Backend kicked off the detached in-process job. User is done here.
-        onQueued(data.message ?? t.loading.emailWhenReady.done);
+      if (data.success) {
+        onQueued(t.loading.emailWhenReady.done);
         onClose();
         return;
       }
 
-      // The backend always returns async:true when an email is provided
-      // now; this branch means the server didn't recognize the email for
-      // some reason. Fall back to the generic error copy.
       onError(t.loading.emailWhenReady.error);
       setBusy(false);
     } catch {

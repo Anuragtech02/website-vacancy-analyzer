@@ -73,17 +73,17 @@ export async function POST(req: NextRequest) {
 
     // Sync to HubSpot (with proper error handling).
     //
-    // lead_source tags every contact synced from this app so the sales team
-    // can segment "external analyzer" leads separately from the in-product
-    // recruitment-intelligence-demo leads (which use
-    // lead_source: "recruitment-intelligence-demo" from backend salesRoutes).
+    // "scrape_bron" (Dutch: source/origin) is the existing custom
+    // property on this HubSpot portal — same one the sales demo flow
+    // writes to. Keeps all contacts tagged with where they came from,
+    // segmentable in HubSpot views.
     const hubspotResult = await syncHubSpotContact(email, {
       company: analysis.metadata?.organization || "",
       website: "",
       vacature_titel: analysis.metadata?.job_title || "Unknown Vacancy",
       vacature_report_id: reportId,
       count_analyzer_flow: String(usageCount + 1), // NEW total count (1 for first submission, 2 for second)
-      lead_source: "external-analyzer",
+      scrape_bron: "external-analyzer",
     });
 
     if (hubspotResult && !hubspotResult.success) {
