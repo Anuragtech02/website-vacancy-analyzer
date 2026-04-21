@@ -3,7 +3,7 @@
 import { type Tokens, PILLAR_COLORS, pillarColor } from "../theme";
 import { Card, Eyebrow, Pill, ScoreBar } from "../primitives";
 import { useMotion, Reveal } from "../motion";
-import { type PillarDatum, PILLAR_DATA } from "./pillar-data";
+import { type PillarDatum } from "./pillar-data";
 import { PillarIcon } from "./pillar-icon";
 import { useV2T } from "../i18n-context";
 
@@ -16,10 +16,9 @@ export function PillarGrid({ tokens, pillars }: PillarGridProps) {
   const m = useMotion(tokens);
   const t = useV2T();
 
-  // PILLAR_DATA is a dev-mode fallback (ReviewChip preview). In production the
-  // Report wrapper always passes a real array — empty means no analysis, and we
-  // render nothing rather than fake pillars.
-  const data = pillars ?? (process.env.NODE_ENV === 'development' ? PILLAR_DATA : []);
+  // Parent always passes a real pillar array derived from the analysis.
+  // Empty means no analysis is available — render nothing rather than fake data.
+  const data = pillars ?? [];
   if (data.length === 0) return null;
 
   return (

@@ -28,74 +28,6 @@ type Screen = "landing" | "loading" | "report";
 type Modal = "email" | "limit" | "demo" | null;
 
 // ---------------------------------------------------------------------------
-// ReviewChip — bottom-left navigator for internal UX stakeholders.
-// Allows jumping between screen states without going through the full flow.
-// ---------------------------------------------------------------------------
-
-interface ReviewChipProps {
-  screen: Screen;
-  unlocked: boolean;
-  onJump: (key: "landing" | "loading" | "report" | "unlocked") => void;
-}
-
-function ReviewChip({ screen, unlocked, onJump }: ReviewChipProps) {
-  const pills: Array<{
-    key: "landing" | "loading" | "report" | "unlocked";
-    label: string;
-    active: boolean;
-  }> = [
-    { key: "landing",  label: "Landing",  active: screen === "landing" },
-    { key: "loading",  label: "Loading",  active: screen === "loading" },
-    { key: "report",   label: "Report",   active: screen === "report" && !unlocked },
-    { key: "unlocked", label: "Unlocked", active: screen === "report" && unlocked },
-  ];
-
-  return (
-    <div
-      style={{
-        position: "fixed",
-        bottom: 20,
-        left: 20,
-        zIndex: 9000,
-        display: "flex",
-        gap: 6,
-        padding: "6px 8px",
-        background: "oklch(0.18 0.02 240 / 0.85)",
-        backdropFilter: "blur(10px)",
-        WebkitBackdropFilter: "blur(10px)",
-        borderRadius: 999,
-        border: "1px solid oklch(0.35 0.02 240 / 0.5)",
-        boxShadow: "0 4px 16px oklch(0 0 0 / 0.35)",
-      }}
-    >
-      {pills.map((p) => (
-        <button
-          key={p.key}
-          onClick={() => onJump(p.key)}
-          style={{
-            padding: "5px 12px",
-            borderRadius: 999,
-            border: "none",
-            cursor: "pointer",
-            fontFamily: "system-ui, sans-serif",
-            fontSize: 11,
-            fontWeight: 600,
-            letterSpacing: "0.04em",
-            background: p.active
-              ? "oklch(0.70 0.17 42)"
-              : "oklch(0.28 0.02 240 / 0.7)",
-            color: p.active ? "#fff" : "oklch(0.75 0.02 240)",
-            transition: "background 0.15s ease, color 0.15s ease",
-          }}
-        >
-          {p.label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
 // V2Page
 // ---------------------------------------------------------------------------
 
@@ -294,15 +226,8 @@ export default function V2Page() {
     }
   };
 
-  // ReviewChip jump handler.
-  const jumpTo = (key: "landing" | "loading" | "report" | "unlocked") => {
-    if (key === "unlocked") {
-      setScreen("report");
-      setUnlocked(true);
-    } else {
-      setScreen(key as Screen);
-    }
-  };
+  // Navbar "home" handler — resets to landing screen.
+  const goHome = () => setScreen("landing");
 
   // ---- Render ----
   return (
@@ -322,7 +247,7 @@ export default function V2Page() {
         <div style={{ position: "relative", zIndex: 1 }}>
           <Navbar
             tokens={tokens}
-            onHome={() => jumpTo("landing")}
+            onHome={goHome}
             usesLeft={usesLeft}
             screen={screen}
           />
@@ -395,10 +320,6 @@ export default function V2Page() {
             />
           )}
         </div>
-
-        {process.env.NODE_ENV === 'development' && (
-          <ReviewChip screen={screen} unlocked={unlocked} onJump={jumpTo} />
-        )}
       </div>
       </BannerProvider>
     </V2MessagesProvider>

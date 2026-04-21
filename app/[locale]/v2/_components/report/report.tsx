@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { type Tokens, type PillarKey } from "../theme";
-import { type PillarDatum, type PillarLabelKey, PILLAR_DATA } from "./pillar-data";
+import { type PillarDatum, type PillarLabelKey } from "./pillar-data";
 import { useV2T } from "../i18n-context";
 import { ReportHeader } from "./report-header";
 import { ScoreCard } from "./score-card";
@@ -65,15 +65,11 @@ export function Report({
 }: ReportProps) {
   const t = useV2T();
 
-  // PILLAR_DATA is a dev-mode fallback for the ReviewChip jump flow only. In
-  // production we should never show it — a report with no analysis means a
-  // routing/hydration bug, and a blank state is better than fake numbers.
+  // Pillar data always comes from the real analysis. When it's missing (stale
+  // hydration, bug) we render an empty array — the page hydration guard should
+  // already have bounced users back to landing before they see this state.
   const pillarData = useMemo(
-    () => {
-      if (analysis) return mapAnalysisToPillarData(analysis);
-      if (process.env.NODE_ENV === 'development') return PILLAR_DATA;
-      return [];
-    },
+    () => (analysis ? mapAnalysisToPillarData(analysis) : []),
     [analysis],
   );
 

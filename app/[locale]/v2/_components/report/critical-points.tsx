@@ -2,7 +2,6 @@
 
 import { type Tokens } from "../theme";
 import { Card, Eyebrow } from "../primitives";
-import { CRITICAL_POINTS } from "./pillar-data";
 import { useV2T } from "../i18n-context";
 
 interface CriticalPointsProps {
@@ -13,11 +12,11 @@ interface CriticalPointsProps {
 export function CriticalPoints({ tokens, issues }: CriticalPointsProps) {
   const t = useV2T();
 
-  // CRITICAL_POINTS is a dev-mode fallback (ReviewChip preview). In production
-  // we only render real issues from the analysis.
+  // Only render real issues from the analysis. Empty → render nothing rather
+  // than show fake points.
   const items = issues && issues.length > 0
     ? issues.slice(0, 5).map((i) => ({ title: i.problem, detail: i.why_it_matters }))
-    : (process.env.NODE_ENV === 'development' ? CRITICAL_POINTS : []);
+    : [];
 
   if (items.length === 0) return null;
 

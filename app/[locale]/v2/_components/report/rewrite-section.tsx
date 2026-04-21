@@ -5,7 +5,6 @@ import { saveAs } from "file-saver";
 import { Document, Packer, Paragraph } from "docx";
 import { type Tokens } from "../theme";
 import { Card, Button, Pill } from "../primitives";
-import { REWRITTEN } from "./pillar-data";
 import { useV2T } from "../i18n-context";
 import { useBanner } from "../banner-context";
 
@@ -31,7 +30,11 @@ export function RewriteSection({ tokens, rewrittenText, projectedScore }: Rewrit
   const [copied, setCopied] = useState(false);
   const [downloadingDocx, setDownloadingDocx] = useState(false);
 
-  const bodyText = stripBasicMarkdown(rewrittenText ?? REWRITTEN);
+  // If we somehow render without real rewritten text, render nothing — better
+  // than showing the hardcoded sample.
+  if (!rewrittenText || rewrittenText.trim().length === 0) return null;
+
+  const bodyText = stripBasicMarkdown(rewrittenText);
   const scoreDisplay = projectedScore != null ? `${projectedScore.toFixed(1)} / 10` : t.report.rewrite.projected.score;
 
   const handleCopy = async () => {
