@@ -63,15 +63,19 @@ export function MethodologySection({ tokens }: MethodologySectionProps) {
       <div style={{
         display: "grid",
         gridTemplateColumns: gridColumns,
+        gridAutoRows: "1fr",
+        alignItems: "stretch",
         gap: mobile ? 12 : 16,
         marginTop: mobile ? 28 : 44,
       }}>
         {(Object.keys(PILLAR_COLORS) as PillarKey[]).map((key, i) => {
           const c = pillarColor(key);
           return (
-            <Reveal tokens={tokens} delay={i * 70} key={key}>
+            <Reveal tokens={tokens} delay={i * 70} key={key} style={{ display: "flex", height: "100%" }}>
               <Card tokens={tokens} pad={20} tint={c.bg}
                 style={{
+                  width: "100%",
+                  display: "flex", flexDirection: "column",
                   borderColor: c.border,
                   transition: m.on ? "transform .3s cubic-bezier(.2,.7,.2,1)" : "none",
                 }}

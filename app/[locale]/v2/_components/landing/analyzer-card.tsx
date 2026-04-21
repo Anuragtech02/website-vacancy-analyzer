@@ -91,16 +91,20 @@ export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
       {!mobile && (
         <div style={{
           display: "grid",
+          // auto step cells instead of 1fr: each step cell hugs its content
+          // width, and the gap-columns between them flex (1fr) so every
+          // arrow sits horizontally equidistant between the step it follows
+          // and the step it precedes. Previous 1fr step cells left-aligned
+          // their content, so arrows appeared jammed against the NEXT step.
           gridTemplateColumns: narrow
-            ? "1fr 16px 1fr 16px 1fr"
-            : "1fr 20px 1fr 20px 1fr",
+            ? "auto 1fr auto 1fr auto"
+            : "auto 1fr auto 1fr auto",
           // Top-align cells so every step's icon sits at the same y. Each
           // icon + arrow gets an explicit marginTop so its geometric centre
-          // lands on the top line of text (the step title), regardless of
-          // whether the desc wraps to one or two lines. Previous approach
-          // used alignItems: center which anchored the arrow to the middle
-          // of the tallest cell — visually drifted off the icon.
-          alignItems: "start", gap: 0,
+          // lands on the top line of text (the step title).
+          alignItems: "start",
+          justifyItems: "center",
+          gap: 0,
           padding: narrow ? "14px 16px" : "18px 22px",
           borderBottom: `1px solid ${tokens.line}`,
         }}>

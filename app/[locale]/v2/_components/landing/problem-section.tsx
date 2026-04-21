@@ -59,14 +59,23 @@ export function ProblemSection({ tokens }: ProblemSectionProps) {
         <div style={{
           display: "grid",
           gridTemplateColumns: mobile ? "1fr" : narrow ? "1fr 1fr" : "1fr 1fr 1fr",
+          gridAutoRows: "1fr",
+          alignItems: "stretch",
           gap: mobile ? 14 : 20,
         }}>
           {t.problemSection.cards.map((card, i) => (
-            <Reveal tokens={tokens} delay={i * 120} key={i}>
+            <Reveal
+              tokens={tokens}
+              delay={i * 120}
+              key={i}
+              style={{ display: "flex", height: "100%" }}
+            >
               <Card
                 tokens={tokens}
                 pad={22}
                 style={{
+                  width: "100%",
+                  display: "flex", flexDirection: "column",
                   transition: m.on ? "transform .3s cubic-bezier(.2,.7,.2,1), box-shadow .3s ease" : "none",
                 }}
                 onMouseEnter={(e) => { if (m.on) { e.currentTarget.style.transform = "translateY(-4px)"; } }}
@@ -84,9 +93,14 @@ export function ProblemSection({ tokens }: ProblemSectionProps) {
                   fontWeight: tokens.displayWeight, color: tokens.ink,
                   marginTop: 18, letterSpacing: "-0.01em",
                 }}>{card.title}</div>
+                {/* flex: 1 on the description so every card stretches the
+                    description block to fill the shared row height; shorter
+                    copy gets bottom whitespace, longer copy still reads the
+                    same as before. */}
                 <div style={{
                   fontFamily: tokens.bodyFont, fontSize: 14, lineHeight: 1.5,
                   color: tokens.inkSoft, marginTop: 10,
+                  flex: "1 1 auto",
                 }}>{card.desc}</div>
               </Card>
             </Reveal>
