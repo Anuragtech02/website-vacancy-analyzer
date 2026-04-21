@@ -1,9 +1,8 @@
 "use client";
 
 import { type Tokens } from "../theme";
-import { Button, Pill } from "../primitives";
+import { Pill } from "../primitives";
 import { useV2T } from "../i18n-context";
-import { useBanner } from "../banner-context";
 import { useBreakpoint, isMobile } from "../use-breakpoint";
 
 interface ReportHeaderProps {
@@ -13,16 +12,10 @@ interface ReportHeaderProps {
   jobTitle?: string | null;
 }
 
-export function ReportHeader({ tokens, usesLeft, unlocked, jobTitle }: ReportHeaderProps) {
+export function ReportHeader({ tokens, usesLeft, unlocked: _unlocked, jobTitle }: ReportHeaderProps) {
   const t = useV2T();
-  const setBanner = useBanner();
   const bp = useBreakpoint();
   const mobile = isMobile(bp);
-
-  const handleDownloadPdf = () => {
-    if (!unlocked) return;
-    setBanner({ message: t.report.header.pdfSentInfo, variant: "info" });
-  };
 
   // "Rapport · {job_title}" when we have one, otherwise fall back to the generic i18n title.
   const displayTitle = jobTitle && jobTitle.trim().length > 0
@@ -56,32 +49,18 @@ export function ReportHeader({ tokens, usesLeft, unlocked, jobTitle }: ReportHea
           }}>{displayTitle}</div>
           <Pill tokens={tokens}>{t.report.header.generatedNow}</Pill>
         </div>
-        <div style={{
-          display: "flex", alignItems: "center", gap: 10,
-          flexWrap: "wrap",
-        }}>
-          {!mobile && (
-            <div style={{
-              fontFamily: tokens.monoFont, fontSize: 11, letterSpacing: "0.12em",
-              color: tokens.inkMute, textTransform: "uppercase",
-            }}>
-              {t.report.header.rewritesLeft.replace('{count}', String(usesLeft))}
-            </div>
-          )}
-          <Button
-            tokens={tokens}
-            variant="ghost"
-            onClick={handleDownloadPdf}
-            style={{
-              padding: "8px 14px",
-              fontSize: 13,
-              opacity: unlocked ? 1 : 0.45,
-              cursor: unlocked ? "pointer" : "not-allowed",
-            }}
-          >
-            {t.report.header.downloadPdf}
-          </Button>
-        </div>
+        {/* "Rewrites left" count on the right — on mobile it's already in the
+            navbar so we omit it here. Previous "Download PDF" button removed:
+            the PDF is emailed on unlock and the button only opened an info
+            toast reminding the user of that, so it wasn't doing anything. */}
+        {!mobile && (
+          <div style={{
+            fontFamily: tokens.monoFont, fontSize: 11, letterSpacing: "0.12em",
+            color: tokens.inkMute, textTransform: "uppercase",
+          }}>
+            {t.report.header.rewritesLeft.replace('{count}', String(usesLeft))}
+          </div>
+        )}
       </div>
     </div>
   );

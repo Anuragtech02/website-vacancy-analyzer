@@ -12,7 +12,7 @@ export const maxDuration = 300;
 
 // Hard upper bound — must stay in sync with v2 AnalyzerCard MAX_CHARS.
 // Enforced here too so the limit can't be bypassed with a direct POST.
-const MAX_VACANCY_CHARS = 2000;
+const MAX_VACANCY_CHARS = 4000;
 
 export async function POST(req: NextRequest) {
   // Rate Limiting

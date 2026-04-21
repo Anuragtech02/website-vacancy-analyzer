@@ -136,6 +136,7 @@ export function Report({
           tokens={tokens}
           rewrittenText={optimization?.full_text_plain}
           projectedScore={potentialScore}
+          currentScore={overall}
         />
       )}
 

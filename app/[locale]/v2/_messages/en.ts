@@ -288,7 +288,8 @@ Send your CV and motivation letter to jobs@company.example. We will come back to
       },
     },
     rewrite: {
-      badge:   "Rewritten · +2.4 pts",
+      badgePrefix: "Rewritten",
+      badgeUnit:   "pts",
       projected: {
         prefix: "Projected overall score after rewrite: ",
         score:  "8.2 / 10",

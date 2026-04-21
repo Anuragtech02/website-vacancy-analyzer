@@ -289,7 +289,8 @@ Stuur je CV en motivatiebrief naar jobs@bedrijf.nl. We komen bij je terug als er
       },
     },
     rewrite: {
-      badge:   "Herschreven · +2,4 pt",
+      badgePrefix: "Herschreven",
+      badgeUnit:   "pt",
       projected: {
         prefix: "Voorspelde totaalscore na herschrijving: ",
         score:  "8,2 / 10",

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLocale } from "next-intl";
 import { saveAs } from "file-saver";
 import { Document, Packer, Paragraph } from "docx";
 import { type Tokens } from "../theme";
@@ -13,6 +14,7 @@ interface RewriteSectionProps {
   tokens: Tokens;
   rewrittenText?: string;
   projectedScore?: number;
+  currentScore?: number;
 }
 
 function stripBasicMarkdown(text: string): string {
@@ -24,8 +26,9 @@ function stripBasicMarkdown(text: string): string {
     .replace(/^\s*[-*]\s+/gm, '• ');     // - bullet / * bullet → • bullet
 }
 
-export function RewriteSection({ tokens, rewrittenText, projectedScore }: RewriteSectionProps) {
+export function RewriteSection({ tokens, rewrittenText, projectedScore, currentScore }: RewriteSectionProps) {
   const t = useV2T();
+  const locale = useLocale();
   const setBanner = useBanner();
   const bp = useBreakpoint();
   const mobile = isMobile(bp);
@@ -40,6 +43,14 @@ export function RewriteSection({ tokens, rewrittenText, projectedScore }: Rewrit
 
   const bodyText = stripBasicMarkdown(rewrittenText);
   const scoreDisplay = projectedScore != null ? `${projectedScore.toFixed(1)} / 10` : t.report.rewrite.projected.score;
+
+  // Real delta instead of the i18n's hardcoded "+2.4 pts" — compute from the
+  // actual current + projected scores. Locale-aware decimal separator so NL
+  // renders "+4,7 pt" and EN renders "+4.7 pts". Badge falls back to just
+  // "Rewritten" when we can't compute a positive delta.
+  const badgeLabel = (projectedScore != null && currentScore != null && projectedScore > currentScore)
+    ? `${t.report.rewrite.badgePrefix} · +${(projectedScore - currentScore).toLocaleString(locale, { maximumFractionDigits: 1, minimumFractionDigits: 1 })} ${t.report.rewrite.badgeUnit}`
+    : t.report.rewrite.badgePrefix;
 
   const handleCopy = async () => {
     try {
@@ -92,7 +103,7 @@ export function RewriteSection({ tokens, rewrittenText, projectedScore }: Rewrit
           background: tokens.bgMuted,
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
-            <Pill tokens={tokens} tone="ok">{t.report.rewrite.badge}</Pill>
+            <Pill tokens={tokens} tone="ok">{badgeLabel}</Pill>
             <div style={{ fontFamily: tokens.bodyFont, fontSize: 14, color: tokens.inkSoft }}>
               {t.report.rewrite.projected.prefix}<strong style={{ color: tokens.ink }}>{scoreDisplay}</strong>
             </div>

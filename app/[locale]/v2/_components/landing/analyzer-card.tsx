@@ -23,7 +23,8 @@ interface AnalyzerCardProps {
 
 // Hard upper bound: typed/pasted vacancies beyond this length are rejected
 // client-side to keep LLM latency predictable and token cost bounded.
-const MAX_CHARS = 2000;
+// Must stay in sync with MAX_VACANCY_CHARS in app/api/analyze/route.ts.
+const MAX_CHARS = 4000;
 
 // Matches the option values v1 uses (app/[locale]/page.tsx) and what
 // lib/prompts.ts' getAnalyzerPrompt(category, ...) expects — changing a value
@@ -93,13 +94,19 @@ export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
           gridTemplateColumns: narrow
             ? "1fr 16px 1fr 16px 1fr"
             : "1fr 20px 1fr 20px 1fr",
-          alignItems: "center", gap: 0,
+          // Top-align cells so every step's icon sits at the same y. Each
+          // icon + arrow gets an explicit marginTop so its geometric centre
+          // lands on the top line of text (the step title), regardless of
+          // whether the desc wraps to one or two lines. Previous approach
+          // used alignItems: center which anchored the arrow to the middle
+          // of the tallest cell — visually drifted off the icon.
+          alignItems: "start", gap: 0,
           padding: narrow ? "14px 16px" : "18px 22px",
           borderBottom: `1px solid ${tokens.line}`,
         }}>
           {t.analyzerCard.steps.map((step, i) => (
             <React.Fragment key={i}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
                 <span style={{
                   width: 22, height: 22, borderRadius: 999,
                   background: i === 0 ? tokens.primaryColor : tokens.bgMuted,
@@ -108,14 +115,27 @@ export function AnalyzerCard({ tokens, onAnalyze }: AnalyzerCardProps) {
                   display: "flex", alignItems: "center", justifyContent: "center",
                   fontFamily: tokens.monoFont, fontSize: 11, fontWeight: 600,
                   flexShrink: 0,
+                  // Nudge the icon down ~2px so its geometric centre lands on
+                  // the step title's cap-height, not its line-box top edge.
+                  marginTop: 2,
                 }}>{i + 1}</span>
                 <div>
-                  <div style={{ fontFamily: tokens.bodyFont, fontSize: 13, fontWeight: 600, color: tokens.ink }}>{step.title}</div>
-                  <div style={{ fontFamily: tokens.bodyFont, fontSize: 12, color: tokens.inkMute }}>{step.desc}</div>
+                  <div style={{ fontFamily: tokens.bodyFont, fontSize: 13, fontWeight: 600, color: tokens.ink, lineHeight: 1.3 }}>{step.title}</div>
+                  <div style={{ fontFamily: tokens.bodyFont, fontSize: 12, color: tokens.inkMute, lineHeight: 1.3 }}>{step.desc}</div>
                 </div>
               </div>
               {i < 2 && (
-                <svg width="20" height="10" viewBox="0 0 20 10" style={{ color: tokens.lineStrong }}>
+                <svg
+                  width="20" height="10" viewBox="0 0 20 10"
+                  style={{
+                    color: tokens.lineStrong,
+                    display: "block",
+                    // Icon centre sits at y ≈ 2 (marginTop) + 11 (icon radius)
+                    // = 13 from the top of the cell. Arrow midline is at arrow
+                    // top + 5, so marginTop 8 puts its midline at y=13 too.
+                    marginTop: 8,
+                  }}
+                >
                   <path d="M0 5 L18 5 M14 1 L18 5 L14 9" stroke="currentColor" strokeWidth="1" fill="none" />
                 </svg>
               )}
