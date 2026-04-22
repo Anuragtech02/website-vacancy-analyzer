@@ -137,7 +137,10 @@ export default function Home() {
       const response = await fetchWithTimeout("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ vacancyText, category, locale }),
+        // uiVersion: "v1" tells the backend to route the completion-email
+        // link back to /{locale}/report/{id} — the old design this user
+        // started from — instead of the /v2/ path.
+        body: JSON.stringify({ vacancyText, category, locale, uiVersion: "v1" }),
         timeout: 30000,
         retries: 0,
       });

@@ -36,6 +36,12 @@ export const analysisJobs = pgTable(
     vacancy_text: text("vacancy_text").notNull(),
     category: text("category").notNull(),
     locale: text("locale").notNull(),
+    // 'v1' (old design, /{locale}/report/{id}) or 'v2' (new design, /{locale}/v2/report/{id}).
+    // Captured on enqueue from the submitting landing page so the completion email
+    // can route the user back to the UI they came from. Bug pre-fix: everything
+    // hardcoded to /v2/, so a user who ran the analysis on /{locale} got sent to
+    // the unfamiliar v2 layout after clicking the email link.
+    ui_version: text("ui_version").notNull().default("v2"),
     email: text("email"),                                  // NULL until attached
     email_sent_at: timestamp("email_sent_at"),             // NULL until notified
     report_id: text("report_id").references(() => reports.id), // NULL until done

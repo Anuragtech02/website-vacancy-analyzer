@@ -1,0 +1,1 @@
+ALTER TABLE "analysis_jobs" ADD COLUMN "ui_version" text DEFAULT 'v2' NOT NULL;

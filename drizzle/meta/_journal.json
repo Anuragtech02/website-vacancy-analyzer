@@ -15,6 +15,13 @@
       "when": 1776766498076,
       "tag": "0001_rare_starfox",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1776852216397,
+      "tag": "0002_narrow_siren",
+      "breakpoints": true
     }
   ]
 }

@@ -32,8 +32,8 @@ export async function POST(req: NextRequest) {
     }
 
     // Check + insert atomically to prevent double-click / fetch-retry races.
-    // IP is intentionally excluded from the count — shared office/VPN IPs would
-    // cause colleagues to block each other. See lib/db.ts: countLeadsByFingerprint.
+    // Identity = MAX(fingerprint, email, ip_address) — see lib/db.ts for
+    // why all three are used now (incognito-bypass regression).
     //
     // Limit resolution, in order of precedence:
     //   1. BYPASS_USAGE_LIMIT=true           → unlimited (dev/local)

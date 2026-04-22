@@ -19,6 +19,7 @@ import { nanoid } from "nanoid";
 import {
   ANALYZE_QUEUE,
   type AnalyzeJobMessage,
+  buildReportUrl,
   getBoss,
   getJob,
   markRunning,
@@ -87,7 +88,7 @@ async function handleAnalyzeJob(jobs: { data: AnalyzeJobMessage; id: string }[])
       // were running.
       const fresh = await getJob(jobId);
       if (fresh?.email && !fresh.email_sent_at) {
-        await sendCompletionEmail(fresh.email, reportId, fresh.locale);
+        await sendCompletionEmail(fresh.email, reportId, fresh.locale, fresh.ui_version);
         await markEmailSent(jobId);
       }
     } catch (err) {
@@ -110,8 +111,8 @@ async function handleAnalyzeJob(jobs: { data: AnalyzeJobMessage; id: string }[])
   }
 }
 
-async function sendCompletionEmail(email: string, reportId: string, locale: string): Promise<void> {
-  const reportUrl = `${BASE_URL}/${locale}/v2/report/${reportId}`;
+async function sendCompletionEmail(email: string, reportId: string, locale: string, uiVersion: "v1" | "v2"): Promise<void> {
+  const reportUrl = buildReportUrl({ baseUrl: BASE_URL, locale, reportId, uiVersion });
   await sendAnalysisReadyEmail({
     to: email,
     reportUrl,

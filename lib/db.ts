@@ -67,6 +67,22 @@ export const dbClient = {
 
   // Atomically checks count + inserts lead in a single transaction to prevent
   // double-click / fetch-retry races past the usage limit guard.
+  //
+  // Identity is the MAX across three independent signals so any one of them
+  // can trip the cap on its own:
+  //   - fingerprint (browser canvas hash) — weakest in incognito because
+  //     anti-fingerprinting adds canvas noise, so this can reset
+  //   - email — trivially bypassed with a fresh address
+  //   - ip_address — strongest signal for a single abuser; weakest for
+  //     legitimate office/VPN shared networks where multiple users may
+  //     collide
+  //
+  // We intentionally accept the shared-IP tradeoff: the previous design
+  // (fp OR email only) was bypassable by opening an incognito window and
+  // typing a different email — the canvas-fingerprint reset and the new
+  // email meant both counts were 0 and the user got unlimited rewrites.
+  // If a legitimate office group hits the IP cap, they can reset via the
+  // admin-reset flow; unlimited bypass is the worse failure.
   createLeadIfUnderLimit: async (params: {
     email: string;
     reportId: string;
@@ -79,10 +95,14 @@ export const dbClient = {
         ? await tx.select({ count: count() }).from(leads).where(eq(leads.fingerprint, params.fingerprint))
         : [{ count: 0 }];
       const emCountResult = await tx.select({ count: count() }).from(leads).where(eq(leads.email, params.email));
+      const ipCountResult = params.ipAddress
+        ? await tx.select({ count: count() }).from(leads).where(eq(leads.ip_address, params.ipAddress))
+        : [{ count: 0 }];
 
       const fpCount = Number(fpCountResult[0]?.count ?? 0);
       const emCount = Number(emCountResult[0]?.count ?? 0);
-      const usageCountBefore = Math.max(fpCount, emCount);
+      const ipCount = Number(ipCountResult[0]?.count ?? 0);
+      const usageCountBefore = Math.max(fpCount, emCount, ipCount);
 
       if (usageCountBefore >= params.limit) {
         return { allowed: false, usageCountBefore };

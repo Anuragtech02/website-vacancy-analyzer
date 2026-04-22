@@ -118,7 +118,9 @@ export default function V2Page() {
       const response = await fetchWithTimeout("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ vacancyText: text, category, locale }),
+        // uiVersion: "v2" tells the backend to route the completion-email
+        // link back to /{locale}/v2/report/{id}.
+        body: JSON.stringify({ vacancyText: text, category, locale, uiVersion: "v2" }),
         timeout: 30000,
         retries: 0,
       });

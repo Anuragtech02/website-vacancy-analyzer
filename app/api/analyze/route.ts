@@ -24,10 +24,11 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { vacancyText, category, locale } = await req.json() as {
+    const { vacancyText, category, locale, uiVersion } = await req.json() as {
       vacancyText: string;
       category?: string;
       locale?: string;
+      uiVersion?: string;  // 'v1' | 'v2' — which landing page enqueued the job
     };
 
     if (!vacancyText || typeof vacancyText !== "string") {
@@ -45,11 +46,15 @@ export async function POST(req: NextRequest) {
 
     const finalCategory = category || "General";
     const finalLocale = locale || "nl";
+    // Whitelist to avoid SQL default being overridden by garbage. Anything
+    // not explicitly 'v1' is treated as 'v2'.
+    const finalUiVersion: "v1" | "v2" = uiVersion === "v1" ? "v1" : "v2";
 
     const jobId = await createJob({
       vacancyText,
       category: finalCategory,
       locale: finalLocale,
+      uiVersion: finalUiVersion,
     });
     await enqueueJob(jobId);
 

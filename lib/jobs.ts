@@ -73,6 +73,7 @@ export interface AnalyzeJobMessage {
 // ─── Job lifecycle ────────────────────────────────────────────────────────
 
 export type JobStatus = "pending" | "running" | "done" | "failed";
+export type UiVersion = "v1" | "v2";
 
 export interface JobRow {
   id: string;
@@ -82,6 +83,7 @@ export interface JobRow {
   vacancy_text: string;
   category: string;
   locale: string;
+  ui_version: UiVersion;
   email: string | null;
   email_sent_at: Date | null;
   report_id: string | null;
@@ -96,6 +98,7 @@ export async function createJob(params: {
   vacancyText: string;
   category: string;
   locale: string;
+  uiVersion?: UiVersion;  // 'v1' or 'v2'; defaults to 'v2' to match historical behaviour
 }): Promise<string> {
   const id = nanoid(12);
   await jobsDb.insert(analysisJobs).values({
@@ -105,6 +108,7 @@ export async function createJob(params: {
     vacancy_text: params.vacancyText,
     category: params.category,
     locale: params.locale,
+    ui_version: params.uiVersion ?? "v2",
   });
   return id;
 }
@@ -228,4 +232,21 @@ export async function reapZombieJobs(): Promise<number> {
     )
     .returning({ id: analysisJobs.id });
   return result.length;
+}
+
+// ─── Report URL builder ───────────────────────────────────────────────────
+// Routes the user back to the UI variant they originally used. This was
+// previously hardcoded to /v2/, so v1 users clicking the "Your analysis
+// is ready" email got dropped into the unfamiliar v2 layout.
+export function buildReportUrl(params: {
+  baseUrl: string;
+  locale: string;
+  reportId: string;
+  uiVersion: UiVersion;
+}): string {
+  const { baseUrl, locale, reportId, uiVersion } = params;
+  const trimmed = baseUrl.replace(/\/$/, "");
+  return uiVersion === "v2"
+    ? `${trimmed}/${locale}/v2/report/${reportId}`
+    : `${trimmed}/${locale}/report/${reportId}`;
 }

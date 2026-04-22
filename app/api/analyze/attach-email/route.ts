@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { attachEmail, markEmailSent } from "@/lib/jobs";
+import { attachEmail, buildReportUrl, markEmailSent } from "@/lib/jobs";
 import { sendAnalysisReadyEmail, sendAnalysisFailedEmail } from "@/lib/email";
+import { syncHubSpotContact } from "@/lib/hubspot";
 
 // POST /api/analyze/attach-email
 // Body: { jobId: string, email: string }
@@ -25,15 +26,50 @@ export async function POST(req: NextRequest) {
     const job = await attachEmail(jobId, email.trim());
     if (!job) return NextResponse.json({ error: "Job not found" }, { status: 404 });
 
+    const trimmedEmail = email.trim();
+    const locale: "en" | "nl" = job.locale === "en" ? "en" : "nl";
+
+    // HubSpot sync — previously only ran in /api/optimize (the rewrite
+    // unlock path). That meant users who submitted their email via the
+    // "email me when ready" modal never made it into HubSpot. Mirror
+    // the /optimize sync here: fire-and-forget, same scrape_bron value
+    // so it's segmentable in HubSpot views.
+    //
+    // Scope notes:
+    //   - job_title / organization aren't known yet (analysis still
+    //     running or just finished) so we leave those off — HubSpot will
+    //     pick them up on the /optimize sync if the user continues.
+    //   - count_analyzer_flow is "1" here — this is the first touchpoint
+    //     from that user in the external analyser funnel.
+    void (async () => {
+      try {
+        const hs = await syncHubSpotContact(trimmedEmail, {
+          scrape_bron: "external-analyzer",
+          count_analyzer_flow: "1",
+        });
+        if (hs && hs.success) {
+          console.log(`[attach-email] HubSpot sync ${hs.action} for ${trimmedEmail}`);
+        } else if (hs && !hs.success) {
+          console.warn(`[attach-email] HubSpot sync failed for ${trimmedEmail}: ${hs.reason}`);
+        }
+      } catch (err) {
+        console.error("[attach-email] HubSpot sync threw:", err);
+      }
+    })();
+
     // Fire-and-forget terminal-state notification. Not awaited so the
     // client gets a fast response; errors are logged server-side.
-    const locale: "en" | "nl" = job.locale === "en" ? "en" : "nl";
     if (job.status === "done" && job.report_id && !job.email_sent_at) {
       void (async () => {
         try {
-          const reportUrl = `${BASE_URL}/${job.locale}/v2/report/${job.report_id}`;
+          const reportUrl = buildReportUrl({
+            baseUrl: BASE_URL,
+            locale: job.locale,
+            reportId: job.report_id!,
+            uiVersion: job.ui_version,
+          });
           await sendAnalysisReadyEmail({
-            to: email.trim(),
+            to: trimmedEmail,
             reportUrl,
             locale,
           });
@@ -46,7 +82,7 @@ export async function POST(req: NextRequest) {
       void (async () => {
         try {
           await sendAnalysisFailedEmail({
-            to: email.trim(),
+            to: trimmedEmail,
             locale,
             retryUrl: `${BASE_URL}/${job.locale}`,
           });
