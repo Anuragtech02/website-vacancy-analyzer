@@ -98,9 +98,14 @@ export async function createJob(params: {
   vacancyText: string;
   category: string;
   locale: string;
-  uiVersion?: UiVersion;  // 'v1' or 'v2'; defaults to 'v2' to match historical behaviour
+  uiVersion?: string;  // caller-supplied, not yet trusted
 }): Promise<string> {
   const id = nanoid(12);
+  // Whitelist here too (route-level whitelisting is a second layer, but
+  // pushing it INTO the create path means any future caller of createJob
+  // can't accidentally write garbage into the ui_version column.
+  // Anything that isn't literal "v1" becomes "v2" — the historical default.
+  const uiVersion: UiVersion = params.uiVersion === "v1" ? "v1" : "v2";
   await jobsDb.insert(analysisJobs).values({
     id,
     status: "pending",
@@ -108,7 +113,7 @@ export async function createJob(params: {
     vacancy_text: params.vacancyText,
     category: params.category,
     locale: params.locale,
-    ui_version: params.uiVersion ?? "v2",
+    ui_version: uiVersion,
   });
   return id;
 }
@@ -136,7 +141,20 @@ export async function getJob(jobId: string): Promise<JobRow | null> {
     .from(analysisJobs)
     .where(eq(analysisJobs.id, jobId))
     .limit(1);
-  return (rows[0] as JobRow | undefined) ?? null;
+  const row = rows[0] as (JobRow & { ui_version: string }) | undefined;
+  if (!row) return null;
+  // Runtime narrow: the DB column is `text`, not a real enum, so Drizzle
+  // hands us a plain string. If somehow an unexpected value lands there
+  // (manual SQL, future migration mistake, corrupted row), coerce back
+  // to "v2" rather than silently tripping buildReportUrl's v1 branch and
+  // emailing users a broken link. Log once so we can notice.
+  if (row.ui_version !== "v1" && row.ui_version !== "v2") {
+    console.warn(
+      `[jobs] job ${jobId} has unexpected ui_version ${JSON.stringify(row.ui_version)}; coercing to "v2"`,
+    );
+    row.ui_version = "v2";
+  }
+  return row as JobRow;
 }
 
 export async function markRunning(jobId: string): Promise<void> {

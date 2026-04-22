@@ -53,9 +53,10 @@ export const dbClient = {
     return result[0]?.count || 0;
   },
 
-  // Count leads by browser fingerprint only. IP is intentionally NOT used here
-  // because office/VPN/NAT networks share IPs across many users; including IP
-  // in the OR caused legitimate users to be blocked by a colleague's usage.
+  // Count leads by browser fingerprint only. This helper is fingerprint-
+  // scoped by design — NOT the cap enforcement path. Cap enforcement lives
+  // in createLeadIfUnderLimit below, which now takes MAX(fp, em, ip) so
+  // incognito + fresh email no longer bypasses.
   countLeadsByFingerprint: async (fingerprint?: string) => {
     if (!fingerprint) return 0;
     const result = await db
