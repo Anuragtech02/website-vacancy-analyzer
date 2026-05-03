@@ -35,6 +35,29 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const analysis = JSON.parse(report.analysis_json);
+
+    const syncAnalyzerLeadToHubSpot = async (countAnalyzerFlow: number, context: "unlocked" | "locked") => {
+      try {
+        const hubspotResult = await syncHubSpotContact(email, {
+          company: analysis.metadata?.organization || "",
+          website: "",
+          vacature_titel: analysis.metadata?.job_title || "Unknown Vacancy",
+          vacature_report_id: reportId,
+          count_analyzer_flow: String(countAnalyzerFlow),
+          [HUBSPOT_SCRAPE_SOURCE_PROPERTY]: HUBSPOT_EXTERNAL_ANALYZER_SOURCE,
+        });
+
+        if (hubspotResult && !hubspotResult.success) {
+          console.warn(`⚠️ HubSpot sync failed for ${email} (${context}):`, hubspotResult.reason);
+        } else if (hubspotResult && hubspotResult.success) {
+          console.log(`✅ HubSpot sync successful for ${email} (${context}): ${hubspotResult.action}`);
+        }
+      } catch (hubspotError) {
+        console.error(`HubSpot sync threw for ${email} (${context}):`, hubspotError);
+      }
+    };
+
     // Check + insert atomically to prevent double-click / fetch-retry races.
     // Identity = MAX(fingerprint, email, ip_address) — see lib/db.ts for
     // why all three are used now (incognito-bypass regression).
@@ -57,8 +80,13 @@ export async function POST(req: NextRequest) {
       limit: effectiveLimit,
     });
 
-    // Phase 3: Lock State — user already has 2 leads; this would be the 3rd attempt.
+    // Phase 3: Lock State — user already has 2 leads; this would be the
+    // next attempt. Still sync to HubSpot because the user explicitly
+    // submitted their email in the unlock modal; we just skip the expensive
+    // vacancy rewrite and email attachment generation.
     if (!allowed) {
+      await syncAnalyzerLeadToHubSpot(usageCountBefore + 1, "locked");
+
       return NextResponse.json({
         success: false,
         isLocked: true,
@@ -69,10 +97,7 @@ export async function POST(req: NextRequest) {
     // The lead has been inserted inside the transaction.
     // usageCountBefore: 0 → 1st rewrite, 1 → 2nd rewrite.
     // Pass (usageCountBefore + 1) as the "Nth email" value for HubSpot + email template.
-    const usageCount = usageCountBefore; // alias for clarity below
-
     // Generate optimization (pass locale for localized responses)
-    const analysis = JSON.parse(report.analysis_json);
     const optimizationResult = await optimizeVacancy(report.vacancy_text, analysis, locale || 'nl');
 
     // Sync to HubSpot (with proper error handling).
@@ -81,27 +106,14 @@ export async function POST(req: NextRequest) {
     // property on this HubSpot portal — same one the sales demo flow
     // writes to. Keeps all contacts tagged with where they came from,
     // segmentable in HubSpot views.
-    const hubspotResult = await syncHubSpotContact(email, {
-      company: analysis.metadata?.organization || "",
-      website: "",
-      vacature_titel: analysis.metadata?.job_title || "Unknown Vacancy",
-      vacature_report_id: reportId,
-      count_analyzer_flow: String(usageCount + 1), // NEW total count (1 for first submission, 2 for second)
-      [HUBSPOT_SCRAPE_SOURCE_PROPERTY]: HUBSPOT_EXTERNAL_ANALYZER_SOURCE,
-    });
-
-    if (hubspotResult && !hubspotResult.success) {
-      console.warn(`⚠️ HubSpot sync failed for ${email}:`, hubspotResult.reason);
-    } else if (hubspotResult && hubspotResult.success) {
-      console.log(`✅ HubSpot sync successful for ${email}: ${hubspotResult.action}`);
-    }
+    await syncAnalyzerLeadToHubSpot(usageCountBefore + 1, "unlocked");
 
     // Send email with PDF attachment
     const emailResult = await sendOptimizedVacancyEmail({
       to: email,
       optimization: optimizationResult,
       reportId,
-      usageCount: usageCount + 1, // Pass the NEW total count
+      usageCount: usageCountBefore + 1, // Pass the NEW total count
     });
 
     if (!emailResult.success) {
