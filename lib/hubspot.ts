@@ -1,5 +1,8 @@
 import { Client } from "@hubspot/api-client";
 
+export const HUBSPOT_SCRAPE_SOURCE_PROPERTY = "scrape_bron";
+export const HUBSPOT_EXTERNAL_ANALYZER_SOURCE = "external-analyzer";
+
 export async function syncHubSpotContact(email: string, properties: Record<string, string> = {}) {
   const accessToken = process.env.HUBSPOT_ACCESS_TOKEN;
   if (!accessToken) {

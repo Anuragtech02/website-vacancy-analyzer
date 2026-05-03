@@ -2,7 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { dbClient } from "@/lib/db";
 import { optimizeVacancy } from "@/lib/gemini";
 import { sendOptimizedVacancyEmail } from "@/lib/email";
-import { syncHubSpotContact } from "@/lib/hubspot";
+import {
+  HUBSPOT_EXTERNAL_ANALYZER_SOURCE,
+  HUBSPOT_SCRAPE_SOURCE_PROPERTY,
+  syncHubSpotContact,
+} from "@/lib/hubspot";
 import { getClientIP } from "@/lib/fingerprint";
 
 // Gemini 3 Flash optimization + Puppeteer PDF + SES send. Budget 5 min.
@@ -83,7 +87,7 @@ export async function POST(req: NextRequest) {
       vacature_titel: analysis.metadata?.job_title || "Unknown Vacancy",
       vacature_report_id: reportId,
       count_analyzer_flow: String(usageCount + 1), // NEW total count (1 for first submission, 2 for second)
-      scrape_bron: "external-analyzer",
+      [HUBSPOT_SCRAPE_SOURCE_PROPERTY]: HUBSPOT_EXTERNAL_ANALYZER_SOURCE,
     });
 
     if (hubspotResult && !hubspotResult.success) {

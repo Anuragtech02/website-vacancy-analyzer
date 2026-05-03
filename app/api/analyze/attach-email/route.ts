@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { attachEmail, buildReportUrl, getJob, markEmailSent } from "@/lib/jobs";
 import { sendAnalysisReadyEmail, sendAnalysisFailedEmail } from "@/lib/email";
-import { syncHubSpotContact } from "@/lib/hubspot";
+import {
+  HUBSPOT_EXTERNAL_ANALYZER_SOURCE,
+  HUBSPOT_SCRAPE_SOURCE_PROPERTY,
+  syncHubSpotContact,
+} from "@/lib/hubspot";
 
 // POST /api/analyze/attach-email
 // Body: { jobId: string, email: string }
@@ -25,13 +29,6 @@ export async function POST(req: NextRequest) {
 
     const trimmedEmail = email.trim();
 
-    // Read the row FIRST so we know whether this is a new email attach
-    // or a retry with the same email. attachEmail() overwrites
-    // unconditionally, so without this pre-read every double-click or
-    // network-retry would re-fire HubSpot sync.
-    const existing = await getJob(jobId);
-    const isNewEmail = !existing?.email || existing.email.toLowerCase() !== trimmedEmail.toLowerCase();
-
     const job = await attachEmail(jobId, trimmedEmail);
     if (!job) return NextResponse.json({ error: "Job not found" }, { status: 404 });
 
@@ -40,12 +37,12 @@ export async function POST(req: NextRequest) {
     // HubSpot sync — previously only ran in /api/optimize (the rewrite
     // unlock path). That meant users who submitted their email via the
     // "email me when ready" modal never made it into HubSpot. Mirror
-    // the /optimize sync here: fire-and-forget, same scrape_bron value
-    // so it's segmentable in HubSpot views.
-    //
-    // Gated on isNewEmail — a retry of the same email against the same
-    // jobId does not need to re-hit HubSpot. This prevents double-click
-    // sprays without adding a new DB column.
+    // the /optimize sync here, using the same scrape_bron value so it's
+    // segmentable in HubSpot views.
+    // Await this instead of launching it in the background: deployed
+    // runtimes are free to freeze the request after the response is sent,
+    // which made the loading-screen email capture unreliable. The HubSpot
+    // helper is an upsert, so retries and double-clicks remain idempotent.
     //
     // Scope notes:
     //   - job_title / organization aren't known yet (analysis still
@@ -53,24 +50,18 @@ export async function POST(req: NextRequest) {
     //     pick them up on the /optimize sync if the user continues.
     //   - count_analyzer_flow is "1" here — this is the first touchpoint
     //     from that user in the external analyser funnel.
-    if (isNewEmail) {
-      void (async () => {
-        try {
-          const hs = await syncHubSpotContact(trimmedEmail, {
-            scrape_bron: "external-analyzer",
-            count_analyzer_flow: "1",
-          });
-          if (hs && hs.success) {
-            console.log(`[attach-email] HubSpot sync ${hs.action} for ${trimmedEmail}`);
-          } else if (hs && !hs.success) {
-            console.warn(`[attach-email] HubSpot sync failed for ${trimmedEmail}: ${hs.reason}`);
-          }
-        } catch (err) {
-          console.error("[attach-email] HubSpot sync threw:", err);
-        }
-      })();
-    } else {
-      console.log(`[attach-email] Skipping HubSpot sync for ${trimmedEmail} — already attached to job ${jobId}`);
+    try {
+      const hs = await syncHubSpotContact(trimmedEmail, {
+        [HUBSPOT_SCRAPE_SOURCE_PROPERTY]: HUBSPOT_EXTERNAL_ANALYZER_SOURCE,
+        count_analyzer_flow: "1",
+      });
+      if (hs && hs.success) {
+        console.log(`[attach-email] HubSpot sync ${hs.action} for ${trimmedEmail}`);
+      } else if (hs && !hs.success) {
+        console.warn(`[attach-email] HubSpot sync failed for ${trimmedEmail}: ${hs.reason}`);
+      }
+    } catch (err) {
+      console.error("[attach-email] HubSpot sync threw:", err);
     }
 
     // Fire-and-forget terminal-state notification. Not awaited so the
