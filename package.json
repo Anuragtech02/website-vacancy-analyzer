@@ -32,7 +32,7 @@
     "framer-motion": "^12.23.24",
     "lucide-react": "^0.555.0",
     "nanoid": "^5.1.6",
-    "next": "^15.0.3",
+    "next": "^15.5.28",
     "next-intl": "^4.7.0",
     "nodemailer": "^7.0.12",
     "pg-boss": "^12.15.0",
@@ -54,7 +54,7 @@
     "dotenv": "^17.2.3",
     "drizzle-kit": "^0.31.7",
     "eslint": "^9",
-    "eslint-config-next": "^15.0.3",
+    "eslint-config-next": "^15.5.28",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
